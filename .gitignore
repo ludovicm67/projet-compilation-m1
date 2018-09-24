@@ -1,0 +1,4 @@
+*.o
+parser.[ch]
+lexer.c
+main
