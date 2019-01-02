@@ -10,6 +10,9 @@
   char* identifier;
   char* operator;
   int   value;
+  ast_node_t *node;
+  ast_unary_op_t unary;
+  ast_binary_op_t binary;
 }
 
 %token PRAGMA
@@ -22,6 +25,11 @@
 %token CHAR
 %token BOOL
 %token VOID
+%token UNARY_FUNC UNARY_OP
+
+%type <unary> UNARY_FUNC
+%type <unary> UNARY_OP
+%type <node> EXPRESSION
 
 %token FOR WHILE DO
 %token IF ELSE SWITCH CASE DEFAULT
@@ -33,59 +41,27 @@
 %%
 
 expression:
-    additive_expr
-  | multiplicative_expr
-  | unary_expr
-  | '(' expression ')'
-  ;
-
-unary_expr:
-    unary_op IDENTIFIER
-  | unary_op VALUE
-  | unary_op expression
-  | IDENTIFIER
+    IDENTIFIER
   | VALUE
+  | '(' additive_expr ')'
   ;
 
 additive_expr:
-    expression '+' expression
-  | expression '-' expression
+    multiplicative_expr
+  | additive_expr '+' multiplicative_expr
+  | additive_expr '-' multiplicative_expr
   ;
 
 multiplicative_expr:
-    expression '*' expression
-  | expression '/' expression
+    expression
+  | multiplicative_expr '*' expression
+  | multiplicative_expr '/' expression
   ;
 
-unary_op:
-    "++"
-  | "--"
-  | '&'
-  | '*'
-  | '+'
-  | '-'
-  | '~'
-  | '!'
-  | "pow"
-  | "powf"
-  | "powl"
-  | "cpow"
-  | "cpowf"
-  | "cpowl"
-  | "sqrt"
-  | "sqrtf"
-  | "sqrtl"
-  | "csqrt"
-  | "csqrtf"
-  | "csqrtl"
-  | "sin"
-  | "sinf"
-  | "sinl"
-  | "csin"
-  | "csinf"
-  | "csinl"
-  | "log"
-  | "exp"
+unary_expr:
+  expression
+  | UNARY_OP expression              { $$ = ast_new_unary($1, $2); }
+  | UNARY_FUNC '(' additive_expr ')' { $$ = ast_new_unary($1, $3); }
   ;
 
 type:
