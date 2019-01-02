@@ -53,7 +53,6 @@
 
 "++"       { yylval.unary = OP_INCR;   return UNARY_OP; }
 "--"       { yylval.unary = OP_DECR;   return UNARY_OP; }
-"-"        { yylval.unary = OP_NEG;    return UNARY_OP; }
 
 "abs"      { yylval.unary = OP_ABS;    return UNARY_FUNC; }
 "cpowf"    { yylval.unary = OP_CPOWF;  return UNARY_FUNC; }
@@ -77,8 +76,11 @@
 "sqrtl"    { yylval.unary = OP_SQRTL;  return UNARY_FUNC; }
 "sqrt"     { yylval.unary = OP_SQRT;   return UNARY_FUNC; }
 
-[0-9]+\.[0-9]+ { yylval.decimal = atof(yytext); return DECIMAL; }
-[0-9]+     { yylval.integer = atoi(yytext); return INTEGER; }
+[0-9]+          { yylval.integer = atoi(yytext); return INTEGER; }
+[0-9]+"."[0-9]+ { yylval.decimal = atof(yytext); return DECIMAL; }
+
+"\n" { return '\n'; }
+.    {}
 
 %%
 
