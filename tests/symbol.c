@@ -1,7 +1,6 @@
 #define TEST_NO_MAIN
 
 #include "acutest.h"
-#include "symbol.h"
 #include "../symbol.h"
 
 void test_symbol_new(void) {

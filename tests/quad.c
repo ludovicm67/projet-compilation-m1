@@ -1,7 +1,6 @@
 #define TEST_NO_MAIN
 
 #include "acutest.h"
-#include "quad.h"
 #include "../quad.h"
 
 void test_quad_test(void) {
