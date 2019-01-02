@@ -5,6 +5,7 @@
 
 symbol_t *symbol_new(char *name, bool external, double value) {
   symbol_t *symbol = malloc(sizeof(symbol_t));
+  symbol->number = 0;
   symbol->name = name;
   symbol->external = external;
   symbol->modified = false;

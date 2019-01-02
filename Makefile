@@ -56,4 +56,4 @@ clean:
 
 .PHONY: format
 format:
-	clang-format -i *.c *.h
+	clang-format -i *.c *.h ./tests/*.c
