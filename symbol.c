@@ -15,7 +15,8 @@ symbol_t *symbol_new(char *name, bool isMutable, int value) {
 symbol_t *symbol_add(symbol_t *symbol, char *name, bool isMutable, int value) {
   symbol_t *tmp;
 
-  if (!symbol) return symbol_new(name, isMutable, value);
+  if (!symbol)
+    return symbol_new(name, isMutable, value);
 
   // check if symbol already exists
   for (tmp = symbol; tmp; tmp = tmp->next) {

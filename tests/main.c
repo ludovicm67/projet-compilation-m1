@@ -1,9 +1,16 @@
 #include "acutest.h"
-#include "quad.h"
-#include "symbol.h"
+
+#define _TEST_LIST                                                              \
+  _TEST_ITEM(quad, test)                                       \
+  _TEST_ITEM(symbol, new)
+
+#define _TEST_ITEM(scope, fun) void test_ ## scope ## _ ## fun(void);
+_TEST_LIST
+#undef _TEST_ITEM
 
 TEST_LIST = {
-   { "quad/test", test_quad_test },
-   { "symbol/new", test_symbol_new },
-   { 0 }
+#define _TEST_ITEM(scope, fun) { #scope "/" #fun , test_ ## scope ## _ ## fun },
+  _TEST_LIST
+#undef _TEST_ITEM
+  { 0 }
 };
