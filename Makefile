@@ -1,18 +1,25 @@
 CFLAGS := -D_POSIX_SOURCE -Wall -Wextra -Werror -pedantic --std=c99 -O3 -g
 LDFLAGS := -O3 -g
 
-main: main.o parser.o lexer.o
+LEXER = lexer
+PARSER = parser
+OBJECTS = main.o $(PARSER).o $(LEXER).o
+BIN = main
 
-%.c %.h: %.y
+$(BIN): $(OBJECTS)
+
+%.h %.o: %.y
 	$(YACC) $(YFLAGS) -d $<
 	mv y.tab.c $*.c
+	$(CC) $(CFLAGS) -c -o $*.o $*.c
+	$(RM) $*.c
 	mv y.tab.h $*.h
 
-lexer.o: parser.h
+$(LEXER).o: $(PARSER).h
 
 .PHONY: clean
 clean:
-	$(RM) *.o parser.h main
+	$(RM) $(OBJECTS) $(PARSER).h $(BIN)
 
 .PHONY: format
 format:
