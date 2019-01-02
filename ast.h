@@ -21,8 +21,30 @@ typedef enum ast_binary_op_e {
 } ast_binary_op_t;
 
 typedef enum ast_unary_op_e {
-  OP_SQRT,
+  OP_INCR,
+  OP_DECR,
+  OP_NEG,
   OP_ABS,
+  OP_CPOWF,
+  OP_CPOWL,
+  OP_CPOW,
+  OP_CSINF,
+  OP_CSINL,
+  OP_CSIN,
+  OP_CSQRTF,
+  OP_CSQRTL,
+  OP_CSQRT,
+  OP_EXP,
+  OP_LOG,
+  OP_POWF,
+  OP_POWL,
+  OP_POW,
+  OP_SINF,
+  OP_SINL,
+  OP_SIN,
+  OP_SQRTF,
+  OP_SQRTL,
+  OP_SQRT,
 } ast_unary_op_t;
 
 typedef struct ast_node_s ast_node_t;
