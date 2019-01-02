@@ -3,7 +3,8 @@
 #define _TEST_LIST                                                             \
   _TEST_ITEM(ast, new)                                                         \
   _TEST_ITEM(quad, new)                                                        \
-  _TEST_ITEM(symbol, memory)
+  _TEST_ITEM(symbol, memory)                                                   \
+  _TEST_ITEM(symbol, same_name)
 
 #define _TEST_ITEM(scope, fun) void test_##scope##_##fun(void);
 _TEST_LIST
