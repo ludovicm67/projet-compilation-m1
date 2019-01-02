@@ -1,32 +1,55 @@
-CFLAGS := -D_POSIX_SOURCE -Wall -Wextra -Werror -pedantic --std=c99 -O3 -g
+CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -Wall -Wextra -Werror -pedantic --std=c99 -O3 -g
 LDFLAGS := -O3 -g
 
-LEXER = lexer
-PARSER = parser
-OBJECTS = main.o $(PARSER).o $(LEXER).o quad.o symbol.o
-TESTS = main.o quad.o symbol.o
+SOURCES = \
+	parser.c \
+	lexer.c \
+	quad.c \
+	symbol.c \
+
+BIN_OBJ = \
+	main.o \
+	$(SOURCES:%.c=%.o)
+
+TESTS = \
+	tests/quad.c \
+	tests/symbol.c \
+
+TESTS_OBJ = \
+	tests/main.o \
+	$(TESTS:%.c=%.o) \
+	$(SOURCES:%.c=%.o)
+
+DEPS = \
+	$(SOURCES:%.c=%.d) \
+	$(TESTS:%.c=%.d) \
+	main.d \
+	tests/main.d
+
 BIN = main
+TESTS_BIN = tests/main
 
-$(BIN): $(OBJECTS)
+$(BIN): $(BIN_OBJ)
+$(TESTS_BIN): $(TESTS_OBJ)
 
-%.h %.o: %.y
+%.d: %.c
+	$(CC) $(CFLAGS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
+
+-include $(DEPS)
+
+%.h %.o %.c: %.y
 	$(YACC) $(YFLAGS) -d $<
 	mv y.tab.c $*.c
 	$(CC) $(CFLAGS) -c -o $*.o $*.c
-	$(RM) $*.c
 	mv y.tab.h $*.h
 
-$(LEXER).o: $(PARSER).h
-
-tests/main: $(TESTS:%=tests/%)
-
-.PHONY: tests
-tests: tests/main
-	./tests/main
+.PHONY: test
+test: $(TESTS_BIN)
+	$(TESTS_BIN)
 
 .PHONY: clean
 clean:
-	$(RM) $(OBJECTS) $(PARSER).h $(BIN) $(TESTS:%=tests/%) tests/main
+	$(RM) parser.h parser.c $(BIN) $(BIN_OBJ) $(TESTS_BIN) $(TESTS_OBJ)
 
 .PHONY: format
 format:

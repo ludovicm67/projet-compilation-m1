@@ -1,4 +1,6 @@
 *.o
 parser.[ch]
 lexer.c
+*.d
 main
+tests/main
