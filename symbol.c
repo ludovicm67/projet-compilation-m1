@@ -3,37 +3,44 @@
 #include <stdlib.h>
 #include <string.h>
 
-symbol_t *symbol_new(char *name, bool isMutable, int value) {
+symbol_t *symbol_new(char *name, bool external, double value) {
   symbol_t *symbol = malloc(sizeof(symbol_t));
   symbol->name = name;
-  symbol->isMutable = isMutable;
+  symbol->external = external;
+  symbol->modified = false;
   symbol->value = value;
   symbol->next = NULL;
   return symbol;
 }
 
-symbol_t *symbol_add(symbol_t *symbol, char *name, bool isMutable, int value) {
+symbol_t *symbol_add(symbol_t **symbol, char *name, bool external,
+                     double value) {
   symbol_t *tmp;
 
-  if (!symbol)
-    return symbol_new(name, isMutable, value);
+  tmp = symbol_new(name, external, value);
+  tmp->next = *symbol;
+
+  *symbol = tmp;
+
+  return tmp;
+}
+
+symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
+  symbol_t *tmp;
 
   // check if symbol already exists
-  for (tmp = symbol; tmp; tmp = tmp->next) {
+  for (tmp = *symbol; tmp; tmp = tmp->next) {
     if (!strcmp(tmp->name, name)) {
-      if (!tmp->isMutable) {
-        fprintf(stderr, "cannot change value of '%s'\n", name);
-        exit(EXIT_FAILURE);
-      }
-      tmp->value = value;
-      tmp->isMutable = isMutable;
-      return symbol;
+      return tmp;
     }
   }
 
-  // if not add it
-  tmp = symbol_new(name, isMutable, value);
-  tmp->next = symbol;
+  // if not add it (assume it is external)
+  return symbol_add(symbol, name, true, 0);
+}
 
-  return tmp;
+void symbol_delete(symbol_t *symbol) {
+  if (!symbol)
+    return;
+  free(symbol);
 }
