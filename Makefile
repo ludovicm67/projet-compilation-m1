@@ -2,6 +2,7 @@ CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -Wall -Wextra -Werror -pedantic --std=c9
 LDFLAGS := -O3 -g
 
 SOURCES = \
+	ast.c \
 	lexer.c \
 	quad.c \
 	symbol.c \
