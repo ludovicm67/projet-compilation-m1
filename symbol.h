@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 typedef struct symbol_s {
-  uint32_t number; // number of the variable (will be unsed at code generation)
+  uint32_t number; // number of the variable (will be used at code generation)
   char *name;
   bool external;
   bool modified;
