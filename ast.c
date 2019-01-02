@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #include "ast.h"
 
@@ -70,4 +72,43 @@ void ast_delete(ast_node_t *node) {
   }
 
   free(node);
+}
+
+void indent(uint8_t n) {
+  for (uint8_t i = 0; i < n; i++)
+    printf("  ");
+}
+
+void ast_display_i(ast_node_t *node, uint8_t i) {
+  indent(i);
+
+  switch (node->type) {
+    case NODE_UNARY:
+      printf("Unary op %d\n", node->c.unary.type);
+      ast_display_i(node->c.unary.arg, i + 1);
+      break;
+
+    case NODE_BINARY:
+      printf("Binary op %d\n", node->c.binary.type);
+      ast_display_i(node->c.binary.left, i + 1);
+      ast_display_i(node->c.binary.right, i + 1);
+      break;
+
+    case NODE_ASSIGN:
+      printf("Assign %s =\n", node->c.assign.lval);
+      ast_display_i(node->c.assign.rval, i + 1);
+      break;
+
+    case NODE_CONST:
+      printf("Const %f\n", node->c.constant);
+      break;
+
+    case NODE_SYMBOL:
+      printf("Symbol %s\n", node->c.symbol);
+      break;
+  }
+}
+
+void ast_display(ast_node_t *node) {
+  ast_display_i(node, 0);
 }

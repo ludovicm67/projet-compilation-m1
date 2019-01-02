@@ -59,5 +59,6 @@ ast_node_t *ast_new_assign(symbol_t *, ast_node_t *);
 ast_node_t *ast_new_constant(constant_t);
 ast_node_t *ast_new_symbol(symbol_t *);
 void ast_delete(ast_node_t *);
+void ast_display(ast_node_t *);
 
 #endif
