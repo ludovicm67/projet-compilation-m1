@@ -12,6 +12,10 @@ void test_quad_new(void) {
   TEST_CHECK(quad == NULL);
   quad = quad_new(QUAD_OP_ADD, result, symbol_left, symbol_right);
   TEST_CHECK(quad != NULL);
+  TEST_CHECK(quad->op == QUAD_OP_ADD);
+  TEST_CHECK(quad->q1 == result);
+  TEST_CHECK(quad->q2 == symbol_left);
+  TEST_CHECK(quad->q3 == symbol_right);
   quad_delete(quad);
   symbol_delete(symbol_table);
 }
