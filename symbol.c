@@ -31,7 +31,7 @@ symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
 
   // check if symbol already exists
   for (tmp = *symbol; tmp; tmp = tmp->next) {
-    if (!strcmp(tmp->name, name)) {
+    if (tmp->name && !strcmp(tmp->name, name)) {
       return tmp;
     }
   }

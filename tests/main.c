@@ -3,6 +3,7 @@
 #define _TEST_LIST                                                             \
   _TEST_ITEM(ast, new)                                                         \
   _TEST_ITEM(quad, new)                                                        \
+  _TEST_ITEM(quad, list)                                                       \
   _TEST_ITEM(symbol, memory)                                                   \
   _TEST_ITEM(symbol, same_name)
 
