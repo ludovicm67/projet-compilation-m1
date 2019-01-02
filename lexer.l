@@ -44,7 +44,10 @@
 "." {return '.';}
 
 
-
+"pow" { yylval.unary = OP_POW;  return UNARY_FUNC; }
+"abs" { yylval.unary = OP_ABS;  return UNARY_FUNC; }
+"++"  { yylval.unary = OP_INCR; return UNARY_OP; }
+"*"   { yylval.unary = OP_INCR; return UNARY_OP; }
 
 %%
 
