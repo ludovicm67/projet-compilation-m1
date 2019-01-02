@@ -1,6 +1,7 @@
 #include "acutest.h"
 
-#define _TEST_LIST                                                              \
+#define _TEST_LIST                                             \
+  _TEST_ITEM(ast, new)                                         \
   _TEST_ITEM(quad, test)                                       \
   _TEST_ITEM(symbol, new)
 

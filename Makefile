@@ -1,5 +1,5 @@
-CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -Wall -Wextra -Werror -pedantic --std=c99 -O3 -g
-LDFLAGS := -O3 -g
+CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -Wall -Wextra -Werror -pedantic --std=c99 -g
+LDFLAGS := -g
 
 SOURCES = \
 	ast.c \
@@ -13,6 +13,7 @@ BIN_OBJ = \
 	$(SOURCES:%.c=%.o)
 
 TESTS = \
+	tests/ast.c \
 	tests/quad.c \
 	tests/symbol.c \
 

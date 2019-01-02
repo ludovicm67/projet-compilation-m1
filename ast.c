@@ -57,7 +57,7 @@ void ast_delete(ast_node_t *node) {
       break;
 
     case NODE_ASSIGN:
-      symbol_delete(node->c.assign.rval);
+      // symbol_delete(node->c.assign.lval);
       ast_delete(node->c.assign.rval);
       break;
 
@@ -65,7 +65,7 @@ void ast_delete(ast_node_t *node) {
       break;
 
     case NODE_SYMBOL:
-      symbol_delete(node->c.symbol);
+      // symbol_delete(node->c.symbol);
       break;
   }
 

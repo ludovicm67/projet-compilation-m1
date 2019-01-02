@@ -13,17 +13,17 @@ typedef enum ast_node_type_e {
   NODE_SYMBOL,
 } ast_node_type_t;
 
-typedef enum ast_unary_op_e {
+typedef enum ast_binary_op_e {
   OP_ADD,
   OP_SUB,
   OP_MUL,
   OP_DIV,
-} ast_unary_op_t;
+} ast_binary_op_t;
 
-typedef enum ast_binary_op_e {
+typedef enum ast_unary_op_e {
   OP_SQRT,
   OP_ABS,
-} ast_binary_op_t;
+} ast_unary_op_t;
 
 typedef struct ast_node_s ast_node_t;
 
