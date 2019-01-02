@@ -28,53 +28,64 @@
 %token BREAK CONTINUE GOTO
 %token RETURN
 
-%start axiom
+%start expression
 
 %%
 
-axiom:
-    expression '\n' { printf("Match :-) !\n"); return 0; };
-
 expression:
-    expression '+' expression {}
-  | expression '*' expression {}
-  | 'sqrt' '(' expression ')' {}
-  | '-' expression            {}
-  | 'pow' '(' expression ')'  {}
-  | '(' expression ')'        {}
-  | IDENTIFIER                {}
-  | VALUE                     {}
+    additive_expr
+  | multiplicative_expr
+  | unary_expr
+  | '(' expression ')'
+  ;
+
+unary_expr:
+    unary_op IDENTIFIER
+  | unary_op VALUE
+  | unary_op expression
+  | IDENTIFIER
+  | VALUE
+  ;
+
+additive_expr:
+    expression '+' expression
+  | expression '-' expression
+  ;
+
+multiplicative_expr:
+    expression '*' expression
+  | expression '/' expression
   ;
 
 unary_op:
-    '++'
-  | '--'
+    "++"
+  | "--"
   | '&'
   | '*'
   | '+'
   | '-'
   | '~'
   | '!'
-  | 'pow'
-  | 'powf'
-  | 'powl'
-  | 'cpow'
-  | 'cpowf'
-  | 'cpowl'
-  | 'sqrt'
-  | 'sqrtf'
-  | 'sqrtl'
-  | 'csqrt'
-  | 'csqrtf'
-  | 'csqrtl'
-  | 'sin'
-  | 'sinf'
-  | 'sinl'
-  | 'csin'
-  | 'csinf'
-  | 'csinl'
-  | 'log'
-  | 'exp'
+  | "pow"
+  | "powf"
+  | "powl"
+  | "cpow"
+  | "cpowf"
+  | "cpowl"
+  | "sqrt"
+  | "sqrtf"
+  | "sqrtl"
+  | "csqrt"
+  | "csqrtf"
+  | "csqrtl"
+  | "sin"
+  | "sinf"
+  | "sinl"
+  | "csin"
+  | "csinf"
+  | "csinl"
+  | "log"
+  | "exp"
   ;
 
 type:
