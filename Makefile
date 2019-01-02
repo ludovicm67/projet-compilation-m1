@@ -2,13 +2,13 @@ CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -Wall -Wextra -Werror -pedantic --std=c9
 LDFLAGS := -O3 -g
 
 SOURCES = \
-	parser.c \
 	lexer.c \
 	quad.c \
 	symbol.c \
 
 BIN_OBJ = \
 	main.o \
+	parser.o \
 	$(SOURCES:%.c=%.o)
 
 TESTS = \
@@ -17,6 +17,7 @@ TESTS = \
 
 TESTS_OBJ = \
 	tests/main.o \
+	parser.o \
 	$(TESTS:%.c=%.o) \
 	$(SOURCES:%.c=%.o)
 

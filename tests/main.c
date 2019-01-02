@@ -4,5 +4,6 @@
 
 TEST_LIST = {
    { "quad/test", test_quad_test },
+   { "symbol/new", test_symbol_new },
    { 0 }
 };
