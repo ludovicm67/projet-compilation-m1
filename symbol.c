@@ -27,7 +27,7 @@ symbol_t *symbol_add(symbol_t **symbol, char *name, bool external,
 }
 
 symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
-  symbol_t *tmp;
+  symbol_t *tmp = *symbol;
 
   // check if symbol already exists
   for (tmp = *symbol; tmp; tmp = tmp->next) {
@@ -43,5 +43,6 @@ symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
 void symbol_delete(symbol_t *symbol) {
   if (!symbol)
     return;
+  symbol_delete(symbol->next);
   free(symbol);
 }

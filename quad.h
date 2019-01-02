@@ -13,6 +13,6 @@ typedef struct op_s {
 } op_t;
 
 op_t *quad_new(quad_op_t op, symbol_t *q1, symbol_t *q2, symbol_t *q3);
-void quad_free(op_t *q);
+void quad_delete(op_t *q);
 
 #endif
