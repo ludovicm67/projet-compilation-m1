@@ -46,15 +46,21 @@
 %type <node>  unary_expr
 %type <node>  additive_expr
 %type <node>  multiplicative_expr
-%type <node>  start
+%type <node>  statement
 
 %start start
 
 %%
 
 start:
-  additive_expr '\n' { ast_display($1); YYACCEPT; }
+    statement '\n' { ast_display($1); YYACCEPT; }
   ;
+
+statement:
+	additive_expr
+  | IDENTIFIER '=' additive_expr { $$ = ast_new_assign($1, $3); }
+  ;
+
 
 additive_expr:
     multiplicative_expr
@@ -81,6 +87,8 @@ expression:
   | INTEGER     { $$ = ast_new_constant($1); }
   | '(' additive_expr ')' { $$ = $2; }
   ;
+
+
 
 type:
     INT
