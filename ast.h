@@ -27,6 +27,13 @@ typedef enum ast_binary_op_e {
   OP_SUB,
   OP_MUL,
   OP_DIV,
+  OP_LTE,
+  OP_GTE,
+  OP_EQ,
+  OP_LT,
+  OP_GT,
+  OP_OR,
+  OP_AND
 } ast_binary_op_t;
 
 typedef enum ast_unary_op_e {
