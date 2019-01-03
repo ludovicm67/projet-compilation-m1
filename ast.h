@@ -17,6 +17,9 @@ typedef enum ast_node_type_e {
 typedef enum ast_decl_type_e {
   TYPE_INT,
   TYPE_DOUBLE,
+  TYPE_BOOL,
+  TYPE_FLOAT,
+  TYPE_COMPLEX
 } ast_decl_type_t;
 
 typedef enum ast_binary_op_e {

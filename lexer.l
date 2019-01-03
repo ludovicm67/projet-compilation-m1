@@ -2,6 +2,7 @@
   #include <stdlib.h>
   #include <string.h>
   #include "ast.h"
+  #include "statement.h"
   #include "parser.h"
   int yyerror(char *errormsg);
 %}
@@ -14,11 +15,9 @@
 "#pragma"[ ]+"MPC"[ ]+"precision("[0-9]+")"[ ]+"rounding("[.]+")" {}
 
 "int"      { return INT; }
-"long"     { return LONG; }
-"short"    { return SHORT; }
 "float"    { return FLOAT; }
 "double"   { return DOUBLE; }
-"char"     { return CHAR; }
+"bool"	   { return BOOL; }
 
 "for"      { return FOR; }
 "while"    { return WHILE; }
@@ -51,6 +50,10 @@
 "{"        { return '{'; }
 "}"        { return '}'; }
 "."        { return '.'; }
+","		   { return ','; }
+"!"		   { return '!'; }
+">"		   { return '>'; }
+"<"		   { return '<'; }
 
 "++"       { yylval.unary = OP_INCR;   return UNARY_OP; }
 "--"       { yylval.unary = OP_DECR;   return UNARY_OP; }

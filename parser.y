@@ -3,6 +3,7 @@
   #include <stdlib.h>
 
   #include "ast.h"
+  #include "statement.h"
 
   int yydebug = 1;
   int yylex(void);
@@ -17,6 +18,8 @@
   ast_node_t     *node;
   ast_unary_op_t  unary;
   ast_binary_op_t binary;
+  ast_decl_type_t decl_type;
+  stmt_t* stmt;
 }
 
 %token PRAGMA
@@ -26,10 +29,8 @@
 %token <integer>    INTEGER
 %token <decimal>    DECIMAL
 
-%token INT LONG SHORT SIGNED UNSIGNED FLOAT DOUBLE COMPLEX
-%token CHAR
+%token INT FLOAT DOUBLE COMPLEX
 %token BOOL
-%token VOID
 
 %token UNARY_FUNC UNARY_OP
 %token COMMENT_LINE COMMENT_MULTI COMMENT_END
@@ -46,21 +47,40 @@
 %type <node>  unary_expr
 %type <node>  additive_expr
 %type <node>  multiplicative_expr
-%type <node>  statement
+%type <stmt>  statement
+%type <node>  assignement
+%type <node>  declaration
+%type <stmt>  identifier_list
+%type <decl_type> type
 
 %start start
 
 %%
 
 start:
-    statement '\n' { ast_display($1); YYACCEPT; }
+    statement '\n' { stmt_display($1); YYACCEPT; }
   ;
 
 statement:
-	additive_expr
-  | IDENTIFIER '=' additive_expr { $$ = ast_new_assign($1, $3); }
+	additive_expr { $$ = stmt_new($1); }
+  | assignement   { $$ = stmt_new($1); }
+  | identifier_list
   ;
 
+assignement:
+	IDENTIFIER '=' additive_expr { $$ = ast_new_assign($1, $3); }
+  ;
+
+declaration:
+	type assignement { $$ = ast_declaration_from_assign($2, $1); }
+  | type IDENTIFIER  { $$ = ast_new_declaration($1, $2, NULL); }
+  ;
+
+identifier_list:
+	declaration  { $$ = stmt_new($1); }
+  | identifier_list ',' IDENTIFIER { $$ = stmt_push($1, ast_new_assign($3, NULL)); }
+  | identifier_list ',' assignement { $$ = stmt_push($1, $3); }
+  ;
 
 additive_expr:
     multiplicative_expr
@@ -91,16 +111,10 @@ expression:
 
 
 type:
-    INT
-  | LONG
-  | SHORT
-  | SIGNED
-  | UNSIGNED
-  | FLOAT
-  | DOUBLE
-  | COMPLEX
-  | CHAR
-  | BOOL
-  | VOID
+    INT { $$ = TYPE_INT; }
+  | FLOAT { $$ = TYPE_FLOAT; }
+  | DOUBLE { $$ = TYPE_DOUBLE; }
+  | COMPLEX { $$ = TYPE_COMPLEX; }
+  | BOOL { $$ = TYPE_BOOL; }
   ;
 
