@@ -34,3 +34,10 @@ uint8_t stmt_count(stmt_t *list) {
   }
   return i;
 }
+
+void stmt_display(stmt_t *list) {
+  while (list) {
+    ast_display(list->node);
+    list = list->next;
+  }
+}
