@@ -69,15 +69,17 @@ struct ast_node_s {
       ast_node_t *right;
     } binary;
 
+    // assign and decl have the same shape in memory. This is important for
+    // transforming between them
     struct {
       symbol_t *lval;
       ast_node_t *rval;
     } assign;
 
     struct {
-      ast_decl_type_t type;
       symbol_t *lval;
       ast_node_t *rval;
+      ast_decl_type_t type;
     } decl;
 
     constant_t constant;
@@ -93,6 +95,7 @@ ast_node_t *ast_new_assign(symbol_t *, ast_node_t *);
 ast_node_t *ast_new_declaration(ast_decl_type_t, symbol_t *, ast_node_t *);
 ast_node_t *ast_new_constant(constant_t);
 ast_node_t *ast_new_symbol(symbol_t *);
+ast_node_t *ast_declaration_from_assign(ast_node_t *, ast_decl_type_t);
 void ast_delete(ast_node_t *);
 void ast_display(ast_node_t *);
 

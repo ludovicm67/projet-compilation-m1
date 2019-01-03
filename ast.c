@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -53,6 +54,13 @@ ast_node_t *ast_new_symbol(symbol_t *symbol) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_SYMBOL;
   node->c.symbol = symbol;
+  return node;
+}
+
+ast_node_t *ast_declaration_from_assign(ast_node_t *node, ast_decl_type_t type) {
+  assert(node->type == NODE_ASSIGN);
+  node->type = NODE_DECL;
+  node->c.decl.type = type;
   return node;
 }
 

@@ -34,3 +34,14 @@ void test_ast_new(void) {
 
   ast_delete(root);
 }
+
+void test_ast_declaration_from_assign() {
+  ast_node_t *val = ast_new_constant(1);
+  ast_node_t *assign = ast_new_assign("x", val);
+  ast_node_t *decl = ast_declaration_from_assign(assign, TYPE_INT);
+
+  TEST_CHECK(decl->type == NODE_DECL);
+  TEST_CHECK(decl->c.decl.type == TYPE_INT);
+  TEST_CHECK(decl->c.decl.rval == val);
+  TEST_CHECK(strcmp(decl->c.decl.lval, "x") == 0);
+}
