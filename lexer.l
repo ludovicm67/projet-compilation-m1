@@ -1,5 +1,6 @@
 %{
   #include <stdlib.h>
+  #include <string.h>
   #include "ast.h"
   #include "parser.h"
   int yyerror(char *errormsg);
@@ -80,6 +81,9 @@
 [0-9]+"."[0-9]+ { yylval.decimal = atof(yytext); return DECIMAL; }
 
 "\n" { return '\n'; }
+
+[a-zA-Z_][0-9a-zA-Z_]*  { yylval.identifier = strdup(yytext); return IDENTIFIER; }
+
 .    {}
 
 %%

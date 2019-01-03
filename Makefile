@@ -1,4 +1,4 @@
-CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -Wall -Wextra -Werror -pedantic --std=c99 -g
+CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -pedantic --std=c99 -g
 LDFLAGS := -g
 
 SOURCES = \

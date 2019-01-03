@@ -104,7 +104,7 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
       break;
 
     case NODE_SYMBOL:
-      printf("Symbol %s\n", node->c.symbol);
+      printf("Symbol '%s'\n", node->c.symbol);
       break;
   }
 }
