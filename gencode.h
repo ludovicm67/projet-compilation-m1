@@ -3,10 +3,11 @@
 
 #include "quad.h"
 #include "symbol.h"
+#include <stdio.h>
 
-void gencode_init(symbol_t *symbol_table, uint32_t precision);
-void gencode_assign(symbol_t *symbol_table, char *rounding);
-void gencode_operations(op_list_t *list, char *rounding);
-void gencode_clear(symbol_t *symbol_table, char *rounding);
+void gencode_init(FILE *file, symbol_t *symbol_table, uint32_t precision);
+void gencode_assign(FILE *file, symbol_t *symbol_table, char *rounding);
+void gencode_operations(FILE *file, op_list_t *list, char *rounding);
+void gencode_clear(FILE *file, symbol_t *symbol_table, char *rounding);
 
 #endif
