@@ -20,14 +20,22 @@
   ast_binary_op_t binary;
   ast_decl_type_t decl_type;
   stmt_t* stmt;
+  struct {
+    enum {
+      MODE_MPC,
+      MODE_MPFR,
+    } mode;
+    int precision;
+    char *rounding;
+  } options;
 }
-
-%token PRAGMA
 
 %token <identifier> IDENTIFIER
 %token <operator>   OPERATOR
 %token <integer>    INTEGER
 %token <decimal>    DECIMAL
+
+%token PRAGMA MPFR MPC PRECISION ROUNDING
 
 %token INT FLOAT DOUBLE COMPLEX
 %token BOOL
@@ -52,6 +60,10 @@
 %type <node>  declaration
 %type <stmt>  identifier_list
 %type <decl_type> type
+%type <integer> precision
+%type <identifier> rounding
+%type <options> options
+%type <options> pragma
 
 %start start
 
@@ -62,23 +74,23 @@ start:
   ;
 
 statement:
-	additive_expr { $$ = stmt_new($1); }
+	  additive_expr { $$ = stmt_new($1); }
   | assignement   { $$ = stmt_new($1); }
   | identifier_list
   ;
 
 assignement:
-	IDENTIFIER '=' additive_expr { $$ = ast_new_assign($1, $3); }
+	  IDENTIFIER '=' additive_expr { $$ = ast_new_assign($1, $3); }
   ;
 
 declaration:
-	type assignement { $$ = ast_declaration_from_assign($2, $1); }
-  | type IDENTIFIER  { $$ = ast_new_declaration($1, $2, NULL); }
+	  type assignement  { $$ = ast_declaration_from_assign($2, $1); }
+  | type IDENTIFIER   { $$ = ast_new_declaration($1, $2, NULL); }
   ;
 
 identifier_list:
-	declaration  { $$ = stmt_new($1); }
-  | identifier_list ',' IDENTIFIER { $$ = stmt_push($1, ast_new_assign($3, NULL)); }
+	  declaration                     { $$ = stmt_new($1); }
+  | identifier_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_assign($3, NULL)); }
   | identifier_list ',' assignement { $$ = stmt_push($1, $3); }
   ;
 
@@ -102,19 +114,45 @@ unary_expr:
   ;
 
 expression:
-    IDENTIFIER  { $$ = ast_new_symbol($1); }
-  | DECIMAL     { $$ = ast_new_constant($1); }
-  | INTEGER     { $$ = ast_new_constant($1); }
+    IDENTIFIER            { $$ = ast_new_symbol($1); }
+  | DECIMAL               { $$ = ast_new_constant($1); }
+  | INTEGER               { $$ = ast_new_constant($1); }
   | '(' additive_expr ')' { $$ = $2; }
   ;
 
-
-
 type:
-    INT { $$ = TYPE_INT; }
-  | FLOAT { $$ = TYPE_FLOAT; }
-  | DOUBLE { $$ = TYPE_DOUBLE; }
+    INT     { $$ = TYPE_INT; }
+  | FLOAT   { $$ = TYPE_FLOAT; }
+  | DOUBLE  { $$ = TYPE_DOUBLE; }
   | COMPLEX { $$ = TYPE_COMPLEX; }
-  | BOOL { $$ = TYPE_BOOL; }
+  | BOOL    { $$ = TYPE_BOOL; }
   ;
 
+test:
+    pragma '\n' { printf("mode: %d, precision: %d, rounding: %s\n",
+                    $1.mode, $1.precision, $1.rounding);
+                    YYACCEPT; }
+  ;
+
+pragma:
+    PRAGMA MPC options  { $$.precision = $3.precision;
+                          $$.rounding = $3.rounding;
+                          $$.mode = MODE_MPC; }
+  | PRAGMA MPFR options { $$.precision = $3.precision;
+                          $$.rounding = $3.rounding;
+                          $$.mode = MODE_MPFR; }
+  ;
+
+precision:
+    PRECISION '(' INTEGER ')'   { $$ = $3; };
+
+rounding:
+    ROUNDING '(' IDENTIFIER ')' { $$ = $3; };
+
+options:
+    precision rounding { $$.precision = $1; $$.rounding = $2; }
+  | precision          { $$.precision = $1; $$.rounding = NULL; }
+  | rounding precision { $$.precision = $2; $$.rounding = $1; }
+  | rounding           { $$.precision = 0;  $$.rounding = $1; }
+  |                    { $$.precision = 0;  $$.rounding = NULL; }
+  ;
