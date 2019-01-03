@@ -33,6 +33,15 @@ ast_node_t *ast_new_assign(symbol_t *lval, ast_node_t *rval) {
   return node;
 }
 
+ast_node_t *ast_new_declaration(ast_decl_type_t type, symbol_t *lval, ast_node_t *rval) {
+  ast_node_t *node = ast_alloc();
+  node->type = NODE_DECL;
+  node->c.decl.type = type;
+  node->c.decl.lval = lval;
+  node->c.decl.rval = rval;
+  return node;
+}
+
 ast_node_t *ast_new_constant(constant_t constant) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_CONST;
