@@ -25,7 +25,7 @@ ast_node_t *ast_new_binary(ast_binary_op_t type, ast_node_t *left,
   return node;
 }
 
-ast_node_t *ast_new_assign(symbol_t *lval, ast_node_t *rval) {
+ast_node_t *ast_new_assign(char *lval, ast_node_t *rval) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_ASSIGN;
   node->c.assign.lval = lval;
@@ -33,8 +33,7 @@ ast_node_t *ast_new_assign(symbol_t *lval, ast_node_t *rval) {
   return node;
 }
 
-ast_node_t *ast_new_declaration(ast_decl_type_t type, symbol_t *lval,
-                                ast_node_t *rval) {
+ast_node_t *ast_new_declaration(ast_decl_type_t type, char *lval, ast_node_t *rval) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_DECL;
   node->c.decl.type = type;
@@ -50,7 +49,7 @@ ast_node_t *ast_new_constant(constant_t constant) {
   return node;
 }
 
-ast_node_t *ast_new_symbol(symbol_t *symbol) {
+ast_node_t *ast_new_symbol(char *symbol) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_SYMBOL;
   node->c.symbol = symbol;
@@ -63,6 +62,44 @@ ast_node_t *ast_declaration_from_assign(ast_node_t *node,
   node->type = NODE_DECL;
   node->c.decl.type = type;
   return node;
+}
+
+symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
+  switch (node->type) {
+    case NODE_BINARY:
+    {
+      symbol_t *dest = symbol_add(table, NULL, false, false, 0);
+      symbol_t *left = ast_gen_quad(node->c.binary.left, table, ops);
+      symbol_t *right = ast_gen_quad(node->c.binary.right, table, ops);
+      op_t *quad = quad_new(node->c.binary.type == OP_ADD ? QUAD_OP_ADD : QUAD_OP_MUL,
+                            dest, left, right);
+      quad_list_append(ops, quad);
+      return dest;
+    }
+
+    case NODE_ASSIGN:
+    {
+      symbol_t *dest = symbol_lookup(table, node->c.assign.lval);
+      dest->modified = true;
+      symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
+      op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
+      quad_list_append(ops, quad);
+      return dest;
+    }
+
+    case NODE_CONST:
+    {
+      return symbol_add(table, NULL, false, true, node->c.constant);
+    }
+
+    case NODE_SYMBOL:
+    {
+      return symbol_lookup(table, node->c.symbol);
+    }
+
+    default:
+      return NULL;
+  }
 }
 
 void ast_delete(ast_node_t *node) {

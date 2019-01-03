@@ -4,6 +4,7 @@
 
   #include "ast.h"
   #include "statement.h"
+  #include "gencode.h"
 
   int yydebug = 1;
   int yylex(void);
@@ -70,7 +71,18 @@
 %%
 
 start:
-    statement '\n' { stmt_display($1); YYACCEPT; }
+    statement '\n' {
+      op_list_t *ops = NULL;
+      symbol_t *table = NULL;
+      stmt_gen_quad($1, &table, &ops);
+      stmt_display($1);
+
+      gencode_init(stdout, table, 128);
+      gencode_assign(stdout, table, "MPCWHATEVER");
+      gencode_operations(stdout, ops, "MPCWHATEVER");
+      gencode_clear(stdout, table, "MPCWHATEVER");
+      YYACCEPT;
+    }
   ;
 
 statement:
