@@ -196,7 +196,7 @@ void test_gencode_example(void) {
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(!strcmp(buff,
-                       "  y = mpc_get_ldc(T3, MPC_RNDZZ);\n"
+                       "  y = mpc_get_dc(T3, MPC_RNDZZ);\n"
                        "\n"
                        "  // free memory of all MPC variables that we used\n"
                        "  mpc_clear(T0);\n"

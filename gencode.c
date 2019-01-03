@@ -1,5 +1,11 @@
 #include "gencode.h"
 
+#define ARG_2                                                                  \
+  indent, q->q1->number, q->q2->number, rounding, q->q1->number, q->q2->number
+#define ARG_3                                                                  \
+  indent, q->q1->number, q->q2->number, q->q3->number, rounding,               \
+      q->q1->number, q->q2->number, q->q3->number
+
 void gencode_init(FILE *file, symbol_t *symbol_table, uint32_t precision) {
   uint32_t n = 0;
   char *indent = "  ";
@@ -33,8 +39,8 @@ void gencode_assign(FILE *file, symbol_t *symbol_table, char *rounding) {
               symbol_table->number, symbol_table->name, rounding,
               symbol_table->name);
     } else if (symbol_table->hasValue) {
-      fprintf(file, "%smpc_set_d(T%d, %f, %s);\n", indent,
-              symbol_table->number, symbol_table->value, rounding);
+      fprintf(file, "%smpc_set_d(T%d, %f, %s);\n", indent, symbol_table->number,
+              symbol_table->value, rounding);
     }
     symbol_table = symbol_table->next;
   }
@@ -53,13 +59,29 @@ void gencode_operations(FILE *file, op_list_t *list, char *rounding) {
     switch (q->op) {
     case QUAD_OP_ADD:
       fprintf(file, "%smpc_add(T%d, T%d, T%d, %s); // T%d = T%d + T%d\n",
-              indent, q->q1->number, q->q2->number, q->q3->number, rounding,
-              q->q1->number, q->q2->number, q->q3->number);
+              ARG_3);
       break;
+
+    case QUAD_OP_SUB:
+      fprintf(file, "%smpc_sub(T%d, T%d, T%d, %s); // T%d = T%d - T%d\n",
+              ARG_3);
+      break;
+
     case QUAD_OP_MUL:
       fprintf(file, "%smpc_mul(T%d, T%d, T%d, %s); // T%d = T%d * T%d\n",
-              indent, q->q1->number, q->q2->number, q->q3->number, rounding,
-              q->q1->number, q->q2->number, q->q3->number);
+              ARG_3);
+      break;
+
+    case QUAD_OP_ASSIGN:
+      fprintf(file, "%smpc_set(T%d, T%d, %s); // T%d = T%d\n", ARG_2);
+      break;
+
+    case QUAD_OP_SQRT:
+      fprintf(file, "%smpc_sqr(T%d, T%d, %s); // T%d = T%d\n", ARG_2);
+      break;
+
+    case QUAD_OP_NEG:
+      fprintf(file, "%smpc_neg(T%d, T%d, %s); // T%d = -T%d\n", ARG_2);
       break;
     }
     list = list->next;
@@ -72,8 +94,8 @@ void gencode_clear(FILE *file, symbol_t *symbol_table, char *rounding) {
 
   for (s = symbol_table; s; s = s->next) {
     if (s->modified && s->name) {
-      fprintf(file, "%s%s = mpc_get_ldc(T%d, %s);\n", indent, s->name,
-              s->number, rounding);
+      fprintf(file, "%s%s = mpc_get_dc(T%d, %s);\n", indent, s->name, s->number,
+              rounding);
     }
   }
 
