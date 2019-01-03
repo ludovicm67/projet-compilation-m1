@@ -6,6 +6,7 @@ SOURCES = \
 	ast.c \
 	lexer.c \
 	quad.c \
+	statement.c \
 	symbol.c \
 
 BIN_OBJ = \
@@ -16,6 +17,7 @@ BIN_OBJ = \
 TESTS = \
 	tests/ast.c \
 	tests/quad.c \
+	tests/statement.c \
 	tests/symbol.c \
 
 TESTS_OBJ = \
