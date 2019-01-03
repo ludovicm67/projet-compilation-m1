@@ -72,6 +72,11 @@ void ast_delete(ast_node_t *node) {
       ast_delete(node->c.assign.rval);
       break;
 
+    case NODE_DECL:
+      // symbol_delete(node->c.decl.lval);
+      ast_delete(node->c.decl.rval);
+      break;
+
     case NODE_CONST:
       break;
 
@@ -106,6 +111,11 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
     case NODE_ASSIGN:
       printf("Assign %s =\n", node->c.assign.lval);
       ast_display_i(node->c.assign.rval, i + 1);
+      break;
+
+    case NODE_DECL:
+      printf("Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
+      ast_display_i(node->c.decl.rval, i + 1);
       break;
 
     case NODE_CONST:
