@@ -40,8 +40,7 @@
 %token INT FLOAT DOUBLE COMPLEX
 %token BOOL
 
-%token OP_GT OP_LT OP_GTE OP_LTE OP_EQ
-%token OP_AND OP_OR COMP_OP
+%token AND_OP OR_OP COMP_OP
 %token UNARY_FUNC UNARY_OP
 %token COMMENT_LINE COMMENT_MULTI COMMENT_END
 %token EXTERN
@@ -51,21 +50,24 @@
 %token BREAK CONTINUE GOTO
 %token RETURN
 
-%type <unary> UNARY_FUNC
-%type <unary> UNARY_OP
-%type <binary> OP_AND
-%type <binary> OP_OR
-%type <binary> COMP_OP
-%type <node>  expression
-%type <node>  unary_expr
-%type <node>  additive_expr
-%type <node>  multiplicative_expr
-%type <stmt>  statement
-%type <node>  assignement
-%type <node>  declaration
-%type <stmt>  declaration_list
-%type <decl_type> type
-%type <integer> precision
+%type <unary>      UNARY_FUNC
+%type <unary>      UNARY_OP
+%type <binary>     OP_AND
+%type <binary>     OP_OR
+%type <binary>     COMP_OP
+%type <node>       expression
+%type <node>       unary_expr
+%type <node>       additive_expr
+%type <node>       multiplicative_expr
+%type <node>       comparaison_expr
+%type <node>       and_expr
+%type <node>       or_expr
+%type <stmt>       statement
+%type <node>       assignement
+%type <node>       declaration
+%type <stmt>       declaration_list
+%type <decl_type>  type
+%type <integer>    precision
 %type <identifier> rounding
 %type <options>    options
 %type <options>    pragma
@@ -87,19 +89,35 @@ statement:
   | declaration_list
   ;
 
-assignement:
-	  IDENTIFIER '=' additive_expr { $$ = ast_new_assign($1, $3); }
-  ;
-
 declaration:
-    type assignement { $$ = ast_decl_from_assign($1, $2); }
-  | type IDENTIFIER  { $$ = ast_new_decl($1, $2, NULL); }
+    type IDENTIFIER '=' or_expr { $$ = ast_new_decl($1, $2, $4); }
+  | type IDENTIFIER             { $$ = ast_new_decl($1, $2, NULL); }
   ;
 
 declaration_list:
     declaration  { $$ = stmt_new($1); }
   | declaration_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_decl($1->node->c.decl.type, $3, NULL)); }
   | declaration_list ',' assignement { $$ = stmt_push($1, ast_decl_from_assign($1->node->c.decl.type, $3)); }
+  ;
+
+assignement:
+    or_expr
+	| IDENTIFIER '=' or_expr { $$ = ast_new_assign($1, $3); }
+  ;
+
+or_expr:
+    and_expr
+  | and_expr OR_OP or_expr { $$ = ast_new_binary(OP_OR, $1, $3); }
+  ;
+
+and_expr:
+    comparaison_expr
+  | comparaison_expr AND_OP and_expr { $$ = ast_new_binary(OP_AND, $1, $3); }
+  ;
+
+comparaison_expr:
+    additive_expr
+  | additive_expr COMP_OP comparaison_expr { $$ = ast_new_binary($2, $1, $3); }
   ;
 
 additive_expr:
@@ -125,7 +143,7 @@ expression:
     IDENTIFIER            { $$ = ast_new_symbol($1); }
   | DECIMAL               { $$ = ast_new_constant($1); }
   | INTEGER               { $$ = ast_new_constant($1); }
-  | '(' additive_expr ')' { $$ = $2; }
+  | '(' assignement ')' { $$ = $2; }
   ;
 
 type:
@@ -187,9 +205,3 @@ options:
   |                    { $$.precision = 0;  $$.rounding = NULL; }
   ;
 
-condition_comparaison:
-    additive_expr OP_COMP additive_expr
-  | additive_expr OP_COMP assignement
-  | assignement   OP_COMP assignement
-  | assignement   OP_COMP additive_expr
-  ;
