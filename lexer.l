@@ -60,7 +60,8 @@
 "<"                    { yylval.binary = OP_LT;    return COMP_OP; }
 "<="                   { yylval.binary = OP_LTE;   return COMP_OP; }
 ">="                   { yylval.binary = OP_GTE;   return COMP_OP; }
-"=="                   { yylval.binary = OP_EQ;    return COMP_OP; }
+"=="                   { yylval.binary = OP_EQ;    return EQ_OP; }
+"!="                   { yylval.binary = OP_EQ;    return EQ_OP; }
 
 "&&"                   { return AND_OP; }
 "||"                   { return OR_OP; }

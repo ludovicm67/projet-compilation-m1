@@ -40,7 +40,7 @@
 %token INT FLOAT DOUBLE COMPLEX
 %token BOOL
 
-%token AND_OP OR_OP COMP_OP
+%token AND_OP OR_OP COMP_OP EQ_OP
 %token UNARY_FUNC UNARY_OP
 %token COMMENT_LINE COMMENT_MULTI COMMENT_END
 %token EXTERN
@@ -52,19 +52,24 @@
 
 %type <unary>      UNARY_FUNC
 %type <unary>      UNARY_OP
-%type <binary>     OP_AND
-%type <binary>     OP_OR
+
+%type <binary>     AND_OP
+%type <binary>     OR_OP
 %type <binary>     COMP_OP
+%type <binary>     EQ_OP
+
 %type <node>       expression
 %type <node>       unary_expr
 %type <node>       additive_expr
 %type <node>       multiplicative_expr
 %type <node>       comparaison_expr
+%type <node>       equal_expr
 %type <node>       and_expr
 %type <node>       or_expr
-%type <stmt>       statement
+%type <node>       assignement_expr
 %type <node>       assignement
 %type <node>       declaration
+%type <stmt>       statement
 %type <stmt>       declaration_list
 %type <decl_type>  type
 %type <integer>    precision
@@ -79,30 +84,29 @@
 
 %%
 
-start:
-    statement '\n' { stmt_display($1); YYACCEPT; }
-  ;
-
 statement:
-    additive_expr { $$ = stmt_new($1); }
-  | assignement   { $$ = stmt_new($1); }
+    assignement_expr   { $$ = stmt_new($1); }
   | declaration_list
   ;
 
 declaration:
-    type IDENTIFIER '=' or_expr { $$ = ast_new_decl($1, $2, $4); }
-  | type IDENTIFIER             { $$ = ast_new_decl($1, $2, NULL); }
+    type assignement { $$ = ast_decl_from_assign($1, $2); }
+  | type IDENTIFIER  { $$ = ast_new_decl($1, $2, NULL); }
   ;
 
 declaration_list:
     declaration  { $$ = stmt_new($1); }
-  | declaration_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_decl($1->node->c.decl.type, $3, NULL)); }
   | declaration_list ',' assignement { $$ = stmt_push($1, ast_decl_from_assign($1->node->c.decl.type, $3)); }
+  | declaration_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_decl($1->node->c.decl.type, $3, NULL)); }
   ;
 
 assignement:
+	  IDENTIFIER '=' or_expr { $$ = ast_new_assign($1, $3); }
+  ;
+
+assignement_expr:
     or_expr
-	| IDENTIFIER '=' or_expr { $$ = ast_new_assign($1, $3); }
+	| assignement
   ;
 
 or_expr:
@@ -111,8 +115,13 @@ or_expr:
   ;
 
 and_expr:
+    equal_expr
+  | equal_expr AND_OP and_expr { $$ = ast_new_binary(OP_AND, $1, $3); }
+  ;
+
+equal_expr:
     comparaison_expr
-  | comparaison_expr AND_OP and_expr { $$ = ast_new_binary(OP_AND, $1, $3); }
+  | comparaison_expr EQ_OP equal_expr { $$ = ast_new_binary($2, $1, $3);  }
   ;
 
 comparaison_expr:
@@ -143,7 +152,7 @@ expression:
     IDENTIFIER            { $$ = ast_new_symbol($1); }
   | DECIMAL               { $$ = ast_new_constant($1); }
   | INTEGER               { $$ = ast_new_constant($1); }
-  | '(' assignement ')' { $$ = $2; }
+  | '(' assignement_expr ')' { $$ = $2; }
   ;
 
 type:
@@ -152,12 +161,6 @@ type:
   | DOUBLE  { $$ = TYPE_DOUBLE; }
   | COMPLEX { $$ = TYPE_COMPLEX; }
   | BOOL    { $$ = TYPE_BOOL; }
-  ;
-
-test:
-    pragma '\n' { printf("mode: %d, precision: %d, rounding: %s\n",
-                    $1.mode, $1.precision, $1.rounding);
-                    YYACCEPT; }
   ;
 
 parse:
@@ -173,7 +176,7 @@ pragma_contents:
  ;
 
 statement_list:
-  | pragma_contents                { $$ = $1; }
+    pragma_contents                { $$ = $1; }
   | statement_list pragma_contents { $$ = $1; stmt_concat(&$$, $2); }
   ;
 
