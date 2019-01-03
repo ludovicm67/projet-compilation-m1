@@ -9,7 +9,8 @@
   _TEST_ITEM(symbol, memory)                                                   \
   _TEST_ITEM(symbol, same_name)                                                \
   _TEST_ITEM(gencode, init)                                                    \
-  _TEST_ITEM(gencode, clear)
+  _TEST_ITEM(gencode, clear)                                                   \
+  _TEST_ITEM(gencode, example)
 
 #define _TEST_ITEM(scope, fun) void test_##scope##_##fun(void);
 _TEST_LIST
