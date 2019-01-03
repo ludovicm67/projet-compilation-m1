@@ -1,5 +1,6 @@
-CFLAGS := -D_POSIX_SOURCE -D_C99_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -pedantic --std=c99 -g
-LDFLAGS := -g
+FLAGS := -g
+CFLAGS := $(FLAGS) -D_POSIX_SOURCE -D_C99_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -pedantic --std=c99
+LDFLAGS := $(FLAGS)
 
 SOURCES = \
 	ast.c \
@@ -35,6 +36,14 @@ TESTS_BIN = tests/main
 $(BIN): $(BIN_OBJ)
 $(TESTS_BIN): $(TESTS_OBJ)
 
+.PHONY: cover
+cover:
+	$(MAKE) FLAGS="-fprofile-arcs -ftest-coverage -g -O0" test
+
+.PHONY: release
+release:
+	$(MAKE) FLAGS="-O3"
+
 %.d: %.c
 	$(CC) $(CFLAGS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
 
@@ -52,7 +61,7 @@ test: $(TESTS_BIN)
 
 .PHONY: clean
 clean:
-	$(RM) parser.h parser.c $(BIN) $(BIN_OBJ) $(TESTS_BIN) $(TESTS_OBJ)
+	$(RM) parser.h parser.c lexer.c $(BIN) $(BIN_OBJ) $(TESTS_BIN) $(TESTS_OBJ)
 
 .PHONY: format
 format:

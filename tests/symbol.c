@@ -14,7 +14,7 @@ void test_symbol_memory(void) {
               symbol->external);
   TEST_CHECK_(!symbol->modified, "Expected modified to be 'false' but got %d",
               symbol->modified);
-  TEST_CHECK_(symbol->value, "Expected value to be '42' but got %d",
+  TEST_CHECK_(symbol->value == 42, "Expected value to be '42' but got %d",
               symbol->value);
   symbol_delete(symbol);
 }

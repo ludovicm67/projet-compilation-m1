@@ -4,3 +4,5 @@ lexer.c
 *.d
 main
 tests/main
+*.gc*
+*.dSYM
