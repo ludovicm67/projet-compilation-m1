@@ -167,9 +167,9 @@ void test_gencode_example(void) {
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(!strcmp(buff, "\n"
                              "  // assign values to some variables\n"
-                             "  mpc_set_si(T0, z, MPC_RNDZZ); // z\n"
-                             "  mpc_set_si(T1, x, MPC_RNDZZ); // x\n"
-                             "  mpc_set_si(T2, 1.000000, MPC_RNDZZ);\n"));
+                             "  mpc_set_d(T0, z, MPC_RNDZZ); // z\n"
+                             "  mpc_set_d(T1, x, MPC_RNDZZ); // x\n"
+                             "  mpc_set_d(T2, 1.000000, MPC_RNDZZ);\n"));
   }
   __clean_output_check(fd);
 

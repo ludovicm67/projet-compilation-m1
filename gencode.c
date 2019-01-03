@@ -29,11 +29,11 @@ void gencode_assign(FILE *file, symbol_t *symbol_table, char *rounding) {
 
   while (symbol_table) {
     if (symbol_table->external && symbol_table->name) {
-      fprintf(file, "%smpc_set_si(T%d, %s, %s); // %s\n", indent,
+      fprintf(file, "%smpc_set_d(T%d, %s, %s); // %s\n", indent,
               symbol_table->number, symbol_table->name, rounding,
               symbol_table->name);
     } else if (symbol_table->hasValue) {
-      fprintf(file, "%smpc_set_si(T%d, %f, %s);\n", indent,
+      fprintf(file, "%smpc_set_d(T%d, %f, %s);\n", indent,
               symbol_table->number, symbol_table->value, rounding);
     }
     symbol_table = symbol_table->next;
