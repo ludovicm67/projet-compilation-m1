@@ -66,15 +66,22 @@ void gencode_operations(op_list_t *list, char *rounding) {
   }
 }
 
-void gencode_clear(symbol_t *symbol_table) {
+void gencode_clear(symbol_t *symbol_table, char *rounding) {
+  symbol_t *s;
   char *indent = "  ";
+
+  for (s = symbol_table; s; s = s->next) {
+    if (s->modified && s->name) {
+      printf("%s%s = mpc_get_ldc(T%d, %s);\n", indent, s->name, s->number,
+             rounding);
+    }
+  }
 
   if (symbol_table) {
     printf("\n%s// free memory of all MPC variables that we used\n", indent);
   }
 
-  while (symbol_table) {
-    printf("%smpc_clear(T%d);\n", indent, symbol_table->number);
-    symbol_table = symbol_table->next;
+  for (s = symbol_table; s; s = s->next) {
+    printf("%smpc_clear(T%d);\n", indent, s->number);
   }
 }

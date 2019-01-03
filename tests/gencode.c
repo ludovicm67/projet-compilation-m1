@@ -23,7 +23,7 @@ void test_gencode_clear(void) {
   symbol_lookup(&symbol_table, "x");
   gencode_init(symbol_table, 128);
   printf("\nOUTPUT:\n");
-  gencode_clear(symbol_table);
+  gencode_clear(symbol_table, "MPC_RNDZZ");
   symbol_delete(symbol_table);
 }
 
@@ -65,7 +65,7 @@ void test_gencode_example(void) {
   gencode_init(symbol_table, 128);
   gencode_assign(symbol_table, "MPC_RNDZZ");
   gencode_operations(list, "MPC_RNDZZ");
-  gencode_clear(symbol_table);
+  gencode_clear(symbol_table, "MPC_RNDZZ");
 
   // clean
   quad_list_delete(list);
