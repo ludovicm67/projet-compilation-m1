@@ -67,10 +67,13 @@
 %type <decl_type> type
 %type <integer> precision
 %type <identifier> rounding
-%type <options> options
-%type <options> pragma
+%type <options>    options
+%type <options>    pragma
+%type <stmt>       block
+%type <stmt>       pragma_contents
+%type <stmt>       statement_list
 
-%start start
+%start parse
 
 %%
 
@@ -139,6 +142,28 @@ test:
                     YYACCEPT; }
   ;
 
+parse:
+    pragma pragma_contents  { printf("mode: %d, precision: %d, rounding: %s\n",
+                  $1.mode, $1.precision, $1.rounding);
+                  stmt_display($2);
+                  YYACCEPT; }
+  ;
+
+pragma_contents:
+   statement ';'   { $$ = $1; }
+ | block           { $$ = $1; }
+ ;
+
+statement_list:
+  | pragma_contents                { $$ = $1; }
+  | statement_list pragma_contents { $$ = $1; stmt_concat(&$$, $2); }
+  ;
+
+block:
+    '{' '}'                 { $$ = NULL; }
+  | '{' statement_list '}'  { $$ = $2; }
+  ;
+
 pragma:
     PRAGMA MPC options  { $$.precision = $3.precision;
                           $$.rounding = $3.rounding;
@@ -160,4 +185,11 @@ options:
   | rounding precision { $$.precision = $2; $$.rounding = $1; }
   | rounding           { $$.precision = 0;  $$.rounding = $1; }
   |                    { $$.precision = 0;  $$.rounding = NULL; }
+  ;
+
+condition_comparaison:
+    additive_expr OP_COMP additive_expr
+  | additive_expr OP_COMP assignement
+  | assignement   OP_COMP assignement
+  | assignement   OP_COMP additive_expr
   ;
