@@ -6,8 +6,8 @@
 void test_quad_new(void) {
   op_t *quad = NULL;
   symbol_t *symbol_table = NULL;
-  symbol_t *symbol_left = symbol_add(&symbol_table, "a", true, 1);
-  symbol_t *symbol_right = symbol_add(&symbol_table, "b", true, 2);
+  symbol_t *symbol_left = symbol_add(&symbol_table, "a", true, true, 1);
+  symbol_t *symbol_right = symbol_add(&symbol_table, "b", true, true, 2);
   symbol_t *result = symbol_lookup(&symbol_table, "x");
   TEST_CHECK(quad == NULL);
   quad = quad_new(QUAD_OP_ADD, result, symbol_left, symbol_right);
@@ -24,9 +24,9 @@ void test_quad_list(void) {
   symbol_t *symbol_table = NULL;
   TEST_CHECK(symbol_table == NULL);
 
-  symbol_t *var_y = symbol_add(&symbol_table, "y", false, 0);
+  symbol_t *var_y = symbol_add(&symbol_table, "y", false, false, 0);
   TEST_CHECK(var_y != NULL);
-  symbol_t *tmp_1 = symbol_add(&symbol_table, NULL, false, 1);
+  symbol_t *tmp_1 = symbol_add(&symbol_table, NULL, false, true, 1);
   TEST_CHECK(tmp_1 != NULL);
   symbol_t *var_x = symbol_lookup(&symbol_table, "x");
   TEST_CHECK(var_x != NULL);
@@ -68,6 +68,7 @@ void test_quad_list(void) {
   TEST_CHECK(list->next->quad == quad2);
   TEST_CHECK(list->next->next->quad == quad1);
 
+  // clean
   quad_list_delete(list);
   quad_delete(quad1);
   quad_delete(quad2);

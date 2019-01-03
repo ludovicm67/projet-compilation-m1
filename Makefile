@@ -8,6 +8,7 @@ SOURCES = \
 	quad.c \
 	statement.c \
 	symbol.c \
+	gencode.c \
 
 BIN_OBJ = \
 	main.o \
@@ -19,6 +20,7 @@ TESTS = \
 	tests/quad.c \
 	tests/statement.c \
 	tests/symbol.c \
+	tests/gencode.c \
 
 TESTS_OBJ = \
 	tests/main.o \

@@ -4,6 +4,7 @@
 
   #include "ast.h"
   #include "statement.h"
+  #include "gencode.h"
 
   int yydebug = 1;
   int yylex(void);
@@ -164,11 +165,20 @@ type:
   ;
 
 parse:
-    pragma pragma_contents  { printf("mode: %d, precision: %d, rounding: %s\n",
-                  $1.mode, $1.precision, $1.rounding);
-                  stmt_display($2);
-                  YYACCEPT; }
-  ;
+    pragma pragma_contents  {
+      printf("mode: %d, precision: %d, rounding: %s\n",
+             $1.mode, $1.precision, $1.rounding);
+      op_list_t *ops = NULL;
+      symbol_t *table = NULL;
+      stmt_gen_quad($2, &table, &ops);
+      stmt_display($2);
+
+      gencode_init(stdout, table, $1.precision);
+      gencode_assign(stdout, table, $1.rounding);
+      gencode_operations(stdout, ops, $1.rounding);
+      gencode_clear(stdout, table, $1.rounding);
+      YYACCEPT;
+    };
 
 pragma_contents:
    statement ';'   { $$ = $1; }
@@ -207,4 +217,3 @@ options:
   | rounding           { $$.precision = 0;  $$.rounding = $1; }
   |                    { $$.precision = 0;  $$.rounding = NULL; }
   ;
-

@@ -3,22 +3,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-symbol_t *symbol_new(char *name, bool external, double value) {
+symbol_t *symbol_new(char *name, bool external, bool hasValue, double value) {
   symbol_t *symbol = malloc(sizeof(symbol_t));
   symbol->number = 0;
   symbol->name = name;
   symbol->external = external;
+  symbol->readBeforeModified = false;
   symbol->modified = false;
+  symbol->hasValue = hasValue;
   symbol->value = value;
   symbol->next = NULL;
   return symbol;
 }
 
 symbol_t *symbol_add(symbol_t **symbol, char *name, bool external,
-                     double value) {
+                     bool hasValue, double value) {
   symbol_t *tmp;
 
-  tmp = symbol_new(name, external, value);
+  tmp = symbol_new(name, external, hasValue, value);
   tmp->next = *symbol;
 
   *symbol = tmp;
@@ -37,7 +39,7 @@ symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
   }
 
   // if not add it (assume it is external)
-  return symbol_add(symbol, name, true, 0);
+  return symbol_add(symbol, name, true, false, 0);
 }
 
 void symbol_delete(symbol_t *symbol) {

@@ -48,3 +48,10 @@ void stmt_display(stmt_t *list) {
     list = list->next;
   }
 }
+
+void stmt_gen_quad(stmt_t *list, symbol_t **table, op_list_t **ops) {
+  while (list) {
+    ast_gen_quad(list->node, table, ops);
+    list = list->next;
+  }
+}

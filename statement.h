@@ -17,5 +17,6 @@ stmt_t *stmt_push(stmt_t *list, ast_node_t *);
 void stmt_delete(stmt_t *list);
 uint8_t stmt_count(stmt_t *);
 void stmt_display(stmt_t *);
+void stmt_gen_quad(stmt_t *, symbol_t **table, op_list_t **ops);
 
 #endif

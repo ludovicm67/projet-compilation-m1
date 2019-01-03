@@ -3,7 +3,14 @@
 
 #include "symbol.h"
 
-typedef enum quad_op_e { QUAD_OP_ADD, QUAD_OP_MUL } quad_op_t;
+typedef enum quad_op_e {
+  QUAD_OP_ADD,
+  QUAD_OP_SUB,
+  QUAD_OP_MUL,
+  QUAD_OP_ASSIGN,
+  QUAD_OP_SQRT,
+  QUAD_OP_NEG
+} quad_op_t;
 
 typedef struct op_s {
   quad_op_t op;
