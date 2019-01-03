@@ -87,11 +87,9 @@
 [0-9]+                { yylval.integer = atoi(yytext); return INTEGER; }
 [0-9]+"."[0-9]+       { yylval.decimal = atof(yytext); return DECIMAL; }
 
-"\n" { return '\n'; }
+[\n\t ] {}
 
 [a-zA-Z_][0-9a-zA-Z_]*  { yylval.identifier = strdup(yytext); return IDENTIFIER; }
-
-.    {}
 
 %%
 

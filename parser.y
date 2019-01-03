@@ -64,8 +64,11 @@
 %type <identifier> rounding
 %type <options> options
 %type <options> pragma
+%type <stmt> block
+%type <stmt> pragma_contents
+%type <stmt> statement_list
 
-%start start
+%start parse
 
 %%
 
@@ -132,6 +135,28 @@ test:
     pragma '\n' { printf("mode: %d, precision: %d, rounding: %s\n",
                     $1.mode, $1.precision, $1.rounding);
                     YYACCEPT; }
+  ;
+
+parse:
+    pragma pragma_contents  { printf("mode: %d, precision: %d, rounding: %s\n",
+                  $1.mode, $1.precision, $1.rounding);
+                  stmt_display($2);
+                  YYACCEPT; }
+  ;
+
+pragma_contents:
+   statement ';'   { $$ = $1; }
+ | block           { $$ = $1; }
+ ;
+
+statement_list:
+  | pragma_contents                { $$ = $1; }
+  | statement_list pragma_contents { $$ = $1; stmt_concat(&$$, $2); }
+  ;
+
+block:
+    '{' '}'                 { $$ = NULL; }
+  | '{' statement_list '}'  { $$ = $2; }
   ;
 
 pragma:
