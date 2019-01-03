@@ -56,8 +56,14 @@
 "."                   { return '.'; }
 ","                   { return ','; }
 "!"                   { return '!'; }
-">"                   { return '>'; }
-"<"                   { return '<'; }
+">"                   { yylval.binary = OP_GT;  return COMP_OP; }
+"<"                   { yylval.binary = OP_LT;  return COMP_OP; }
+"<="                  { yylval.binary = OP_LTE; return COMP_OP; }
+">="                  { yylval.binary = OP_GTE; return COMP_OP; }
+"=="                  { yylval.binary = OP_EQ;  return COMP_OP; }
+
+"&&"                  { yylval.binary = OP_AND; return OP_AND; }
+"||"                  { yylval.binary = OP_OR;  return OP_OR; }
 
 "++"                  { yylval.unary = OP_INCR;   return UNARY_OP; }
 "--"                  { yylval.unary = OP_DECR;   return UNARY_OP; }

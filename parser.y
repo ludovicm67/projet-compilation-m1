@@ -40,6 +40,8 @@
 %token INT FLOAT DOUBLE COMPLEX
 %token BOOL
 
+%token OP_GT OP_LT OP_GTE OP_LTE OP_EQ
+%token OP_AND OP_OR COMP_OP
 %token UNARY_FUNC UNARY_OP
 %token COMMENT_LINE COMMENT_MULTI COMMENT_END
 %token EXTERN
@@ -51,6 +53,9 @@
 
 %type <unary> UNARY_FUNC
 %type <unary> UNARY_OP
+%type <binary> OP_AND
+%type <binary> OP_OR
+%type <binary> COMP_OP
 %type <node>  expression
 %type <node>  unary_expr
 %type <node>  additive_expr
