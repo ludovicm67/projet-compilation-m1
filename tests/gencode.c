@@ -33,14 +33,48 @@ void test_gencode_init(void) {
 }
 
 void test_gencode_clear(void) {
+  // init output check
+  int fd[2];
+  char buff[BUFF_SIZE];
+  FILE *f = NULL;
+
+  // init symbols
   symbol_t *symbol_table = NULL;
   symbol_add(&symbol_table, "a", true, true, 1);
   symbol_add(&symbol_table, "a", true, true, 2);
   symbol_lookup(&symbol_table, "x");
   symbol_lookup(&symbol_table, "x");
-  gencode_init(stdout, symbol_table, 128);
-  printf("\nOUTPUT:\n");
-  gencode_clear(stdout, symbol_table, "MPC_RNDZZ");
+
+  // check init
+  f = __init_output_check(fd, buff);
+  gencode_init(f, symbol_table, 128);
+
+  fclose(f);
+
+  while (read(fd[0], buff, BUFF_SIZE) > 0) {
+    TEST_CHECK(!strcmp(buff, "\n\
+  // declaration of all MPC variables that we will use\n\
+  mpc_t T0; mpc_init2(T0, 128); // x\n\
+  mpc_t T1; mpc_init2(T1, 128); // a\n\
+  mpc_t T2; mpc_init2(T2, 128); // a\n"));
+  }
+  __clean_output_check(fd);
+
+  // check clear
+  f = __init_output_check(fd, buff);
+  gencode_clear(f, symbol_table, "MPC_RNDZZ");
+
+  fclose(f);
+
+  while (read(fd[0], buff, BUFF_SIZE) > 0) {
+    TEST_CHECK(!strcmp(buff, "\n\
+  // free memory of all MPC variables that we used\n\
+  mpc_clear(T0);\n\
+  mpc_clear(T1);\n\
+  mpc_clear(T2);\n"));
+  }
+  __clean_output_check(fd);
+
   symbol_delete(symbol_table);
 }
 
