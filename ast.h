@@ -95,10 +95,10 @@ struct ast_node_s {
 ast_node_t *ast_new_unary(ast_unary_op_t, ast_node_t *);
 ast_node_t *ast_new_binary(ast_binary_op_t, ast_node_t *, ast_node_t *);
 ast_node_t *ast_new_assign(symbol_t *, ast_node_t *);
-ast_node_t *ast_new_declaration(ast_decl_type_t, symbol_t *, ast_node_t *);
+ast_node_t *ast_new_decl(ast_decl_type_t, symbol_t *, ast_node_t *);
 ast_node_t *ast_new_constant(constant_t);
 ast_node_t *ast_new_symbol(symbol_t *);
-ast_node_t *ast_declaration_from_assign(ast_node_t *, ast_decl_type_t);
+ast_node_t *ast_decl_from_assign(ast_decl_type_t, ast_node_t *);
 void ast_delete(ast_node_t *);
 void ast_display(ast_node_t *);
 
