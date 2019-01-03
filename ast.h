@@ -91,7 +91,6 @@ struct ast_node_s {
   } c;
 };
 
-
 ast_node_t *ast_new_unary(ast_unary_op_t, ast_node_t *);
 ast_node_t *ast_new_binary(ast_binary_op_t, ast_node_t *, ast_node_t *);
 ast_node_t *ast_new_assign(symbol_t *, ast_node_t *);

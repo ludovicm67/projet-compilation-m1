@@ -1,13 +1,11 @@
 #include <assert.h>
-#include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ast.h"
 
-ast_node_t *ast_alloc(void) {
-  return malloc(sizeof(ast_node_t));
-}
+ast_node_t *ast_alloc(void) { return malloc(sizeof(ast_node_t)); }
 
 ast_node_t *ast_new_unary(ast_unary_op_t type, ast_node_t *arg) {
   ast_node_t *node = ast_alloc();
@@ -17,7 +15,8 @@ ast_node_t *ast_new_unary(ast_unary_op_t type, ast_node_t *arg) {
   return node;
 }
 
-ast_node_t *ast_new_binary(ast_binary_op_t type, ast_node_t *left, ast_node_t *right) {
+ast_node_t *ast_new_binary(ast_binary_op_t type, ast_node_t *left,
+                           ast_node_t *right) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_BINARY;
   node->c.binary.type = type;
@@ -34,7 +33,8 @@ ast_node_t *ast_new_assign(symbol_t *lval, ast_node_t *rval) {
   return node;
 }
 
-ast_node_t *ast_new_declaration(ast_decl_type_t type, symbol_t *lval, ast_node_t *rval) {
+ast_node_t *ast_new_declaration(ast_decl_type_t type, symbol_t *lval,
+                                ast_node_t *rval) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_DECL;
   node->c.decl.type = type;
@@ -57,7 +57,8 @@ ast_node_t *ast_new_symbol(symbol_t *symbol) {
   return node;
 }
 
-ast_node_t *ast_declaration_from_assign(ast_node_t *node, ast_decl_type_t type) {
+ast_node_t *ast_declaration_from_assign(ast_node_t *node,
+                                        ast_decl_type_t type) {
   assert(node->type == NODE_ASSIGN);
   node->type = NODE_DECL;
   node->c.decl.type = type;
@@ -66,31 +67,31 @@ ast_node_t *ast_declaration_from_assign(ast_node_t *node, ast_decl_type_t type) 
 
 void ast_delete(ast_node_t *node) {
   switch (node->type) {
-    case NODE_UNARY:
-      ast_delete(node->c.unary.arg);
-      break;
+  case NODE_UNARY:
+    ast_delete(node->c.unary.arg);
+    break;
 
-    case NODE_BINARY:
-      ast_delete(node->c.binary.left);
-      ast_delete(node->c.binary.right);
-      break;
+  case NODE_BINARY:
+    ast_delete(node->c.binary.left);
+    ast_delete(node->c.binary.right);
+    break;
 
-    case NODE_ASSIGN:
-      // symbol_delete(node->c.assign.lval);
-      ast_delete(node->c.assign.rval);
-      break;
+  case NODE_ASSIGN:
+    // symbol_delete(node->c.assign.lval);
+    ast_delete(node->c.assign.rval);
+    break;
 
-    case NODE_DECL:
-      // symbol_delete(node->c.decl.lval);
-      ast_delete(node->c.decl.rval);
-      break;
+  case NODE_DECL:
+    // symbol_delete(node->c.decl.lval);
+    ast_delete(node->c.decl.rval);
+    break;
 
-    case NODE_CONST:
-      break;
+  case NODE_CONST:
+    break;
 
-    case NODE_SYMBOL:
-      // symbol_delete(node->c.symbol);
-      break;
+  case NODE_SYMBOL:
+    // symbol_delete(node->c.symbol);
+    break;
   }
 
   free(node);
@@ -105,41 +106,39 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
   indent(i);
 
   switch (node->type) {
-    case NODE_UNARY:
-      printf("Unary op %d\n", node->c.unary.type);
-      ast_display_i(node->c.unary.arg, i + 1);
-      break;
+  case NODE_UNARY:
+    printf("Unary op %d\n", node->c.unary.type);
+    ast_display_i(node->c.unary.arg, i + 1);
+    break;
 
-    case NODE_BINARY:
-      printf("Binary op %d\n", node->c.binary.type);
-      ast_display_i(node->c.binary.left, i + 1);
-      ast_display_i(node->c.binary.right, i + 1);
-      break;
+  case NODE_BINARY:
+    printf("Binary op %d\n", node->c.binary.type);
+    ast_display_i(node->c.binary.left, i + 1);
+    ast_display_i(node->c.binary.right, i + 1);
+    break;
 
-    case NODE_ASSIGN:
-      printf("Assign %s =\n", node->c.assign.lval);
-      ast_display_i(node->c.assign.rval, i + 1);
-      break;
+  case NODE_ASSIGN:
+    printf("Assign %s =\n", node->c.assign.lval);
+    ast_display_i(node->c.assign.rval, i + 1);
+    break;
 
-    case NODE_DECL:
-      if (node->c.decl.rval) {
-        printf("Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
-        ast_display_i(node->c.decl.rval, i + 1);
-      } else {
-        printf("Declaration %d %s\n", node->c.decl.type, node->c.decl.lval);
-      }
-      break;
+  case NODE_DECL:
+    if (node->c.decl.rval) {
+      printf("Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
+      ast_display_i(node->c.decl.rval, i + 1);
+    } else {
+      printf("Declaration %d %s\n", node->c.decl.type, node->c.decl.lval);
+    }
+    break;
 
-    case NODE_CONST:
-      printf("Const %f\n", node->c.constant);
-      break;
+  case NODE_CONST:
+    printf("Const %f\n", node->c.constant);
+    break;
 
-    case NODE_SYMBOL:
-      printf("Symbol '%s'\n", node->c.symbol);
-      break;
+  case NODE_SYMBOL:
+    printf("Symbol '%s'\n", node->c.symbol);
+    break;
   }
 }
 
-void ast_display(ast_node_t *node) {
-  ast_display_i(node, 0);
-}
+void ast_display(ast_node_t *node) { ast_display_i(node, 0); }
