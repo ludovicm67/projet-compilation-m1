@@ -41,11 +41,12 @@ void test_gencode_init(void) {
   fclose(f);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "\n\
-  // declaration of all MPC variables that we will use\n\
-  mpc_t T0; mpc_init2(T0, 128); // x\n\
-  mpc_t T1; mpc_init2(T1, 128); // a\n\
-  mpc_t T2; mpc_init2(T2, 128); // a\n"));
+    TEST_CHECK(
+        !strcmp(buff, "\n"
+                      "  // declaration of all MPC variables that we will use\n"
+                      "  mpc_t T0; mpc_init2(T0, 128); // x\n"
+                      "  mpc_t T1; mpc_init2(T1, 128); // a\n"
+                      "  mpc_t T2; mpc_init2(T2, 128); // a\n"));
   }
   __clean_output_check(fd);
 
@@ -72,11 +73,12 @@ void test_gencode_clear(void) {
   fclose(f);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "\n\
-  // declaration of all MPC variables that we will use\n\
-  mpc_t T0; mpc_init2(T0, 128); // x\n\
-  mpc_t T1; mpc_init2(T1, 128); // a\n\
-  mpc_t T2; mpc_init2(T2, 128); // a\n"));
+    TEST_CHECK(
+        !strcmp(buff, "\n"
+                      "  // declaration of all MPC variables that we will use\n"
+                      "  mpc_t T0; mpc_init2(T0, 128); // x\n"
+                      "  mpc_t T1; mpc_init2(T1, 128); // a\n"
+                      "  mpc_t T2; mpc_init2(T2, 128); // a\n"));
   }
   __clean_output_check(fd);
 
@@ -87,11 +89,12 @@ void test_gencode_clear(void) {
   fclose(f);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "\n\
-  // free memory of all MPC variables that we used\n\
-  mpc_clear(T0);\n\
-  mpc_clear(T1);\n\
-  mpc_clear(T2);\n"));
+    TEST_CHECK(!strcmp(buff,
+                       "\n"
+                       "  // free memory of all MPC variables that we used\n"
+                       "  mpc_clear(T0);\n"
+                       "  mpc_clear(T1);\n"
+                       "  mpc_clear(T2);\n"));
   }
   __clean_output_check(fd);
 
@@ -145,12 +148,13 @@ void test_gencode_example(void) {
   fclose(f);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "\n\
-  // declaration of all MPC variables that we will use\n\
-  mpc_t T0; mpc_init2(T0, 128); // z\n\
-  mpc_t T1; mpc_init2(T1, 128); // x\n\
-  mpc_t T2; mpc_init2(T2, 128);\n\
-  mpc_t T3; mpc_init2(T3, 128); // y\n"));
+    TEST_CHECK(
+        !strcmp(buff, "\n"
+                      "  // declaration of all MPC variables that we will use\n"
+                      "  mpc_t T0; mpc_init2(T0, 128); // z\n"
+                      "  mpc_t T1; mpc_init2(T1, 128); // x\n"
+                      "  mpc_t T2; mpc_init2(T2, 128);\n"
+                      "  mpc_t T3; mpc_init2(T3, 128); // y\n"));
   }
   __clean_output_check(fd);
 
@@ -161,11 +165,11 @@ void test_gencode_example(void) {
   fclose(f);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "\n\
-  // assign values to some variables\n\
-  mpc_set_si(T0, z, MPC_RNDZZ); // z\n\
-  mpc_set_si(T1, x, MPC_RNDZZ); // x\n\
-  mpc_set_si(T2, 1.000000, MPC_RNDZZ);\n"));
+    TEST_CHECK(!strcmp(buff, "\n"
+                             "  // assign values to some variables\n"
+                             "  mpc_set_si(T0, z, MPC_RNDZZ); // z\n"
+                             "  mpc_set_si(T1, x, MPC_RNDZZ); // x\n"
+                             "  mpc_set_si(T2, 1.000000, MPC_RNDZZ);\n"));
   }
   __clean_output_check(fd);
 
@@ -176,10 +180,11 @@ void test_gencode_example(void) {
   fclose(f);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "\n\
-  // operations\n\
-  mpc_add(T3, T2, T1, MPC_RNDZZ); // T3 = T2 + T1\n\
-  mpc_mul(T0, T3, T3, MPC_RNDZZ); // T0 = T3 * T3\n"));
+    TEST_CHECK(!strcmp(buff,
+                       "\n"
+                       "  // operations\n"
+                       "  mpc_add(T3, T2, T1, MPC_RNDZZ); // T3 = T2 + T1\n"
+                       "  mpc_mul(T0, T3, T3, MPC_RNDZZ); // T0 = T3 * T3\n"));
   }
   __clean_output_check(fd);
 
@@ -190,13 +195,14 @@ void test_gencode_example(void) {
   fclose(f);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "  y = mpc_get_ldc(T3, MPC_RNDZZ);\n\
-\n\
-  // free memory of all MPC variables that we used\n\
-  mpc_clear(T0);\n\
-  mpc_clear(T1);\n\
-  mpc_clear(T2);\n\
-  mpc_clear(T3);\n"));
+    TEST_CHECK(!strcmp(buff,
+                       "  y = mpc_get_ldc(T3, MPC_RNDZZ);\n"
+                       "\n"
+                       "  // free memory of all MPC variables that we used\n"
+                       "  mpc_clear(T0);\n"
+                       "  mpc_clear(T1);\n"
+                       "  mpc_clear(T2);\n"
+                       "  mpc_clear(T3);\n"));
   }
   __clean_output_check(fd);
 
