@@ -64,6 +64,7 @@ void test_gencode_example(void) {
   printf("\nOUTPUT:\n");
   gencode_init(symbol_table, 128);
   gencode_assign(symbol_table);
+  gencode_operations(list);
   gencode_clear(symbol_table);
 
   // clean
