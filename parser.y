@@ -49,24 +49,24 @@
 %token BREAK CONTINUE GOTO
 %token RETURN
 
-%type <unary> UNARY_FUNC
-%type <unary> UNARY_OP
-%type <node>  expression
-%type <node>  unary_expr
-%type <node>  additive_expr
-%type <node>  multiplicative_expr
-%type <stmt>  statement
-%type <node>  assignement
-%type <node>  declaration
-%type <stmt>  declaration_list
-%type <decl_type> type
-%type <integer> precision
+%type <unary>      UNARY_FUNC
+%type <unary>      UNARY_OP
+%type <node>       expression
+%type <node>       unary_expr
+%type <node>       additive_expr
+%type <node>       multiplicative_expr
+%type <stmt>       statement
+%type <node>       assignement
+%type <node>       declaration
+%type <stmt>       declaration_list
+%type <decl_type>  type
+%type <integer>    precision
 %type <identifier> rounding
-%type <options> options
-%type <options> pragma
-%type <stmt> block
-%type <stmt> pragma_contents
-%type <stmt> statement_list
+%type <options>    options
+%type <options>    pragma
+%type <stmt>       block
+%type <stmt>       pragma_contents
+%type <stmt>       statement_list
 
 %start parse
 
@@ -180,4 +180,11 @@ options:
   | rounding precision { $$.precision = $2; $$.rounding = $1; }
   | rounding           { $$.precision = 0;  $$.rounding = $1; }
   |                    { $$.precision = 0;  $$.rounding = NULL; }
+  ;
+
+condition_comparaison:
+    additive_expr OP_COMP additive_expr
+  | additive_expr OP_COMP assignement
+  | assignement   OP_COMP assignement
+  | assignement   OP_COMP additive_expr
   ;
