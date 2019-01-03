@@ -11,9 +11,16 @@ stmt_t *stmt_new(ast_node_t *node) {
   return statement;
 }
 
+void stmt_concat(stmt_t **head, stmt_t *tail) {
+  stmt_t **tmp = head;
+  while (*tmp)
+    tmp = &(*tmp)->next;
+  *tmp = tail;
+}
+
 stmt_t *stmt_push(stmt_t *list, ast_node_t *node) {
   stmt_t *statement = stmt_new(node);
-  statement->next = list;
+  stmt_concat(&statement, list);
   return statement;
 }
 
