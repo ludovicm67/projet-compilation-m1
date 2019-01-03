@@ -58,7 +58,7 @@
 %type <stmt>  statement
 %type <node>  assignement
 %type <node>  declaration
-%type <stmt>  identifier_list
+%type <stmt>  declaration_list
 %type <decl_type> type
 %type <integer> precision
 %type <identifier> rounding
@@ -77,9 +77,9 @@ start:
   ;
 
 statement:
-	  additive_expr { $$ = stmt_new($1); }
+    additive_expr { $$ = stmt_new($1); }
   | assignement   { $$ = stmt_new($1); }
-  | identifier_list
+  | declaration_list
   ;
 
 assignement:
@@ -87,14 +87,14 @@ assignement:
   ;
 
 declaration:
-	  type assignement  { $$ = ast_declaration_from_assign($2, $1); }
-  | type IDENTIFIER   { $$ = ast_new_declaration($1, $2, NULL); }
+    type assignement { $$ = ast_decl_from_assign($1, $2); }
+  | type IDENTIFIER  { $$ = ast_new_decl($1, $2, NULL); }
   ;
 
-identifier_list:
-	  declaration                     { $$ = stmt_new($1); }
-  | identifier_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_assign($3, NULL)); }
-  | identifier_list ',' assignement { $$ = stmt_push($1, $3); }
+declaration_list:
+    declaration  { $$ = stmt_new($1); }
+  | declaration_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_decl($1->node->c.decl.type, $3, NULL)); }
+  | declaration_list ',' assignement { $$ = stmt_push($1, ast_decl_from_assign($1->node->c.decl.type, $3)); }
   ;
 
 additive_expr:

@@ -2,7 +2,7 @@
 
 #define _TEST_LIST                                                             \
   _TEST_ITEM(ast, new)                                                         \
-  _TEST_ITEM(ast, declaration_from_assign)                                     \
+  _TEST_ITEM(ast, decl_from_assign)                                            \
   _TEST_ITEM(quad, new)                                                        \
   _TEST_ITEM(quad, list)                                                       \
   _TEST_ITEM(statement, count)                                                 \

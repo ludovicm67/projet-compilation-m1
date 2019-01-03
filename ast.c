@@ -34,7 +34,7 @@ ast_node_t *ast_new_assign(symbol_t *lval, ast_node_t *rval) {
   return node;
 }
 
-ast_node_t *ast_new_declaration(ast_decl_type_t type, symbol_t *lval, ast_node_t *rval) {
+ast_node_t *ast_new_decl(ast_decl_type_t type, symbol_t *lval, ast_node_t *rval) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_DECL;
   node->c.decl.type = type;
@@ -57,7 +57,7 @@ ast_node_t *ast_new_symbol(symbol_t *symbol) {
   return node;
 }
 
-ast_node_t *ast_declaration_from_assign(ast_node_t *node, ast_decl_type_t type) {
+ast_node_t *ast_decl_from_assign(ast_decl_type_t type, ast_node_t *node) {
   assert(node->type == NODE_ASSIGN);
   node->type = NODE_DECL;
   node->c.decl.type = type;
