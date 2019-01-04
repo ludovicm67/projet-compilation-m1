@@ -35,8 +35,8 @@ void test_gencode_init(void) {
 
   // init symbols
   symbol_t *symbol_table = NULL;
-  symbol_add(&symbol_table, "a", true, true, 1);
-  symbol_add(&symbol_table, "a", true, true, 2);
+  symbol_add(&symbol_table, SYM_UNKNOWN, "a", false);
+  symbol_add(&symbol_table, SYM_UNKNOWN, "a", false);
   symbol_lookup(&symbol_table, "x");
   symbol_lookup(&symbol_table, "x");
 
@@ -73,8 +73,8 @@ void test_gencode_clear(void) {
 
   // init symbols
   symbol_t *symbol_table = NULL;
-  symbol_add(&symbol_table, "a", true, true, 1);
-  symbol_add(&symbol_table, "a", true, true, 2);
+  symbol_add(&symbol_table, SYM_UNKNOWN, "a", false);
+  symbol_add(&symbol_table, SYM_UNKNOWN, "a", false);
   symbol_lookup(&symbol_table, "x");
   symbol_lookup(&symbol_table, "x");
 
@@ -123,10 +123,11 @@ void test_gencode_example(void) {
   symbol_t *symbol_table = NULL;
   TEST_CHECK(symbol_table == NULL);
 
-  symbol_t *var_y = symbol_add(&symbol_table, "y", true, false, 0);
+  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
   TEST_CHECK(var_y != NULL);
   var_y->modified = true;
-  symbol_t *tmp_1 = symbol_add(&symbol_table, NULL, false, true, 1);
+  symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
+  symbol_set_decimal(tmp_1, 1.0);
   TEST_CHECK(tmp_1 != NULL);
   symbol_t *var_x = symbol_lookup(&symbol_table, "x");
   TEST_CHECK(var_x != NULL);

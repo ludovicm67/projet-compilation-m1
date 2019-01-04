@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "gencode.h"
 
 #define ARG_1                                                                  \
@@ -39,25 +41,34 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol_table) {
   }
 }
 
-void gencode_assign(gencode_args_t *args, symbol_t *symbol_table) {
+void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
   char *indent = "  ";
   char *lib = __gencode_lib_name(args->lib);
 
-  if (symbol_table) {
+  if (symbol) {
     fprintf(args->file, "\n%s// assign values to some variables\n", indent);
   }
 
-  while (symbol_table) {
-    if (symbol_table->external && symbol_table->name &&
-        symbol_table->readBeforeModified) {
+  while (symbol) {
+    if (symbol->external && symbol->name &&
+        symbol->readBeforeModified) {
       fprintf(args->file, "%s%s_set_d(T%d, %s, %s); // %s\n", indent, lib,
-              symbol_table->number, symbol_table->name, args->rounding,
-              symbol_table->name);
-    } else if (symbol_table->hasValue) {
-      fprintf(args->file, "%s%s_set_d(T%d, %f, %s);\n", indent, lib,
-              symbol_table->number, symbol_table->value, args->rounding);
+              symbol->number, symbol->name, args->rounding,
+              symbol->name);
+    } else if (symbol->hasValue) {
+      if (symbol->type == SYM_DECIMAL) {
+        fprintf(args->file, "%s%s_set_d(T%d, %f, %s);\n", indent, lib,
+                symbol->number, symbol->value.decimal, args->rounding);
+      } else if (symbol->type == SYM_INTEGER) {
+        fprintf(args->file, "%s%s_set_d(T%d, %d, %s);\n", indent, lib,
+                symbol->number, symbol->value.integer, args->rounding);
+      } else {
+        fprintf(stderr, "Unsupported symbol type %d\n", symbol->type);
+        fflush(stderr);
+        abort();
+      }
     }
-    symbol_table = symbol_table->next;
+    symbol = symbol->next;
   }
 }
 
