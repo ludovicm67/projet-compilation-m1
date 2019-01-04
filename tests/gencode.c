@@ -22,10 +22,16 @@ void __clean_output_check(int *fd) {
 }
 
 void test_gencode_init(void) {
+  // init gencode args
+  gencode_args_t args;
+  args.file = NULL;
+  args.lib = LIB_MPC;
+  args.precision = 128;
+  args.rounding = "MPC_RNDZZ";
+
   // init output check
   int fd[2];
   char buff[BUFF_SIZE];
-  FILE *f = NULL;
 
   // init symbols
   symbol_t *symbol_table = NULL;
@@ -35,10 +41,10 @@ void test_gencode_init(void) {
   symbol_lookup(&symbol_table, "x");
 
   // check init
-  f = __init_output_check(fd, buff);
-  gencode_init(f, symbol_table, 128);
+  args.file = __init_output_check(fd, buff);
+  gencode_init(&args, symbol_table);
 
-  fclose(f);
+  fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(
@@ -54,10 +60,16 @@ void test_gencode_init(void) {
 }
 
 void test_gencode_clear(void) {
+  // init gencode args
+  gencode_args_t args;
+  args.file = NULL;
+  args.lib = LIB_MPC;
+  args.precision = 128;
+  args.rounding = "MPC_RNDZZ";
+
   // init output check
   int fd[2];
   char buff[BUFF_SIZE];
-  FILE *f = NULL;
 
   // init symbols
   symbol_t *symbol_table = NULL;
@@ -67,10 +79,10 @@ void test_gencode_clear(void) {
   symbol_lookup(&symbol_table, "x");
 
   // check init
-  f = __init_output_check(fd, buff);
-  gencode_init(f, symbol_table, 128);
+  args.file = __init_output_check(fd, buff);
+  gencode_init(&args, symbol_table);
 
-  fclose(f);
+  fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(
@@ -83,10 +95,10 @@ void test_gencode_clear(void) {
   __clean_output_check(fd);
 
   // check clear
-  f = __init_output_check(fd, buff);
-  gencode_clear(f, symbol_table, "MPC_RNDZZ");
+  args.file = __init_output_check(fd, buff);
+  gencode_clear(&args, symbol_table);
 
-  fclose(f);
+  fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(!strcmp(buff,
@@ -102,6 +114,13 @@ void test_gencode_clear(void) {
 }
 
 void test_gencode_example(void) {
+  // init gencode args
+  gencode_args_t args;
+  args.file = NULL;
+  args.lib = LIB_MPC;
+  args.precision = 128;
+  args.rounding = "MPC_RNDZZ";
+
   symbol_t *symbol_table = NULL;
   TEST_CHECK(symbol_table == NULL);
 
@@ -140,13 +159,12 @@ void test_gencode_example(void) {
   // init output check
   int fd[2];
   char buff[BUFF_SIZE];
-  FILE *f = NULL;
 
   // check init
-  f = __init_output_check(fd, buff);
-  gencode_init(f, symbol_table, 128);
+  args.file = __init_output_check(fd, buff);
+  gencode_init(&args, symbol_table);
 
-  fclose(f);
+  fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(
@@ -160,10 +178,10 @@ void test_gencode_example(void) {
   __clean_output_check(fd);
 
   // check assign
-  f = __init_output_check(fd, buff);
-  gencode_assign(f, symbol_table, "MPC_RNDZZ");
+  args.file = __init_output_check(fd, buff);
+  gencode_assign(&args, symbol_table);
 
-  fclose(f);
+  fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(!strcmp(buff, "\n"
@@ -174,10 +192,10 @@ void test_gencode_example(void) {
   __clean_output_check(fd);
 
   // check operations
-  f = __init_output_check(fd, buff);
-  gencode_operations(f, list, "MPC_RNDZZ");
+  args.file = __init_output_check(fd, buff);
+  gencode_operations(&args, list);
 
-  fclose(f);
+  fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(!strcmp(buff,
@@ -189,10 +207,10 @@ void test_gencode_example(void) {
   __clean_output_check(fd);
 
   // check clean
-  f = __init_output_check(fd, buff);
-  gencode_clear(f, symbol_table, "MPC_RNDZZ");
+  args.file = __init_output_check(fd, buff);
+  gencode_clear(&args, symbol_table);
 
-  fclose(f);
+  fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
     TEST_CHECK(!strcmp(buff,

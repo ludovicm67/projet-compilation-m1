@@ -7,9 +7,17 @@ typedef enum quad_op_e {
   QUAD_OP_ADD,
   QUAD_OP_SUB,
   QUAD_OP_MUL,
+  QUAD_OP_DIV,
   QUAD_OP_ASSIGN,
   QUAD_OP_SQRT,
   QUAD_OP_NEG,
+  QUAD_OP_ABS,
+  QUAD_OP_EXP,
+  QUAD_OP_LOG,
+  QUAD_OP_POW,
+  QUAD_OP_SIN,
+  QUAD_OP_INCR,
+  QUAD_OP_DECR,
   QUAD_NOOP,
 } quad_op_t;
 

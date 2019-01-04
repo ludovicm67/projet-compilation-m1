@@ -177,17 +177,25 @@ type:
 
 parse:
     pragma pragma_contents  {
+      // init gencode args
+      gencode_args_t args;
+      args.file = stdout;
+      args.lib = $1.mode;
+      args.precision = $1.precision;
+      args.rounding = $1.rounding;
+
       printf("mode: %d, precision: %d, rounding: %s\n",
              $1.mode, $1.precision, $1.rounding);
+
       op_list_t *ops = NULL;
       symbol_t *table = NULL;
       stmt_gen_quad($2, &table, &ops);
       stmt_display($2);
 
-      gencode_init(stdout, table, $1.precision);
-      gencode_assign(stdout, table, $1.rounding);
-      gencode_operations(stdout, ops, $1.rounding);
-      gencode_clear(stdout, table, $1.rounding);
+      gencode_init(&args, table);
+      gencode_assign(&args, table);
+      gencode_operations(&args, ops);
+      gencode_clear(&args, table);
       YYACCEPT;
     };
 
