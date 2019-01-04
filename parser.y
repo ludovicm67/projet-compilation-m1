@@ -70,7 +70,6 @@
 %type <node>       assignement_expr
 %type <node>       assignement
 %type <node>       declaration
-%type <node>       for_condition
 %type <stmt>       statement
 %type <stmt>       declaration_list
 %type <decl_type>  type
@@ -85,6 +84,8 @@
 %type <node>       while_statement
 %type <node>       do_while_statement
 %type <node>       for_statement
+%type <node>       for_condition
+%type <stmt>       for_instruction
 
 
 %start parse
@@ -98,6 +99,7 @@ statement:
   | while_statement       { $$ = stmt_new($1); }
   | do_while_statement    { $$ = NULL; printf("do_while_statement\n"); }
   | for_statement         { $$ = stmt_new($1); }
+  | ';'                   { $$ = NULL; }
   ;
 
 declaration:
@@ -252,10 +254,16 @@ do_while_statement:
 
 for_condition:
     assignement_expr
-  |
+  |                   { $$ = NULL; }
+  ;
+
+for_instruction:
+    assignement_expr                      { $$ = stmt_new($1); }
+  | for_instruction ',' assignement_expr  { $$ = $1; stmt_concat(&$$, stmt_new($3)); }
+  |                                       { $$ = NULL; }
   ;
 
 for_statement:
-    FOR '(' for_condition ';' for_condition ';' for_condition ')' block     { $$ = ast_new_loop(stmt_new($3), $5, stmt_new($7), $9); }
-  | FOR '(' declaration_list ';' for_condition ';' for_condition ')' block  { $$ = ast_new_loop($3, $5, stmt_new($7), $9); }
+    FOR '(' for_instruction ';' for_condition ';' for_instruction ')' block  { $$ = ast_new_loop($3, $5, $7, $9); }
+  | FOR '(' declaration_list ';' for_condition ';' for_instruction ')' block { $$ = ast_new_loop($3, $5, $7, $9); }
   ;

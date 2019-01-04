@@ -137,10 +137,12 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
 
     case NODE_DECL: {
       symbol_t *dest = symbol_add(table, node->c.assign.lval, false, false, 0);
-      dest->modified = true;
-      symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
-      op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
-      quad_list_append(ops, quad);
+      if (node->c.assign.rval) {
+        dest->modified = true;
+        symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
+        op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
+        quad_list_append(ops, quad);
+      }
       return NULL;
     }
 
