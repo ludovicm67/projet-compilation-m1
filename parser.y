@@ -9,6 +9,8 @@
   int yydebug = 1;
   int yylex(void);
   int yyerror(const char *s);
+
+  extern bool is_pragma;
 %}
 
 %union {
@@ -31,12 +33,15 @@
   } options;
 }
 
+%token END
+
 %token <identifier> IDENTIFIER
 %token <operator>   OPERATOR
 %token <integer>    INTEGER
 %token <decimal>    DECIMAL
 
-%token PRAGMA MPFR MPC PRECISION ROUNDING
+%token IGNORE
+%token PRAGMA_MPC PRAGMA_MPFR PRECISION ROUNDING
 
 %token INT FLOAT DOUBLE COMPLEX
 %token BOOL
@@ -88,7 +93,7 @@
 %type <stmt>       for_instruction
 
 
-%start parse
+%start start
 
 %%
 
@@ -177,6 +182,16 @@ type:
   | BOOL    { $$ = TYPE_BOOL; }
   ;
 
+start:
+    parse_list END { YYACCEPT; }
+
+parse_list:
+    parse
+  | parse_list parse
+  | parse_list IGNORE
+  | IGNORE
+  ;
+
 parse:
     pragma pragma_contents  {
       // init gencode args
@@ -186,8 +201,8 @@ parse:
       args.precision = $1.precision;
       args.rounding = $1.rounding;
 
-      printf("mode: %d, precision: %d, rounding: %s\n",
-             $1.mode, $1.precision, $1.rounding);
+      fprintf(stderr, "mode: %d, precision: %d, rounding: %s\n",
+              $1.mode, $1.precision, $1.rounding);
 
       op_list_t *ops = NULL;
       symbol_t *table = NULL;
@@ -198,7 +213,7 @@ parse:
       gencode_assign(&args, table);
       gencode_operations(&args, ops);
       gencode_clear(&args, table);
-      YYACCEPT;
+      is_pragma = false;
     };
 
 pragma_contents:
@@ -217,10 +232,12 @@ statement_list:
   ;
 
 pragma:
-    PRAGMA MPC options  { $$.precision = $3.precision;
+    PRAGMA_MPC { is_pragma = true; }
+               options  { $$.precision = $3.precision;
                           $$.rounding = $3.rounding;
                           $$.mode = MODE_MPC; }
-  | PRAGMA MPFR options { $$.precision = $3.precision;
+  | PRAGMA_MPFR { is_pragma = true; }
+                options { $$.precision = $3.precision;
                           $$.rounding = $3.rounding;
                           $$.mode = MODE_MPFR; }
   ;

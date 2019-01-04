@@ -1,129 +1,142 @@
 %{
   #include <stdlib.h>
   #include <string.h>
+  #include <stdbool.h>
   #include "ast.h"
   #include "statement.h"
   #include "parser.h"
+
   int yyerror(char *errormsg);
+  int scanne(int token);
+
+  bool is_pragma = false;
+
+  bool term = false;
 %}
 
+%option noyywrap
 %option nounput
 %option noinput
 
 %%
 
-"#pragma"             { return PRAGMA; }
-" MPC"                { return MPC; }
-" MPFR"               { return MPFR; }
-" precision"          { return PRECISION; }
-" rounding"           { return ROUNDING; }
+<<EOF>>                { return END; }
 
-"int"                  { return INT; }
-"float"                { return FLOAT; }
-"double"               { return DOUBLE; }
-"bool"                 { return BOOL; }
+"#pragma MPC"          { return PRAGMA_MPC; }
+"#pragma MPFR"         { return PRAGMA_MPFR; }
+" precision"           { return scanne(PRECISION); }
+" rounding"            { return scanne(ROUNDING); }
 
-"for"                  { return FOR; }
-"while"                { return WHILE; }
-"do"                   { return DO; }
+"int"                  { return scanne(INT); }
+"float"                { return scanne(FLOAT); }
+"double"               { return scanne(DOUBLE); }
+"bool"                 { return scanne(BOOL); }
 
-"break"                { return BREAK; }
-"continue"             { return CONTINUE; }
+"for"                  { return scanne(FOR); }
+"while"                { return scanne(WHILE); }
+"do"                   { return scanne(DO); }
 
-"if"                   { return IF; }
-"else"                 { return ELSE; }
-"return"               { return RETURN; }
+"break"                { return scanne(BREAK); }
+"continue"             { return scanne(CONTINUE); }
 
-"extern"               { return EXTERN; }
+"if"                   { return scanne(IF); }
+"else"                 { return scanne(ELSE); }
+"return"               { return scanne(RETURN); }
+
+"extern"               { return scanne(EXTERN); }
 
 
-"//"                   { return COMMENT_LINE; }
-"/*"                   { return COMMENT_MULTI; }
-"*/"                   { return COMMENT_END; }
+"//"                   { return scanne(COMMENT_LINE); }
+"/*"                   { return scanne(COMMENT_MULTI); }
+"*/"                   { return scanne(COMMENT_END); }
 
-";"                    { return ';'; }
-"="                    { return '='; }
-"+"                    { return '+'; }
-"*"                    { return '*'; }
-"-"                    { return '-'; }
-"/"                    { return '/'; }
-"("                    { return '('; }
-")"                    { return ')'; }
-"{"                    { return '{'; }
-"}"                    { return '}'; }
-"."                    { return '.'; }
-","                    { return ','; }
-"!"                    { return '!'; }
-">"                    { yylval.binary = OP_GT;    return COMP_OP; }
-"<"                    { yylval.binary = OP_LT;    return COMP_OP; }
-"<="                   { yylval.binary = OP_LTE;   return COMP_OP; }
-">="                   { yylval.binary = OP_GTE;   return COMP_OP; }
-"=="                   { yylval.binary = OP_EQ;    return EQ_OP; }
-"!="                   { yylval.binary = OP_EQ;    return EQ_OP; }
+";"                    { return scanne(';'); }
+"="                    { return scanne('='); }
+"+"                    { return scanne('+'); }
+"*"                    { return scanne('*'); }
+"-"                    { return scanne('-'); }
+"/"                    { return scanne('/'); }
+"("                    { return scanne('('); }
+")"                    { return scanne(')'); }
+"{"                    { return scanne('{'); }
+"}"                    { return scanne('}'); }
+"."                    { return scanne('.'); }
+","                    { return scanne(','); }
+"!"                    { return scanne('!'); }
+">"                    { yylval.binary = OP_GT;    return scanne(COMP_OP); }
+"<"                    { yylval.binary = OP_LT;    return scanne(COMP_OP); }
+"<="                   { yylval.binary = OP_LTE;   return scanne(COMP_OP); }
+">="                   { yylval.binary = OP_GTE;   return scanne(COMP_OP); }
+"=="                   { yylval.binary = OP_EQ;    return scanne(EQ_OP); }
+"!="                   { yylval.binary = OP_EQ;    return scanne(EQ_OP); }
 
-"&&"                   { return AND_OP; }
-"||"                   { return OR_OP; }
+"&&"                   { return scanne(AND_OP); }
+"||"                   { return scanne(OR_OP); }
 
-"++"                   { yylval.unary = OP_INCR;   return UNARY_OP; }
-"--"                   { yylval.unary = OP_DECR;   return UNARY_OP; }
+"++"                   { yylval.unary = OP_INCR;   return scanne(UNARY_OP); }
+"--"                   { yylval.unary = OP_DECR;   return scanne(UNARY_OP); }
 
-"cabsf"                { yylval.unary = OP_CABSF;  return UNARY_FUNC; }
-"cabsl"                { yylval.unary = OP_CABSL;  return UNARY_FUNC; }
-"cabs"                 { yylval.unary = OP_CABS;   return UNARY_FUNC; }
-"ccosf"                { yylval.unary = OP_CCOSF;  return UNARY_FUNC; }
-"ccosl"                { yylval.unary = OP_CCOSL;  return UNARY_FUNC; }
-"ccos"                 { yylval.unary = OP_CCOS;   return UNARY_FUNC; }
-"cexpf"                { yylval.unary = OP_CEXPF;  return UNARY_FUNC; }
-"cexpl"                { yylval.unary = OP_CEXPL;  return UNARY_FUNC; }
-"cexp"                 { yylval.unary = OP_CEXP;   return UNARY_FUNC; }
-"clogf"                { yylval.unary = OP_CLOGF;  return UNARY_FUNC; }
-"clogl"                { yylval.unary = OP_CLOGL;  return UNARY_FUNC; }
-"clog"                 { yylval.unary = OP_CLOG;   return UNARY_FUNC; }
-"cpow"                 { yylval.unary = OP_CPOW;   return UNARY_FUNC; }
-"cpowf"                { yylval.unary = OP_CPOWF;  return UNARY_FUNC; }
-"cpowl"                { yylval.unary = OP_CPOWL;  return UNARY_FUNC; }
-"csin"                 { yylval.unary = OP_CSIN;   return UNARY_FUNC; }
-"csinf"                { yylval.unary = OP_CSINF;  return UNARY_FUNC; }
-"csinl"                { yylval.unary = OP_CSINL;  return UNARY_FUNC; }
-"csqrt"                { yylval.unary = OP_CSQRT;  return UNARY_FUNC; }
-"csqrtf"               { yylval.unary = OP_CSQRTF; return UNARY_FUNC; }
-"csqrtl"               { yylval.unary = OP_CSQRTL; return UNARY_FUNC; }
-"llabs"                { yylval.unary = OP_LLABS;  return UNARY_FUNC; }
-"labs"                 { yylval.unary = OP_LABS;   return UNARY_FUNC; }
-"abs"                  { yylval.unary = OP_ABS;    return UNARY_FUNC; }
-"cosf"                 { yylval.unary = OP_COSF;   return UNARY_FUNC; }
-"cosl"                 { yylval.unary = OP_COSL;   return UNARY_FUNC; }
-"cos"                  { yylval.unary = OP_COS;    return UNARY_FUNC; }
-"expf"                 { yylval.unary = OP_EXPF;   return UNARY_FUNC; }
-"expl"                 { yylval.unary = OP_EXPL;   return UNARY_FUNC; }
-"exp"                  { yylval.unary = OP_EXP;    return UNARY_FUNC; }
-"logf"                 { yylval.unary = OP_LOGF;   return UNARY_FUNC; }
-"logl"                 { yylval.unary = OP_LOGL;   return UNARY_FUNC; }
-"log"                  { yylval.unary = OP_LOG;    return UNARY_FUNC; }
-"pow"                  { yylval.unary = OP_POW;    return UNARY_FUNC; }
-"powf"                 { yylval.unary = OP_POWF;   return UNARY_FUNC; }
-"powl"                 { yylval.unary = OP_POWL;   return UNARY_FUNC; }
-"sin"                  { yylval.unary = OP_SIN;    return UNARY_FUNC; }
-"sinf"                 { yylval.unary = OP_SINF;   return UNARY_FUNC; }
-"sinl"                 { yylval.unary = OP_SINL;   return UNARY_FUNC; }
-"sqrt"                 { yylval.unary = OP_SQRT;   return UNARY_FUNC; }
-"sqrtf"                { yylval.unary = OP_SQRTF;  return UNARY_FUNC; }
-"sqrtl"                { yylval.unary = OP_SQRTL;  return UNARY_FUNC; }
+"cabsf"                { yylval.unary = OP_CABSF;  return scanne(UNARY_FUNC); }
+"cabsl"                { yylval.unary = OP_CABSL;  return scanne(UNARY_FUNC); }
+"cabs"                 { yylval.unary = OP_CABS;   return scanne(UNARY_FUNC); }
+"ccosf"                { yylval.unary = OP_CCOSF;  return scanne(UNARY_FUNC); }
+"ccosl"                { yylval.unary = OP_CCOSL;  return scanne(UNARY_FUNC); }
+"ccos"                 { yylval.unary = OP_CCOS;   return scanne(UNARY_FUNC); }
+"cexpf"                { yylval.unary = OP_CEXPF;  return scanne(UNARY_FUNC); }
+"cexpl"                { yylval.unary = OP_CEXPL;  return scanne(UNARY_FUNC); }
+"cexp"                 { yylval.unary = OP_CEXP;   return scanne(UNARY_FUNC); }
+"clogf"                { yylval.unary = OP_CLOGF;  return scanne(UNARY_FUNC); }
+"clogl"                { yylval.unary = OP_CLOGL;  return scanne(UNARY_FUNC); }
+"clog"                 { yylval.unary = OP_CLOG;   return scanne(UNARY_FUNC); }
+"cpow"                 { yylval.unary = OP_CPOW;   return scanne(UNARY_FUNC); }
+"cpowf"                { yylval.unary = OP_CPOWF;  return scanne(UNARY_FUNC); }
+"cpowl"                { yylval.unary = OP_CPOWL;  return scanne(UNARY_FUNC); }
+"csin"                 { yylval.unary = OP_CSIN;   return scanne(UNARY_FUNC); }
+"csinf"                { yylval.unary = OP_CSINF;  return scanne(UNARY_FUNC); }
+"csinl"                { yylval.unary = OP_CSINL;  return scanne(UNARY_FUNC); }
+"csqrt"                { yylval.unary = OP_CSQRT;  return scanne(UNARY_FUNC); }
+"csqrtf"               { yylval.unary = OP_CSQRTF; return scanne(UNARY_FUNC); }
+"csqrtl"               { yylval.unary = OP_CSQRTL; return scanne(UNARY_FUNC); }
+"llabs"                { yylval.unary = OP_LLABS;  return scanne(UNARY_FUNC); }
+"labs"                 { yylval.unary = OP_LABS;   return scanne(UNARY_FUNC); }
+"abs"                  { yylval.unary = OP_ABS;    return scanne(UNARY_FUNC); }
+"cosf"                 { yylval.unary = OP_COSF;   return scanne(UNARY_FUNC); }
+"cosl"                 { yylval.unary = OP_COSL;   return scanne(UNARY_FUNC); }
+"cos"                  { yylval.unary = OP_COS;    return scanne(UNARY_FUNC); }
+"expf"                 { yylval.unary = OP_EXPF;   return scanne(UNARY_FUNC); }
+"expl"                 { yylval.unary = OP_EXPL;   return scanne(UNARY_FUNC); }
+"exp"                  { yylval.unary = OP_EXP;    return scanne(UNARY_FUNC); }
+"logf"                 { yylval.unary = OP_LOGF;   return scanne(UNARY_FUNC); }
+"logl"                 { yylval.unary = OP_LOGL;   return scanne(UNARY_FUNC); }
+"log"                  { yylval.unary = OP_LOG;    return scanne(UNARY_FUNC); }
+"pow"                  { yylval.unary = OP_POW;    return scanne(UNARY_FUNC); }
+"powf"                 { yylval.unary = OP_POWF;   return scanne(UNARY_FUNC); }
+"powl"                 { yylval.unary = OP_POWL;   return scanne(UNARY_FUNC); }
+"sin"                  { yylval.unary = OP_SIN;    return scanne(UNARY_FUNC); }
+"sinf"                 { yylval.unary = OP_SINF;   return scanne(UNARY_FUNC); }
+"sinl"                 { yylval.unary = OP_SINL;   return scanne(UNARY_FUNC); }
+"sqrt"                 { yylval.unary = OP_SQRT;   return scanne(UNARY_FUNC); }
+"sqrtf"                { yylval.unary = OP_SQRTF;  return scanne(UNARY_FUNC); }
+"sqrtl"                { yylval.unary = OP_SQRTL;  return scanne(UNARY_FUNC); }
 
-[0-9]+                 { yylval.integer = atoi(yytext); return INTEGER; }
-[0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return DECIMAL; }
+[0-9]+                 { yylval.integer = atoi(yytext); return scanne(INTEGER); }
+[0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return scanne(DECIMAL); }
 
-[\n\t ]                {}
+[\n\t ]+               { if (!is_pragma) printf("%s", yytext); }
 
-[a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext); return IDENTIFIER; }
+[a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext); return scanne(IDENTIFIER); }
 
 %%
-
-int yywrap(void) {
-     return 0;
-}
 
 int yyerror(char *errormsg) {
       fprintf(stderr, "%s\n", errormsg);
       exit(1);
+}
+
+int scanne(int token) {
+  if (is_pragma)
+    return token;
+
+  printf("%s", yytext);
+  return IGNORE;
 }

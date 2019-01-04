@@ -218,7 +218,7 @@ void ast_delete(ast_node_t *node) {
 
 void indent(uint8_t n) {
   for (uint8_t i = 0; i < n; i++)
-    printf("  ");
+    fprintf(stderr, "  ");
 }
 
 void ast_display_i(ast_node_t *node, uint8_t i);
@@ -235,75 +235,75 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
 
   switch (node->type) {
     case NODE_UNARY:
-      printf("Unary op %d\n", node->c.unary.type);
+      fprintf(stderr, "Unary op %d\n", node->c.unary.type);
       ast_display_i(node->c.unary.arg, i + 1);
       break;
 
     case NODE_BINARY:
-      printf("Binary op %d\n", node->c.binary.type);
+      fprintf(stderr, "Binary op %d\n", node->c.binary.type);
       ast_display_i(node->c.binary.left, i + 1);
       ast_display_i(node->c.binary.right, i + 1);
       break;
 
     case NODE_ASSIGN:
-      printf("Assign %s =\n", node->c.assign.lval);
+      fprintf(stderr, "Assign %s =\n", node->c.assign.lval);
       ast_display_i(node->c.assign.rval, i + 1);
       break;
 
     case NODE_DECL:
       if (node->c.decl.rval) {
-        printf("Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
+        fprintf(stderr, "Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
         ast_display_i(node->c.decl.rval, i + 1);
       } else {
-        printf("Declaration %d %s\n", node->c.decl.type, node->c.decl.lval);
+        fprintf(stderr, "Declaration %d %s\n", node->c.decl.type, node->c.decl.lval);
       }
       break;
 
     case NODE_COND:
-      printf("If\n");
+      fprintf(stderr, "If\n");
       ast_display_i(node->c.cond.condition, i + 1);
       indent(i);
-      printf("Then\n");
+      fprintf(stderr, "Then\n");
       stmt_display_i(node->c.cond.body, i + 1);
 
       if (node->c.cond.else_body) {
         indent(i);
-        printf("Else\n");
+        fprintf(stderr, "Else\n");
         stmt_display_i(node->c.cond.else_body, i + 1);
       }
       break;
 
     case NODE_LOOP:
-      printf("Loop\n");
+      fprintf(stderr, "Loop\n");
       if (node->c.loop.initializers) {
         indent(i);
-        printf("Init\n");
+        fprintf(stderr, "Init\n");
         stmt_display_i(node->c.loop.initializers, i + 1);
       }
 
       if (node->c.loop.condition) {
         indent(i);
-        printf("Condition\n");
+        fprintf(stderr, "Condition\n");
         ast_display_i(node->c.loop.condition, i + 1);
       }
 
       indent(i);
-      printf("Body\n");
+      fprintf(stderr, "Body\n");
       stmt_display_i(node->c.loop.body, i + 1);
 
       if (node->c.loop.end) {
         indent(i);
-        printf("End\n");
+        fprintf(stderr, "End\n");
         stmt_display_i(node->c.loop.end, i + 1);
       }
       break;
 
     case NODE_CONST:
-      printf("Const %f\n", node->c.constant);
+      fprintf(stderr, "Const %f\n", node->c.constant);
       break;
 
     case NODE_SYMBOL:
-      printf("Symbol '%s'\n", node->c.symbol);
+      fprintf(stderr, "Symbol '%s'\n", node->c.symbol);
       break;
   }
 }
