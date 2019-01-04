@@ -5,9 +5,18 @@
 #include "symbol.h"
 #include <stdio.h>
 
-void gencode_init(FILE *file, symbol_t *symbol_table, uint32_t precision);
-void gencode_assign(FILE *file, symbol_t *symbol_table, char *rounding);
-void gencode_operations(FILE *file, op_list_t *list, char *rounding);
-void gencode_clear(FILE *file, symbol_t *symbol_table, char *rounding);
+typedef enum gencode_lib_e { LIB_MPC, LIB_MPFR } gencode_lib_t;
+
+typedef struct gencode_args_s {
+  gencode_lib_t lib;
+  uint32_t precision;
+  char *rounding;
+  FILE *file;
+} gencode_args_t;
+
+void gencode_init(gencode_args_t *args, symbol_t *symbol_table);
+void gencode_assign(gencode_args_t *args, symbol_t *symbol_table);
+void gencode_operations(gencode_args_t *args, op_list_t *list);
+void gencode_clear(gencode_args_t *args, symbol_t *symbol_table);
 
 #endif
