@@ -95,9 +95,9 @@ statement:
     assignement_expr ';'  { $$ = stmt_new($1); }
   | declaration_list ';'
   | if_statement          { $$ = stmt_new($1); }
-  | while_statement       { $$ = NULL; printf("while_statement\n"); }
+  | while_statement       { $$ = stmt_new($1); }
   | do_while_statement    { $$ = NULL; printf("do_while_statement\n"); }
-  | for_statement         { $$ = NULL; printf("for_condition\n"); }
+  | for_statement         { $$ = stmt_new($1); }
   ;
 
 declaration:
@@ -243,7 +243,7 @@ if_statement:
   ;
 
 while_statement:
-    WHILE '(' assignement_expr ')' block { printf("while\n"); }
+    WHILE '(' assignement_expr ')' block { $$ = ast_new_loop(NULL, $3, NULL, $5); }
   ;
 
 do_while_statement:
@@ -256,6 +256,6 @@ for_condition:
   ;
 
 for_statement:
-    FOR '(' for_condition ';' for_condition ';' for_condition ')' block     { printf("for\n"); }
-  | FOR '(' declaration_list ';' for_condition ';' for_condition ')' block  { printf("for decl\n"); }
+    FOR '(' for_condition ';' for_condition ';' for_condition ')' block     { $$ = ast_new_loop(stmt_new($3), $5, stmt_new($7), $9); }
+  | FOR '(' declaration_list ';' for_condition ';' for_condition ')' block  { $$ = ast_new_loop($3, $5, stmt_new($7), $9); }
   ;
