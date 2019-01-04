@@ -50,11 +50,9 @@ void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
   }
 
   while (symbol) {
-    if (symbol->external && symbol->name &&
-        symbol->readBeforeModified) {
+    if (symbol->name && symbol->readBeforeModified && !symbol->declared) {
       fprintf(args->file, "%s%s_set_d(T%d, %s, %s); // %s\n", indent, lib,
-              symbol->number, symbol->name, args->rounding,
-              symbol->name);
+              symbol->number, symbol->name, args->rounding, symbol->name);
     } else if (symbol->hasValue) {
       if (symbol->type == SYM_DECIMAL) {
         fprintf(args->file, "%s%s_set_d(T%d, %f, %s);\n", indent, lib,
@@ -163,9 +161,22 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
   char *lib = __gencode_lib_name(args->lib);
 
   for (s = symbol_table; s; s = s->next) {
-    if (s->modified && s->name && s->external) {
-      fprintf(args->file, "%s%s = %s_get_dc(T%d, %s);\n", indent, s->name, lib,
-              s->number, args->rounding);
+    if (s->modified && s->name) {
+      if (s->declared) {
+        char *type;
+        if (s->type == SYM_DECIMAL)
+          type = "double";
+        else if (s->type == SYM_INTEGER)
+          type = "int";
+        else
+          abort(); // TODO(sandhose): error handling
+
+        fprintf(args->file, "%s%s %s = %s_get_dc(T%d, %s);\n", indent, type,
+                s->name, lib, s->number, args->rounding);
+      } else {
+        fprintf(args->file, "%s%s = %s_get_dc(T%d, %s);\n", indent, s->name,
+                lib, s->number, args->rounding);
+      }
     }
   }
 

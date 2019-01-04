@@ -63,6 +63,25 @@ ast_node_t *ast_new_loop(stmt_t *init, ast_node_t *cond, stmt_t *end,
   return node;
 }
 
+ast_node_t *ast_new_break(void) {
+  ast_node_t *node = ast_alloc();
+  node->type = NODE_BREAK;
+  return node;
+}
+
+ast_node_t *ast_new_continue(void) {
+  ast_node_t *node = ast_alloc();
+  node->type = NODE_CONTINUE;
+  return node;
+}
+
+ast_node_t *ast_new_return(ast_node_t *retval) {
+  ast_node_t *node = ast_alloc();
+  node->type = NODE_RETURN;
+  node->c.retval = retval;
+  return node;
+}
+
 ast_node_t *ast_new_constant(constant_t constant) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_CONST;
@@ -136,11 +155,30 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
     }
 
     case NODE_DECL: {
-      // TODO(sandhose): The symbol type should be set according to the decl type
-      symbol_t *dest = symbol_add(table, SYM_DECIMAL, node->c.assign.lval, false);
+      symbol_type_t type;
+      switch (node->c.decl.type) {
+        case TYPE_INT:
+          type = SYM_INTEGER;
+          break;
+
+        case TYPE_DOUBLE:
+        case TYPE_FLOAT:
+          type = SYM_DECIMAL;
+          break;
+
+        case TYPE_BOOL:
+          type = SYM_BOOLEAN;
+          break;
+
+        case TYPE_COMPLEX:
+          type = SYM_UNKNOWN;
+          break;
+      }
+
+      symbol_t *dest = symbol_add(table, type, node->c.decl.lval, true);
       if (node->c.assign.rval) {
         dest->modified = true;
-        symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
+        symbol_t *temp = ast_gen_quad(node->c.decl.rval, table, ops);
         op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
         quad_list_append(ops, quad);
       }
@@ -154,6 +192,23 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
 
     case NODE_LOOP: {
       // TODO(sandhose): generate code for loop control blocks
+      break;
+    }
+
+    case NODE_BREAK: {
+      // TODO(sandhose): generate code for break statements
+      break;
+    }
+
+    case NODE_CONTINUE: {
+      // TODO(sandhose): generate code for continue statements
+      break;
+    }
+
+    case NODE_RETURN: {
+      symbol_t *dest = ast_gen_quad(node->c.retval, table, ops);
+      // TODO(sandhose): generate code for return statements
+      (void)dest;
       break;
     }
 
@@ -205,6 +260,12 @@ void ast_delete(ast_node_t *node) {
       // TODO(sandhose): free the statements
       break;
 
+    case NODE_RETURN:
+      ast_delete(node->c.retval);
+      break;
+
+    case NODE_BREAK:
+    case NODE_CONTINUE:
     case NODE_CONST:
       break;
 
@@ -296,6 +357,22 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
         fprintf(stderr, "End\n");
         stmt_display_i(node->c.loop.end, i + 1);
       }
+      break;
+
+    case NODE_BREAK:
+      printf("Break\n");
+      break;
+
+    case NODE_CONTINUE:
+      printf("Continue\n");
+      break;
+
+    case NODE_RETURN:
+      printf("Return\n");
+
+      if (node->c.retval)
+        ast_display_i(node->c.retval, i + 1);
+
       break;
 
     case NODE_CONST:

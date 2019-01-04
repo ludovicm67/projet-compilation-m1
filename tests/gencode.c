@@ -123,7 +123,7 @@ void test_gencode_example(void) {
   symbol_t *symbol_table = NULL;
   TEST_CHECK(symbol_table == NULL);
 
-  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
+  symbol_t *var_y = symbol_add(&symbol_table, SYM_DECIMAL, "y", true);
   TEST_CHECK(var_y != NULL);
   var_y->modified = true;
   symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
@@ -213,7 +213,7 @@ void test_gencode_example(void) {
   fclose(args.file);
 
   while (read(fd[0], buff, BUFF_SIZE) > 0) {
-    TEST_CHECK(!strcmp(buff, "  y = mpc_get_dc(T3, MPC_RNDZZ);\n"
+    TEST_CHECK(!strcmp(buff, "  double y = mpc_get_dc(T3, MPC_RNDZZ);\n"
                              "\n"
                              "  // free memory of all variables that we used\n"
                              "  mpc_clear(T0);\n"

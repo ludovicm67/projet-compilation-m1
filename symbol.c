@@ -5,12 +5,12 @@
 
 #include "symbol.h"
 
-symbol_t *symbol_new(symbol_type_t type, char *name, bool external) {
+symbol_t *symbol_new(symbol_type_t type, char *name, bool declared) {
   symbol_t *symbol = malloc(sizeof(symbol_t));
   symbol->number = 0;
   symbol->type = type;
   symbol->name = name;
-  symbol->external = external;
+  symbol->declared = declared;
   symbol->readBeforeModified = false;
   symbol->modified = false;
   symbol->hasValue = false;
@@ -18,10 +18,11 @@ symbol_t *symbol_new(symbol_type_t type, char *name, bool external) {
   return symbol;
 }
 
-symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name, bool external) {
+symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name,
+                     bool declared) {
   symbol_t *tmp;
 
-  tmp = symbol_new(type, name, external);
+  tmp = symbol_new(type, name, declared);
   tmp->next = *symbol;
 
   *symbol = tmp;
@@ -62,8 +63,8 @@ symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
     }
   }
 
-  // if not add it (assume it is external)
-  return symbol_add(symbol, SYM_UNKNOWN, name, true);
+  // if not add it
+  return symbol_add(symbol, SYM_UNKNOWN, name, false);
 }
 
 void symbol_delete(symbol_t *symbol) {
