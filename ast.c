@@ -222,10 +222,11 @@ void indent(uint8_t n) {
     printf("  ");
 }
 
+void ast_display_i(ast_node_t *node, uint8_t i);
+
 void stmt_display_i(stmt_t *list, uint8_t i) {
   while (list) {
-    indent(i);
-    ast_display(list->node);
+    ast_display_i(list->node, i);
     list = list->next;
   }
 }

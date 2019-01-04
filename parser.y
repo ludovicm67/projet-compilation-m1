@@ -80,7 +80,7 @@
 %type <stmt>       pragma_contents
 %type <stmt>       block
 %type <stmt>       statement_list
-%type <stmt>       if_statement
+%type <node>       if_statement
 
 
 %start parse
@@ -90,7 +90,7 @@
 statement:
     assignement_expr ';'  { $$ = stmt_new($1); }
   | declaration_list ';'
-  | if_statement          { printf("woop woop\n"); }
+  | if_statement          { $$ = stmt_new($1); }
   ;
 
 declaration:
@@ -231,6 +231,6 @@ for_statement:
 */
 
 if_statement:
-    IF '(' assignement_expr ')' block             { printf("if\n"); }
-  | IF '(' assignement_expr ')' block ELSE block  { printf("if else\n"); }
+    IF '(' assignement_expr ')' block             { $$ = ast_new_cond($3, $5, NULL); }
+  | IF '(' assignement_expr ')' block ELSE block  { $$ = ast_new_cond($3, $5, $7); }
   ;
