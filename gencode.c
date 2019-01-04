@@ -130,6 +130,11 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
                 ARG_2);
         break;
 
+      case QUAD_OP_COS:
+        fprintf(args->file, "%s%s_cos(T%d, T%d, %s); // T%d = cos(T%d)\n",
+                ARG_2);
+        break;
+
       case QUAD_OP_INCR:
         fprintf(args->file, "%s%s_add_ui(T%d, T%d, 1, %s); // T%d++\n", ARG_1);
         break;
