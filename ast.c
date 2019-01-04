@@ -162,6 +162,8 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
     return tmp;
   }
   }
+
+  return NULL;
 }
 
 void ast_delete(ast_node_t *node) {
