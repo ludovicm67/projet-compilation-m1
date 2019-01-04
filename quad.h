@@ -16,6 +16,7 @@ typedef enum quad_op_e {
   QUAD_OP_LOG,
   QUAD_OP_POW,
   QUAD_OP_SIN,
+  QUAD_OP_COS,
   QUAD_OP_INCR,
   QUAD_OP_DECR,
   QUAD_NOOP,
