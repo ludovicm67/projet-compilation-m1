@@ -84,6 +84,10 @@ void gencode_operations(FILE *file, op_list_t *list, char *rounding) {
     case QUAD_OP_NEG:
       fprintf(file, "%smpc_neg(T%d, T%d, %s); // T%d = -T%d\n", ARG_2);
       break;
+
+    case QUAD_NOOP:
+      fprintf(file, "%s// Unsupported OP\n", indent);
+      break;
     }
     list = list->next;
   }

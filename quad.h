@@ -9,7 +9,8 @@ typedef enum quad_op_e {
   QUAD_OP_MUL,
   QUAD_OP_ASSIGN,
   QUAD_OP_SQRT,
-  QUAD_OP_NEG
+  QUAD_OP_NEG,
+  QUAD_NOOP,
 } quad_op_t;
 
 typedef struct op_s {
