@@ -43,6 +43,7 @@
 "//"                   { return COMMENT_LINE; }
 "/*"                   { return COMMENT_MULTI; }
 "*/"                   { return COMMENT_END; }
+
 ";"                    { return ';'; }
 "="                    { return '='; }
 "+"                    { return '+'; }

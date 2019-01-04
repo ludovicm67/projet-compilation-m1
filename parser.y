@@ -77,17 +77,20 @@
 %type <identifier> rounding
 %type <options>    options
 %type <options>    pragma
-%type <stmt>       block
 %type <stmt>       pragma_contents
+%type <stmt>       block
 %type <stmt>       statement_list
+%type <stmt>       if_statement
+
 
 %start parse
 
 %%
 
 statement:
-    assignement_expr   { $$ = stmt_new($1); }
-  | declaration_list
+    assignement_expr ';'  { $$ = stmt_new($1); }
+  | declaration_list ';'
+  | if_statement          { printf("woop woop\n"); }
   ;
 
 declaration:
@@ -96,7 +99,7 @@ declaration:
   ;
 
 declaration_list:
-    declaration  { $$ = stmt_new($1); }
+    declaration                      { $$ = stmt_new($1); }
   | declaration_list ',' assignement { $$ = stmt_push($1, ast_decl_from_assign($1->node->c.decl.type, $3)); }
   | declaration_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_decl($1->node->c.decl.type, $3, NULL)); }
   ;
@@ -181,18 +184,18 @@ parse:
     };
 
 pragma_contents:
-   statement ';'   { $$ = $1; }
- | block           { $$ = $1; }
- ;
-
-statement_list:
-    pragma_contents                { $$ = $1; }
-  | statement_list pragma_contents { $$ = $1; stmt_concat(&$$, $2); }
+    block  { $$ = $1; }
   ;
 
 block:
-    '{' '}'                 { $$ = NULL; }
+   statement                { $$ = $1; }
+  | '{' '}'                 { $$ = NULL; }
   | '{' statement_list '}'  { $$ = $2; }
+  ;
+
+statement_list:
+    block                { $$ = $1; }
+  | statement_list block { $$ = $1; stmt_concat(&$$, $2); }
   ;
 
 pragma:
@@ -216,4 +219,18 @@ options:
   | rounding precision { $$.precision = $2; $$.rounding = $1; }
   | rounding           { $$.precision = 0;  $$.rounding = $1; }
   |                    { $$.precision = 0;  $$.rounding = NULL; }
+  ;
+
+/* Control Flow */
+
+/*
+control_statement:
+while_statement:
+switch_statement:
+for_statement:
+*/
+
+if_statement:
+    IF '(' assignement_expr ')' block             { printf("if\n"); }
+  | IF '(' assignement_expr ')' block ELSE block  { printf("if else\n"); }
   ;
