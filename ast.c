@@ -64,54 +64,26 @@ ast_node_t *ast_decl_from_assign(ast_decl_type_t type, ast_node_t *node) {
 }
 
 static quad_op_t binary_map[] = {
-  [OP_ADD] = QUAD_OP_ADD,
-  [OP_AND] = QUAD_NOOP,
-  [OP_DIV] = QUAD_NOOP,
-  [OP_EQ] = QUAD_NOOP,
-  [OP_GTE] = QUAD_NOOP,
-  [OP_GT] = QUAD_NOOP,
-  [OP_LTE] = QUAD_NOOP,
-  [OP_LT] = QUAD_NOOP,
-  [OP_MUL] = QUAD_OP_MUL,
-  [OP_OR] = QUAD_NOOP,
-  [OP_SUB] = QUAD_OP_SUB,
+    [OP_ADD] = QUAD_OP_ADD, [OP_AND] = QUAD_NOOP,   [OP_DIV] = QUAD_OP_DIV,
+    [OP_EQ] = QUAD_NOOP,    [OP_GTE] = QUAD_NOOP,   [OP_GT] = QUAD_NOOP,
+    [OP_LTE] = QUAD_NOOP,   [OP_LT] = QUAD_NOOP,    [OP_MUL] = QUAD_OP_MUL,
+    [OP_OR] = QUAD_NOOP,    [OP_SUB] = QUAD_OP_SUB,
 };
 
-quad_op_t ast_map_binary(ast_binary_op_t op) {
-  return binary_map[op];
-}
-
+quad_op_t ast_map_binary(ast_binary_op_t op) { return binary_map[op]; }
 
 static quad_op_t unary_map[] = {
-  [OP_ABS] = QUAD_NOOP,
-  [OP_CPOW] = QUAD_NOOP,
-  [OP_CPOWF] = QUAD_NOOP,
-  [OP_CPOWL] = QUAD_NOOP,
-  [OP_CSIN] = QUAD_NOOP,
-  [OP_CSINF] = QUAD_NOOP,
-  [OP_CSINL] = QUAD_NOOP,
-  [OP_CSQRT] = QUAD_NOOP,
-  [OP_CSQRTF] = QUAD_NOOP,
-  [OP_CSQRTL] = QUAD_NOOP,
-  [OP_DECR] = QUAD_NOOP,
-  [OP_EXP] = QUAD_NOOP,
-  [OP_INCR] = QUAD_NOOP,
-  [OP_LOG] = QUAD_NOOP,
-  [OP_NEG] = QUAD_OP_NEG,
-  [OP_POW] = QUAD_NOOP,
-  [OP_POWF] = QUAD_NOOP,
-  [OP_POWL] = QUAD_NOOP,
-  [OP_SIN] = QUAD_NOOP,
-  [OP_SINF] = QUAD_NOOP,
-  [OP_SINL] = QUAD_NOOP,
-  [OP_SQRT] = QUAD_OP_SQRT,
-  [OP_SQRTF] = QUAD_NOOP,
-  [OP_SQRTL] = QUAD_NOOP,
+    [OP_ABS] = QUAD_OP_ABS,   [OP_CPOW] = QUAD_NOOP,    [OP_CPOWF] = QUAD_NOOP,
+    [OP_CPOWL] = QUAD_NOOP,   [OP_CSIN] = QUAD_NOOP,    [OP_CSINF] = QUAD_NOOP,
+    [OP_CSINL] = QUAD_NOOP,   [OP_CSQRT] = QUAD_NOOP,   [OP_CSQRTF] = QUAD_NOOP,
+    [OP_CSQRTL] = QUAD_NOOP,  [OP_DECR] = QUAD_OP_DECR, [OP_EXP] = QUAD_OP_EXP,
+    [OP_INCR] = QUAD_OP_INCR, [OP_LOG] = QUAD_OP_LOG,   [OP_NEG] = QUAD_OP_NEG,
+    [OP_POW] = QUAD_OP_POW,   [OP_POWF] = QUAD_NOOP,    [OP_POWL] = QUAD_NOOP,
+    [OP_SIN] = QUAD_OP_SIN,   [OP_SINF] = QUAD_NOOP,    [OP_SINL] = QUAD_NOOP,
+    [OP_SQRT] = QUAD_OP_SQRT, [OP_SQRTF] = QUAD_NOOP,   [OP_SQRTL] = QUAD_NOOP,
 };
 
-quad_op_t ast_map_unary(ast_unary_op_t op) {
-  return unary_map[op];
-}
+quad_op_t ast_map_unary(ast_unary_op_t op) { return unary_map[op]; }
 
 symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
   switch (node->type) {

@@ -1,5 +1,6 @@
 #include "gencode.h"
 
+#define ARG_1 indent, q->q1->number, q->q1->number, rounding, q->q1->number
 #define ARG_2                                                                  \
   indent, q->q1->number, q->q2->number, rounding, q->q1->number, q->q2->number
 #define ARG_3                                                                  \
@@ -73,6 +74,11 @@ void gencode_operations(FILE *file, op_list_t *list, char *rounding) {
               ARG_3);
       break;
 
+    case QUAD_OP_DIV:
+      fprintf(file, "%smpc_div(T%d, T%d, T%d, %s); // T%d = T%d / T%d\n",
+              ARG_3);
+      break;
+
     case QUAD_OP_ASSIGN:
       fprintf(file, "%smpc_set(T%d, T%d, %s); // T%d = T%d\n", ARG_2);
       break;
@@ -83,6 +89,34 @@ void gencode_operations(FILE *file, op_list_t *list, char *rounding) {
 
     case QUAD_OP_NEG:
       fprintf(file, "%smpc_neg(T%d, T%d, %s); // T%d = -T%d\n", ARG_2);
+      break;
+
+    case QUAD_OP_ABS:
+      fprintf(file, "%smpc_abs(T%d, T%d, %s); // T%d = abs(T%d)\n", ARG_2);
+      break;
+
+    case QUAD_OP_EXP:
+      fprintf(file, "%smpc_exp(T%d, T%d, %s); // T%d = exp(T%d)\n", ARG_2);
+      break;
+
+    case QUAD_OP_LOG:
+      fprintf(file, "%smpc_log(T%d, T%d, %s); // T%d = log(T%d)\n", ARG_2);
+      break;
+
+    case QUAD_OP_POW:
+      fprintf(file, "%smpc_pow(T%d, T%d, %s); // T%d = pow(T%d)\n", ARG_2);
+      break;
+
+    case QUAD_OP_SIN:
+      fprintf(file, "%smpc_sin(T%d, T%d, %s); // T%d = sin(T%d)\n", ARG_2);
+      break;
+
+    case QUAD_OP_INCR:
+      fprintf(file, "%smpc_add_ui(T%d, T%d, 1, %s); // T%d++\n", ARG_1);
+      break;
+
+    case QUAD_OP_DECR:
+      fprintf(file, "%smpc_sub_ui(T%d, T%d, 1, %s); // T%d--\n", ARG_1);
       break;
 
     case QUAD_NOOP:
