@@ -47,7 +47,7 @@
 %token EXTERN
 
 %token FOR WHILE DO
-%token IF ELSE SWITCH CASE DEFAULT
+%token IF ELSE
 %token BREAK CONTINUE GOTO
 %token RETURN
 
@@ -70,6 +70,7 @@
 %type <node>       assignement_expr
 %type <node>       assignement
 %type <node>       declaration
+%type <node>       for_condition
 %type <stmt>       statement
 %type <stmt>       declaration_list
 %type <decl_type>  type
@@ -81,6 +82,9 @@
 %type <stmt>       block
 %type <stmt>       statement_list
 %type <node>       if_statement
+%type <node>       while_statement
+%type <node>       do_while_statement
+%type <node>       for_statement
 
 
 %start parse
@@ -91,6 +95,9 @@ statement:
     assignement_expr ';'  { $$ = stmt_new($1); }
   | declaration_list ';'
   | if_statement          { $$ = stmt_new($1); }
+  | while_statement       { $$ = NULL; printf("while_statement\n"); }
+  | do_while_statement    { $$ = NULL; printf("do_while_statement\n"); }
+  | for_statement         { $$ = NULL; printf("for_condition\n"); }
   ;
 
 declaration:
@@ -148,6 +155,7 @@ multiplicative_expr:
 unary_expr:
     expression
   | '-' expression                   { $$ = ast_new_unary(OP_NEG, $2); }
+  | expression UNARY_OP              { $$ = ast_new_unary($2, $1); }
   | UNARY_OP expression              { $$ = ast_new_unary($1, $2); }
   | UNARY_FUNC '(' additive_expr ')' { $$ = ast_new_unary($1, $3); }
   ;
@@ -221,16 +229,25 @@ options:
   |                    { $$.precision = 0;  $$.rounding = NULL; }
   ;
 
-/* Control Flow */
-
-/*
-control_statement:
-while_statement:
-switch_statement:
-for_statement:
-*/
-
 if_statement:
     IF '(' assignement_expr ')' block             { $$ = ast_new_cond($3, $5, NULL); }
   | IF '(' assignement_expr ')' block ELSE block  { $$ = ast_new_cond($3, $5, $7); }
+  ;
+
+while_statement:
+    WHILE '(' assignement_expr ')' block { printf("while\n"); }
+  ;
+
+do_while_statement:
+    DO block WHILE ';'  { printf("do while\n"); }
+  ;
+
+for_condition:
+    assignement_expr
+  |
+  ;
+
+for_statement:
+    FOR '(' for_condition ';' for_condition ';' for_condition ')' block     { printf("for\n"); }
+  | FOR '(' declaration_list ';' for_condition ';' for_condition ')' block  { printf("for decl\n"); }
   ;
