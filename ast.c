@@ -291,6 +291,7 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
         printf("End\n");
         stmt_display_i(node->c.loop.end, i + 1);
       }
+      break;
 
     case NODE_CONST:
       printf("Const %f\n", node->c.constant);
