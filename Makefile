@@ -4,15 +4,17 @@ LDFLAGS := $(FLAGS)
 
 SOURCES = \
 	ast.c \
-	lexer.c \
 	quad.c \
 	statement.c \
 	symbol.c \
 	gencode.c \
 
-BIN_OBJ = \
-	main.o \
+HEADERS = \
+	$(SOURCES=.c=.h)
+
+OBJECTS = \
 	parser.o \
+	lexer.o \
 	$(SOURCES:%.c=%.o)
 
 TESTS = \
@@ -23,10 +25,7 @@ TESTS = \
 	tests/gencode.c \
 
 TESTS_OBJ = \
-	tests/main.o \
-	parser.o \
-	$(TESTS:%.c=%.o) \
-	$(SOURCES:%.c=%.o)
+	$(TESTS:%.c=%.o)
 
 DEPS = \
 	$(SOURCES:%.c=%.d) \
@@ -37,8 +36,8 @@ DEPS = \
 BIN = main
 TESTS_BIN = tests/main
 
-$(BIN): $(BIN_OBJ)
-$(TESTS_BIN): $(TESTS_OBJ)
+$(BIN): main.o $(OBJECTS)
+$(TESTS_BIN): tests/main.o $(OBJECTS) $(TESTS_OBJ)
 
 .PHONY: cover
 cover:
@@ -65,8 +64,8 @@ test: $(TESTS_BIN)
 
 .PHONY: clean
 clean:
-	$(RM) parser.h parser.c lexer.c $(BIN) $(BIN_OBJ) $(TESTS_BIN) $(TESTS_OBJ)
+	$(RM) parser.h parser.c lexer.c $(BIN) $(OBJECTS) $(TESTS_BIN) $(TESTS_OBJ)
 
 .PHONY: format
 format:
-	clang-format -i *.c *.h ./tests/*.c
+	clang-format -i $(SOURCES) $(TESTS) $(HEADERS) main.c tests/main.c
