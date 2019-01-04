@@ -52,6 +52,17 @@ ast_node_t *ast_new_cond(ast_node_t *condition, stmt_t *body,
   return node;
 }
 
+ast_node_t *ast_new_loop(stmt_t *init, ast_node_t *cond, stmt_t *end,
+                         stmt_t *body) {
+  ast_node_t *node = ast_alloc();
+  node->type = NODE_LOOP;
+  node->c.loop.initializers = init;
+  node->c.loop.condition = cond;
+  node->c.loop.end = end;
+  node->c.loop.body = body;
+  return node;
+}
+
 ast_node_t *ast_new_constant(constant_t constant) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_CONST;
@@ -138,6 +149,11 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
       break;
     }
 
+    case NODE_LOOP: {
+      // TODO(sandhose): generate code for loop control blocks
+      break;
+    }
+
     case NODE_CONST: {
       return symbol_add(table, NULL, false, true, node->c.constant);
     }
@@ -176,6 +192,11 @@ void ast_delete(ast_node_t *node) {
 
     case NODE_COND:
       ast_delete(node->c.cond.condition);
+      // TODO(sandhose): free the statements
+      break;
+
+    case NODE_LOOP:
+      ast_delete(node->c.loop.condition);
       // TODO(sandhose): free the statements
       break;
 
@@ -246,6 +267,30 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
         stmt_display_i(node->c.cond.else_body, i + 1);
       }
       break;
+
+    case NODE_LOOP:
+      printf("Loop\n");
+      if (node->c.loop.initializers) {
+        indent(i);
+        printf("Init\n");
+        stmt_display_i(node->c.loop.initializers, i + 1);
+      }
+
+      if (node->c.loop.condition) {
+        indent(i);
+        printf("Condition\n");
+        ast_display_i(node->c.loop.condition, i + 1);
+      }
+
+      indent(i);
+      printf("Body\n");
+      stmt_display_i(node->c.loop.body, i + 1);
+
+      if (node->c.loop.end) {
+        indent(i);
+        printf("End\n");
+        stmt_display_i(node->c.loop.end, i + 1);
+      }
 
     case NODE_CONST:
       printf("Const %f\n", node->c.constant);

@@ -14,6 +14,7 @@ typedef enum ast_node_type_e {
   NODE_CONST,
   NODE_SYMBOL,
   NODE_COND,
+  NODE_LOOP,
 } ast_node_type_t;
 
 typedef enum ast_decl_type_e {
@@ -123,6 +124,13 @@ struct ast_node_s {
       stmt_t *else_body;
     } cond;
 
+    struct {
+      stmt_t *initializers;
+      ast_node_t *condition;
+      stmt_t *end;
+      stmt_t *body;
+    } loop;
+
     constant_t constant;
 
     char *symbol;
@@ -134,6 +142,7 @@ ast_node_t *ast_new_binary(ast_binary_op_t, ast_node_t *, ast_node_t *);
 ast_node_t *ast_new_assign(char *, ast_node_t *);
 ast_node_t *ast_new_decl(ast_decl_type_t, char *, ast_node_t *);
 ast_node_t *ast_new_cond(ast_node_t *, stmt_t *, stmt_t *);
+ast_node_t *ast_new_loop(stmt_t *init, ast_node_t *cond, stmt_t *end, stmt_t *body);
 ast_node_t *ast_new_constant(constant_t);
 ast_node_t *ast_new_symbol(char *);
 ast_node_t *ast_decl_from_assign(ast_decl_type_t, ast_node_t *);
