@@ -10,8 +10,8 @@ void test_symbol_memory(void) {
   TEST_CHECK(symbol != NULL);
   TEST_CHECK_(!strcmp(symbol->name, "test"),
               "Expected name to be 'test' but got %s", symbol->name);
-  TEST_CHECK_(symbol->external, "Expected external to be 'true' but got %d",
-              symbol->external);
+  TEST_CHECK_(symbol->declared, "Expected declared to be 'true' but got %d",
+              symbol->declared);
   TEST_CHECK_(!symbol->modified, "Expected modified to be 'false' but got %d",
               symbol->modified);
   TEST_CHECK_(!symbol->hasValue, "Expected hasValue to be 'false' but got %d",

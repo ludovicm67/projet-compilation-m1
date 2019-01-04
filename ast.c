@@ -137,10 +137,30 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
 
     case NODE_DECL: {
       // TODO(sandhose): The symbol type should be set according to the decl type
-      symbol_t *dest = symbol_add(table, SYM_DECIMAL, node->c.assign.lval, false);
+      symbol_type_t type;
+      switch (node->c.decl.type) {
+        case TYPE_INT:
+          type = SYM_INTEGER;
+          break;
+
+        case TYPE_DOUBLE:
+        case TYPE_FLOAT:
+          type = SYM_DECIMAL;
+          break;
+
+        case TYPE_BOOL:
+          type = SYM_BOOLEAN;
+          break;
+
+        case TYPE_COMPLEX:
+          type = SYM_UNKNOWN;
+          break;
+      }
+
+      symbol_t *dest = symbol_add(table, type, node->c.decl.lval, true);
       if (node->c.assign.rval) {
         dest->modified = true;
-        symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
+        symbol_t *temp = ast_gen_quad(node->c.decl.rval, table, ops);
         op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
         quad_list_append(ops, quad);
       }

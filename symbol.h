@@ -15,7 +15,8 @@ typedef struct symbol_s {
   uint32_t number; // number of the variable (will be used at code generation)
   symbol_type_t type;
   char *name;
-  bool external;
+  bool declared;
+  // TODO(sandhose): store the symbol scope/depth
   bool readBeforeModified; // value has been read
   bool modified;           // value has been changed in the pragma block
   bool hasValue;           // if this symbol contains a value or not
@@ -27,8 +28,8 @@ typedef struct symbol_s {
   struct symbol_s *next;
 } symbol_t;
 
-symbol_t *symbol_new(symbol_type_t type, char *name, bool external);
-symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name, bool external);
+symbol_t *symbol_new(symbol_type_t type, char *name, bool declared);
+symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name, bool declared);
 void symbol_set_type(symbol_t *, symbol_type_t);
 void symbol_set_decimal(symbol_t *, double value);
 void symbol_set_integer(symbol_t *, int value);
