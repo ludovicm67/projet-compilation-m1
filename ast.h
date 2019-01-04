@@ -13,6 +13,7 @@ typedef enum ast_node_type_e {
   NODE_DECL,
   NODE_CONST,
   NODE_SYMBOL,
+  NODE_COND,
 } ast_node_type_t;
 
 typedef enum ast_decl_type_e {
@@ -66,6 +67,8 @@ typedef enum ast_unary_op_e {
 
 typedef struct ast_node_s ast_node_t;
 
+#include "statement.h"
+
 struct ast_node_s {
   ast_node_type_t type;
   union {
@@ -93,6 +96,12 @@ struct ast_node_s {
       ast_decl_type_t type;
     } decl;
 
+    struct {
+      ast_node_t *condition;
+      stmt_t *body;
+      stmt_t *else_body;
+    } cond;
+
     constant_t constant;
 
     char *symbol;
@@ -103,6 +112,7 @@ ast_node_t *ast_new_unary(ast_unary_op_t, ast_node_t *);
 ast_node_t *ast_new_binary(ast_binary_op_t, ast_node_t *, ast_node_t *);
 ast_node_t *ast_new_assign(char *, ast_node_t *);
 ast_node_t *ast_new_decl(ast_decl_type_t, char *, ast_node_t *);
+ast_node_t *ast_new_cond(ast_node_t *, stmt_t *, stmt_t *);
 ast_node_t *ast_new_constant(constant_t);
 ast_node_t *ast_new_symbol(char *);
 ast_node_t *ast_decl_from_assign(ast_decl_type_t, ast_node_t *);

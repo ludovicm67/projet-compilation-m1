@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 
+typedef struct stmt_s stmt_t;
+
 #include "ast.h"
 
-typedef struct stmt_s stmt_t;
 struct stmt_s {
   ast_node_t *node;
   stmt_t *next;
