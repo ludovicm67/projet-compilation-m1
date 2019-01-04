@@ -52,8 +52,7 @@ void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
   while (symbol) {
     if (symbol->name && symbol->readBeforeModified && !symbol->declared) {
       fprintf(args->file, "%s%s_set_d(T%d, %s, %s); // %s\n", indent, lib,
-              symbol->number, symbol->name, args->rounding,
-              symbol->name);
+              symbol->number, symbol->name, args->rounding, symbol->name);
     } else if (symbol->hasValue) {
       if (symbol->type == SYM_DECIMAL) {
         fprintf(args->file, "%s%s_set_d(T%d, %f, %s);\n", indent, lib,
@@ -175,8 +174,8 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
         fprintf(args->file, "%s%s %s = %s_get_dc(T%d, %s);\n", indent, type,
                 s->name, lib, s->number, args->rounding);
       } else {
-        fprintf(args->file, "%s%s = %s_get_dc(T%d, %s);\n", indent, s->name, lib,
-                s->number, args->rounding);
+        fprintf(args->file, "%s%s = %s_get_dc(T%d, %s);\n", indent, s->name,
+                lib, s->number, args->rounding);
       }
     }
   }
