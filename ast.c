@@ -42,7 +42,8 @@ ast_node_t *ast_new_decl(ast_decl_type_t type, char *lval, ast_node_t *rval) {
   return node;
 }
 
-ast_node_t *ast_new_cond(ast_node_t *condition, stmt_t *body, stmt_t *else_body) {
+ast_node_t *ast_new_cond(ast_node_t *condition, stmt_t *body,
+                         stmt_t *else_body) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_COND;
   node->c.cond.condition = condition;
@@ -96,57 +97,57 @@ quad_op_t ast_map_unary(ast_unary_op_t op) { return unary_map[op]; }
 
 symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
   switch (node->type) {
-  case NODE_UNARY: {
-    symbol_t *dest = symbol_add(table, NULL, false, false, 0);
-    symbol_t *arg = ast_gen_quad(node->c.unary.arg, table, ops);
-    op_t *quad = quad_new(ast_map_unary(node->c.unary.type), dest, arg, NULL);
-    quad_list_append(ops, quad);
-    return dest;
-  }
+    case NODE_UNARY: {
+      symbol_t *dest = symbol_add(table, NULL, false, false, 0);
+      symbol_t *arg = ast_gen_quad(node->c.unary.arg, table, ops);
+      op_t *quad = quad_new(ast_map_unary(node->c.unary.type), dest, arg, NULL);
+      quad_list_append(ops, quad);
+      return dest;
+    }
 
-  case NODE_BINARY: {
-    symbol_t *dest = symbol_add(table, NULL, false, false, 0);
-    symbol_t *left = ast_gen_quad(node->c.binary.left, table, ops);
-    symbol_t *right = ast_gen_quad(node->c.binary.right, table, ops);
-    op_t *quad =
-        quad_new(ast_map_binary(node->c.binary.type), dest, left, right);
-    quad_list_append(ops, quad);
-    return dest;
-  }
+    case NODE_BINARY: {
+      symbol_t *dest = symbol_add(table, NULL, false, false, 0);
+      symbol_t *left = ast_gen_quad(node->c.binary.left, table, ops);
+      symbol_t *right = ast_gen_quad(node->c.binary.right, table, ops);
+      op_t *quad =
+          quad_new(ast_map_binary(node->c.binary.type), dest, left, right);
+      quad_list_append(ops, quad);
+      return dest;
+    }
 
-  case NODE_ASSIGN: {
-    symbol_t *dest = symbol_lookup(table, node->c.assign.lval);
-    dest->modified = true;
-    symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
-    op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
-    quad_list_append(ops, quad);
-    return dest;
-  }
+    case NODE_ASSIGN: {
+      symbol_t *dest = symbol_lookup(table, node->c.assign.lval);
+      dest->modified = true;
+      symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
+      op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
+      quad_list_append(ops, quad);
+      return dest;
+    }
 
-  case NODE_DECL: {
-    symbol_t *dest = symbol_add(table, node->c.assign.lval, false, false, 0);
-    dest->modified = true;
-    symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
-    op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
-    quad_list_append(ops, quad);
-    return NULL;
-  }
+    case NODE_DECL: {
+      symbol_t *dest = symbol_add(table, node->c.assign.lval, false, false, 0);
+      dest->modified = true;
+      symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
+      op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
+      quad_list_append(ops, quad);
+      return NULL;
+    }
 
-  case NODE_COND: {
-    // TODO(sandhose): generate code for `if` control blocks
-    break;
-  }
+    case NODE_COND: {
+      // TODO(sandhose): generate code for `if` control blocks
+      break;
+    }
 
-  case NODE_CONST: {
-    return symbol_add(table, NULL, false, true, node->c.constant);
-  }
+    case NODE_CONST: {
+      return symbol_add(table, NULL, false, true, node->c.constant);
+    }
 
-  case NODE_SYMBOL: {
-    symbol_t *tmp = symbol_lookup(table, node->c.symbol);
-    if (!tmp->modified)
-      tmp->readBeforeModified = true;
-    return tmp;
-  }
+    case NODE_SYMBOL: {
+      symbol_t *tmp = symbol_lookup(table, node->c.symbol);
+      if (!tmp->modified)
+        tmp->readBeforeModified = true;
+      return tmp;
+    }
   }
 
   return NULL;
@@ -154,36 +155,36 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
 
 void ast_delete(ast_node_t *node) {
   switch (node->type) {
-  case NODE_UNARY:
-    ast_delete(node->c.unary.arg);
-    break;
+    case NODE_UNARY:
+      ast_delete(node->c.unary.arg);
+      break;
 
-  case NODE_BINARY:
-    ast_delete(node->c.binary.left);
-    ast_delete(node->c.binary.right);
-    break;
+    case NODE_BINARY:
+      ast_delete(node->c.binary.left);
+      ast_delete(node->c.binary.right);
+      break;
 
-  case NODE_ASSIGN:
-    // symbol_delete(node->c.assign.lval);
-    ast_delete(node->c.assign.rval);
-    break;
+    case NODE_ASSIGN:
+      // symbol_delete(node->c.assign.lval);
+      ast_delete(node->c.assign.rval);
+      break;
 
-  case NODE_DECL:
-    // symbol_delete(node->c.decl.lval);
-    ast_delete(node->c.decl.rval);
-    break;
+    case NODE_DECL:
+      // symbol_delete(node->c.decl.lval);
+      ast_delete(node->c.decl.rval);
+      break;
 
-  case NODE_COND:
-    ast_delete(node->c.cond.condition);
-    // TODO(sandhose): free the statements
-    break;
+    case NODE_COND:
+      ast_delete(node->c.cond.condition);
+      // TODO(sandhose): free the statements
+      break;
 
-  case NODE_CONST:
-    break;
+    case NODE_CONST:
+      break;
 
-  case NODE_SYMBOL:
-    // symbol_delete(node->c.symbol);
-    break;
+    case NODE_SYMBOL:
+      // symbol_delete(node->c.symbol);
+      break;
   }
 
   free(node);
@@ -207,52 +208,52 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
   indent(i);
 
   switch (node->type) {
-  case NODE_UNARY:
-    printf("Unary op %d\n", node->c.unary.type);
-    ast_display_i(node->c.unary.arg, i + 1);
-    break;
+    case NODE_UNARY:
+      printf("Unary op %d\n", node->c.unary.type);
+      ast_display_i(node->c.unary.arg, i + 1);
+      break;
 
-  case NODE_BINARY:
-    printf("Binary op %d\n", node->c.binary.type);
-    ast_display_i(node->c.binary.left, i + 1);
-    ast_display_i(node->c.binary.right, i + 1);
-    break;
+    case NODE_BINARY:
+      printf("Binary op %d\n", node->c.binary.type);
+      ast_display_i(node->c.binary.left, i + 1);
+      ast_display_i(node->c.binary.right, i + 1);
+      break;
 
-  case NODE_ASSIGN:
-    printf("Assign %s =\n", node->c.assign.lval);
-    ast_display_i(node->c.assign.rval, i + 1);
-    break;
+    case NODE_ASSIGN:
+      printf("Assign %s =\n", node->c.assign.lval);
+      ast_display_i(node->c.assign.rval, i + 1);
+      break;
 
-  case NODE_DECL:
-    if (node->c.decl.rval) {
-      printf("Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
-      ast_display_i(node->c.decl.rval, i + 1);
-    } else {
-      printf("Declaration %d %s\n", node->c.decl.type, node->c.decl.lval);
-    }
-    break;
+    case NODE_DECL:
+      if (node->c.decl.rval) {
+        printf("Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
+        ast_display_i(node->c.decl.rval, i + 1);
+      } else {
+        printf("Declaration %d %s\n", node->c.decl.type, node->c.decl.lval);
+      }
+      break;
 
-  case NODE_COND:
-    printf("If\n");
-    ast_display_i(node->c.cond.condition, i + 1);
-    indent(i);
-    printf("Then\n");
-    stmt_display_i(node->c.cond.body, i + 1);
-
-    if (node->c.cond.else_body) {
+    case NODE_COND:
+      printf("If\n");
+      ast_display_i(node->c.cond.condition, i + 1);
       indent(i);
-      printf("Else\n");
-      stmt_display_i(node->c.cond.else_body, i + 1);
-    }
-    break;
+      printf("Then\n");
+      stmt_display_i(node->c.cond.body, i + 1);
 
-  case NODE_CONST:
-    printf("Const %f\n", node->c.constant);
-    break;
+      if (node->c.cond.else_body) {
+        indent(i);
+        printf("Else\n");
+        stmt_display_i(node->c.cond.else_body, i + 1);
+      }
+      break;
 
-  case NODE_SYMBOL:
-    printf("Symbol '%s'\n", node->c.symbol);
-    break;
+    case NODE_CONST:
+      printf("Const %f\n", node->c.constant);
+      break;
+
+    case NODE_SYMBOL:
+      printf("Symbol '%s'\n", node->c.symbol);
+      break;
   }
 }
 

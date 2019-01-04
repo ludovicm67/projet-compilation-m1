@@ -63,75 +63,75 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
   while (list) {
     q = list->quad;
     switch (q->op) {
-    case QUAD_OP_ADD:
-      fprintf(args->file, "%smpc_add(T%d, T%d, T%d, %s); // T%d = T%d + T%d\n",
-              ARG_3);
-      break;
+      case QUAD_OP_ADD:
+        fprintf(args->file,
+                "%smpc_add(T%d, T%d, T%d, %s); // T%d = T%d + T%d\n", ARG_3);
+        break;
 
-    case QUAD_OP_SUB:
-      fprintf(args->file, "%smpc_sub(T%d, T%d, T%d, %s); // T%d = T%d - T%d\n",
-              ARG_3);
-      break;
+      case QUAD_OP_SUB:
+        fprintf(args->file,
+                "%smpc_sub(T%d, T%d, T%d, %s); // T%d = T%d - T%d\n", ARG_3);
+        break;
 
-    case QUAD_OP_MUL:
-      fprintf(args->file, "%smpc_mul(T%d, T%d, T%d, %s); // T%d = T%d * T%d\n",
-              ARG_3);
-      break;
+      case QUAD_OP_MUL:
+        fprintf(args->file,
+                "%smpc_mul(T%d, T%d, T%d, %s); // T%d = T%d * T%d\n", ARG_3);
+        break;
 
-    case QUAD_OP_DIV:
-      fprintf(args->file, "%smpc_div(T%d, T%d, T%d, %s); // T%d = T%d / T%d\n",
-              ARG_3);
-      break;
+      case QUAD_OP_DIV:
+        fprintf(args->file,
+                "%smpc_div(T%d, T%d, T%d, %s); // T%d = T%d / T%d\n", ARG_3);
+        break;
 
-    case QUAD_OP_ASSIGN:
-      fprintf(args->file, "%smpc_set(T%d, T%d, %s); // T%d = T%d\n", ARG_2);
-      break;
+      case QUAD_OP_ASSIGN:
+        fprintf(args->file, "%smpc_set(T%d, T%d, %s); // T%d = T%d\n", ARG_2);
+        break;
 
-    case QUAD_OP_SQRT:
-      fprintf(args->file, "%smpc_sqr(T%d, T%d, %s); // T%d = sqrt(T%d)\n",
-              ARG_2);
-      break;
+      case QUAD_OP_SQRT:
+        fprintf(args->file, "%smpc_sqr(T%d, T%d, %s); // T%d = sqrt(T%d)\n",
+                ARG_2);
+        break;
 
-    case QUAD_OP_NEG:
-      fprintf(args->file, "%smpc_neg(T%d, T%d, %s); // T%d = -T%d\n", ARG_2);
-      break;
+      case QUAD_OP_NEG:
+        fprintf(args->file, "%smpc_neg(T%d, T%d, %s); // T%d = -T%d\n", ARG_2);
+        break;
 
-    case QUAD_OP_ABS:
-      fprintf(args->file, "%smpc_abs(T%d, T%d, %s); // T%d = abs(T%d)\n",
-              ARG_2);
-      break;
+      case QUAD_OP_ABS:
+        fprintf(args->file, "%smpc_abs(T%d, T%d, %s); // T%d = abs(T%d)\n",
+                ARG_2);
+        break;
 
-    case QUAD_OP_EXP:
-      fprintf(args->file, "%smpc_exp(T%d, T%d, %s); // T%d = exp(T%d)\n",
-              ARG_2);
-      break;
+      case QUAD_OP_EXP:
+        fprintf(args->file, "%smpc_exp(T%d, T%d, %s); // T%d = exp(T%d)\n",
+                ARG_2);
+        break;
 
-    case QUAD_OP_LOG:
-      fprintf(args->file, "%smpc_log(T%d, T%d, %s); // T%d = log(T%d)\n",
-              ARG_2);
-      break;
+      case QUAD_OP_LOG:
+        fprintf(args->file, "%smpc_log(T%d, T%d, %s); // T%d = log(T%d)\n",
+                ARG_2);
+        break;
 
-    case QUAD_OP_POW:
-      fprintf(args->file, "%smpc_pow(T%d, T%d, %s); // T%d = pow(T%d)\n",
-              ARG_2);
-      break;
+      case QUAD_OP_POW:
+        fprintf(args->file, "%smpc_pow(T%d, T%d, %s); // T%d = pow(T%d)\n",
+                ARG_2);
+        break;
 
-    case QUAD_OP_SIN:
-      fprintf(args->file, "%smpc_sin(T%d, T%d, %s); // T%d = sin(T%d)\n",
-              ARG_2);
-      break;
+      case QUAD_OP_SIN:
+        fprintf(args->file, "%smpc_sin(T%d, T%d, %s); // T%d = sin(T%d)\n",
+                ARG_2);
+        break;
 
-    case QUAD_OP_INCR:
-      fprintf(args->file, "%smpc_add_ui(T%d, T%d, 1, %s); // T%d++\n", ARG_1);
-      break;
+      case QUAD_OP_INCR:
+        fprintf(args->file, "%smpc_add_ui(T%d, T%d, 1, %s); // T%d++\n", ARG_1);
+        break;
 
-    case QUAD_OP_DECR:
-      fprintf(args->file, "%smpc_sub_ui(T%d, T%d, 1, %s); // T%d--\n", ARG_1);
-      break;
+      case QUAD_OP_DECR:
+        fprintf(args->file, "%smpc_sub_ui(T%d, T%d, 1, %s); // T%d--\n", ARG_1);
+        break;
 
-    case QUAD_NOOP:
-      fprintf(args->file, "%s// Unsupported OP\n", indent);
-      break;
+      case QUAD_NOOP:
+        fprintf(args->file, "%s// Unsupported OP\n", indent);
+        break;
     }
     list = list->next;
   }
