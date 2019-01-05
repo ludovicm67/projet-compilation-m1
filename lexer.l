@@ -12,6 +12,8 @@
   bool is_pragma = false;
   bool is_in_single_comment = false;
   bool is_in_multi_comment = false;
+
+  extern FILE *f_dst;
 %}
 
 %option noyywrap
@@ -111,8 +113,8 @@
 [0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return scanne(DECIMAL); }
 
 "\n"                   { if (is_pragma && is_in_single_comment) return yytext[0];
-                         if (!is_pragma) printf("%c", yytext[0]); }
-[\t ]+                 { if (!is_pragma) printf("%s", yytext); }
+                         if (!is_pragma) fprintf(f_dst, "%c", yytext[0]); }
+[\t ]+                 { if (!is_pragma) fprintf(f_dst, "%s", yytext); }
 
 [a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext); return scanne(IDENTIFIER); }
 
@@ -133,6 +135,6 @@ int scanne(int token) {
       return token;
   }
 
-  printf("%s", yytext);
+  fprintf(f_dst, "%s", yytext);
   return IGNORE;
 }

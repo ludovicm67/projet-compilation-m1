@@ -3,8 +3,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void parse(FILE* source);
+#include "statement.h"
+#include "gencode.h"
+
+stmt_t *parse(FILE* source);
 int yyparse(void);
+
+FILE *f_dst;
 
 void usage (char * const command) {
     printf("Usage: %s [-o file] SOURCE\n\n", command);
@@ -21,8 +26,8 @@ void usage (char * const command) {
     exit(EXIT_FAILURE);
 }
 
-FILE* f_open(char* fname) {
-  FILE* fp = fopen(fname, "r");
+FILE* f_open(char* fname, char* options) {
+  FILE* fp = fopen(fname, options);
   if (!fp) {
     perror("open");
     abort();
@@ -45,14 +50,14 @@ int main (int argc, char* argv[]) {
   int option;
   int i = 0;
 
-  FILE* src = stdin;  // STDIN is the source by default
-  FILE* dst = stdout; // STDOUT is the destination by default
+  FILE* f_src = stdin; // STDIN is the source by default
+  f_dst = stdout;      // STDOUT is the destination by default
 
   // No option is required
   while ((option = getopt(argc, argv, "+:o:h")) != -1) {
     switch(option){
       case 'o':
-        dst = f_open(optarg);
+        f_dst = f_open(optarg, "w");
         break;
       case 'h':
         usage(prog_name);
@@ -75,7 +80,7 @@ int main (int argc, char* argv[]) {
 
   if (argc == 1) {
     printf("source : %s\n", argv[0]);
-    src = f_open(argv[0]);
+    f_src = f_open(argv[0], "r");
   }
 
   if (argc > 1) {
@@ -88,17 +93,34 @@ int main (int argc, char* argv[]) {
     usage(prog_name);
   }
 
-  (void) src;
-  (void) dst;
+  gencode_args_t args;
+  args.file = stdout;
+  args.lib = 0;
+  args.precision = 128;
+  args.rounding = "MPCMACHIN";
+  args.file = f_dst;
 
-  parse(src);
-  /*
-  yyin = src;
-  yyparse();
-  */
+  stmt_t *result = NULL;
 
-  f_close(src);
-  f_close(dst);
+  while ((result = parse(f_src)) != NULL) {
+    //stmt_display(result);
+
+    op_list_t *ops = NULL;
+    symbol_t *table = NULL;
+    stmt_gen_quad(result, &table, &ops);
+
+    gencode_init(&args, table);
+    gencode_assign(&args, table);
+    gencode_operations(&args, ops);
+    gencode_clear(&args, table);
+
+    stmt_delete(result);
+    quad_list_delete(ops);
+    symbol_delete(table);
+  }
+
+  f_close(f_src);
+  f_close(f_dst);
 
   return EXIT_SUCCESS;
 }

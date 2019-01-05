@@ -9,11 +9,13 @@
   int yydebug = 1;
   int yylex(void);
   int yyerror(const char *s);
-  extern FILE* yyin;
 
+  extern FILE* yyin;
   extern bool is_pragma;
   extern bool is_in_single_comment;
   extern bool is_in_multi_comment;
+
+  stmt_t *parse_result;
 %}
 
 %union {
@@ -21,17 +23,17 @@
   char*  operator;
   int    integer;
   double decimal;
-  ast_node_t     *node;
-  ast_unary_op_t  unary;
-  ast_binary_op_t binary;
+  ast_node_t      *node;
+  ast_unary_op_t   unary;
+  ast_binary_op_t  binary;
   stmt_decl_type_t decl_type;
-  stmt_t* stmt;
-  struct {
+  stmt_t          *stmt;
+  struct parse_option_s {
     enum {
       MODE_MPC,
       MODE_MPFR,
     } mode;
-    int precision;
+    int   precision;
     char *rounding;
   } options;
 }
@@ -195,7 +197,7 @@ type:
   ;
 
 start:
-    parse_list END { printf("\n"); YYACCEPT; }
+    parse_list END { parse_result = NULL; YYACCEPT; }
 
 parse_list:
     parse
@@ -207,33 +209,25 @@ parse_list:
 parse:
     pragma pragma_contents  {
       // init gencode args
+      /*
       gencode_args_t args;
       args.file = stdout;
       args.lib = $1.mode;
       args.precision = $1.precision;
       args.rounding = $1.rounding;
+      */
 
-      fprintf(stderr, "mode: %d, precision: %d, rounding: %s\n",
-              $1.mode, $1.precision, $1.rounding);
-      stmt_display($2);
+      parse_result = $2;
 
-      op_list_t *ops = NULL;
-      symbol_t *table = NULL;
-      stmt_gen_quad($2, &table, &ops);
-
-      gencode_init(&args, table);
-      gencode_assign(&args, table);
-      gencode_operations(&args, ops);
-      gencode_clear(&args, table);
       is_pragma = false;
       is_in_single_comment = false;
       is_in_multi_comment = false;
+      YYACCEPT;
 
-      if (args.rounding)
-        free(args.rounding);
-      stmt_delete($2);
-      quad_list_delete(ops);
-      symbol_delete(table);
+      /*
+      fprintf(stderr, "mode: %d, precision: %d, rounding: %s\n",
+              $1.mode, $1.precision, $1.rounding);
+      */
     };
 
 pragma_contents:
@@ -324,7 +318,9 @@ comment_single:
 
 %%
 
-void parse(FILE* source) {
+stmt_t* parse(FILE* source) {
   yyin = source;
   yyparse();
+
+  return parse_result;
 }
