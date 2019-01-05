@@ -10,7 +10,8 @@
   int scanne(int token);
 
   bool is_pragma = false;
-  bool is_in_comment = false;
+  bool is_in_single_comment = false;
+  bool is_in_multi_comment = false;
 %}
 
 %option noyywrap
@@ -47,22 +48,9 @@
 
 "//"                   { return scanne(COMMENT_LINE); }
 "/*"                   { return scanne(COMMENT_MULTI); }
-"*/"                   { if (is_pragma && is_in_comment) return COMMENT_END;
+"*/"                   { if (is_pragma && is_in_multi_comment) return COMMENT_END;
                          return scanne(COMMENT_END); }
 
-";"                    { return scanne(';'); }
-"="                    { return scanne('='); }
-"+"                    { return scanne('+'); }
-"*"                    { return scanne('*'); }
-"-"                    { return scanne('-'); }
-"/"                    { return scanne('/'); }
-"("                    { return scanne('('); }
-")"                    { return scanne(')'); }
-"{"                    { return scanne('{'); }
-"}"                    { return scanne('}'); }
-"."                    { return scanne('.'); }
-","                    { return scanne(','); }
-"!"                    { return scanne('!'); }
 ">"                    { yylval.binary = OP_GT;    return scanne(COMP_OP); }
 "<"                    { yylval.binary = OP_LT;    return scanne(COMP_OP); }
 "<="                   { yylval.binary = OP_LTE;   return scanne(COMP_OP); }
@@ -122,11 +110,13 @@
 [0-9]+                 { yylval.integer = atoi(yytext); return scanne(INTEGER); }
 [0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return scanne(DECIMAL); }
 
-"\n"                   { if (is_pragma && is_in_comment) return yytext[0];
+"\n"                   { if (is_pragma && is_in_single_comment) return yytext[0];
                          if (!is_pragma) printf("%c", yytext[0]); }
 [\t ]+                 { if (!is_pragma) printf("%s", yytext); }
 
 [a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext); return scanne(IDENTIFIER); }
+
+.                      { return scanne(yytext[0]); }
 
 %%
 
@@ -137,7 +127,7 @@ int yyerror(char *errormsg) {
 
 int scanne(int token) {
   if (is_pragma) {
-    if (is_in_comment)
+    if (is_in_single_comment || is_in_multi_comment)
       return IGNORE;
     else
       return token;

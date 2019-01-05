@@ -11,7 +11,8 @@
   int yyerror(const char *s);
 
   extern bool is_pragma;
-  extern bool is_in_comment;
+  extern bool is_in_single_comment;
+  extern bool is_in_multi_comment;
 %}
 
 %union {
@@ -106,6 +107,8 @@ statement:
   | do_while_statement    { $$ = NULL; printf("do_while_statement\n"); }
   | for_statement
   | ';'                   { $$ = NULL; }
+  | BREAK ';'             { $$ = NULL; }
+  | CONTINUE ';'          { $$ = NULL; }
   ;
 
 declaration:
@@ -215,7 +218,8 @@ parse:
       gencode_operations(&args, ops);
       gencode_clear(&args, table);
       is_pragma = false;
-      is_in_comment = false;
+      is_in_single_comment = false;
+      is_in_multi_comment = false;
     };
 
 pragma_contents:
@@ -292,14 +296,14 @@ for_statement:
   ;
 
 comment_multiline:
-    COMMENT_MULTI                 { is_in_comment = true; }
+    COMMENT_MULTI                 { is_in_multi_comment = true; }
   | comment_multiline IGNORE
   | comment_multiline '\n'
-  | comment_multiline COMMENT_END { is_in_comment = false; }
+  | comment_multiline COMMENT_END { is_in_multi_comment = false; }
   ;
 
 comment_single:
-    COMMENT_LINE          { is_in_comment = true; }
+    COMMENT_LINE          { is_in_single_comment = true; }
   | comment_single IGNORE
-  | comment_single '\n'   { is_in_comment = false; }
+  | comment_single '\n'   { is_in_single_comment = false; }
   ;
