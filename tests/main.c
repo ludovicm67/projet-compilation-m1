@@ -2,6 +2,17 @@
 
 #define _TEST_LIST                                                             \
   _TEST_ITEM(ast, new)                                                         \
+  _TEST_ITEM(ast, new_unary)                                                   \
+  _TEST_ITEM(ast, new_binary)                                                  \
+  _TEST_ITEM(ast, new_assign)                                                  \
+  _TEST_ITEM(ast, new_decl)                                                    \
+  _TEST_ITEM(ast, new_cond)                                                    \
+  _TEST_ITEM(ast, new_loop)                                                    \
+  _TEST_ITEM(ast, new_break)                                                   \
+  _TEST_ITEM(ast, new_continue)                                                \
+  _TEST_ITEM(ast, new_return)                                                  \
+  _TEST_ITEM(ast, new_constant)                                                \
+  _TEST_ITEM(ast, new_symbol)                                                  \
   _TEST_ITEM(ast, decl_from_assign)                                            \
   _TEST_ITEM(quad, new)                                                        \
   _TEST_ITEM(quad, list)                                                       \

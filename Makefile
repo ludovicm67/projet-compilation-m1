@@ -47,6 +47,10 @@ cover:
 release:
 	$(MAKE) FLAGS="-O3"
 
+.PHONY: doc
+doc:
+	doxygen
+
 %.d: %.c
 	$(CC) $(CFLAGS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
 

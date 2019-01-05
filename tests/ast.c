@@ -35,7 +35,133 @@ void test_ast_new(void) {
   ast_delete(root);
 }
 
-void test_ast_decl_from_assign() {
+void test_ast_new_unary(void) {
+  ast_node_t *x = ast_new_symbol("x");
+  ast_node_t *minus_x = ast_new_unary(OP_NEG, x);
+
+  TEST_CHECK(minus_x->type == NODE_UNARY);
+  TEST_CHECK(minus_x->c.unary.type == OP_NEG);
+  TEST_CHECK(minus_x->c.unary.arg == x);
+
+  ast_delete(minus_x);
+}
+
+void test_ast_new_binary(void) {
+  ast_node_t *two = ast_new_constant(2.0);
+  ast_node_t *x = ast_new_symbol("x");
+  ast_node_t *two_times_x = ast_new_binary(OP_MUL, two, x);
+
+  TEST_CHECK(two_times_x->type == NODE_BINARY);
+  TEST_CHECK(two_times_x->c.binary.type == OP_MUL);
+  TEST_CHECK(two_times_x->c.binary.left == two);
+  TEST_CHECK(two_times_x->c.binary.right == x);
+
+  ast_delete(two_times_x);
+}
+
+void test_ast_new_assign(void) {
+  ast_node_t *two = ast_new_constant(2.0);
+  ast_node_t *double_x_eq_two = ast_new_decl(TYPE_DOUBLE, "x", two);
+
+  TEST_CHECK(double_x_eq_two->type == NODE_DECL);
+  TEST_CHECK(double_x_eq_two->c.decl.type == TYPE_DOUBLE);
+  TEST_CHECK(strcmp(double_x_eq_two->c.decl.lval, "x") == 0);
+  TEST_CHECK(double_x_eq_two->c.decl.rval == two);
+
+  ast_delete(double_x_eq_two);
+}
+
+void test_ast_new_decl(void) {
+  ast_node_t *two = ast_new_constant(2.0);
+  ast_node_t *double_x_eq_two = ast_new_decl(TYPE_DOUBLE, "x", two);
+
+  TEST_CHECK(double_x_eq_two->type == NODE_DECL);
+  TEST_CHECK(double_x_eq_two->c.decl.type == TYPE_DOUBLE);
+  TEST_CHECK(strcmp(double_x_eq_two->c.decl.lval, "x") == 0);
+  TEST_CHECK(double_x_eq_two->c.decl.rval == two);
+
+  ast_delete(double_x_eq_two);
+}
+
+void test_ast_new_cond(void) {
+  ast_node_t *y = ast_new_symbol("y");
+  stmt_t *body = stmt_new(ast_new_assign("x", ast_new_constant(2.0)));
+  stmt_t *else_body = stmt_new(ast_new_assign("x", ast_new_constant(5.0)));
+  ast_node_t *cond = ast_new_cond(y, body, else_body);
+
+  TEST_CHECK(cond->type == NODE_COND);
+  TEST_CHECK(cond->c.cond.condition == y);
+  TEST_CHECK(cond->c.cond.body == body);
+  TEST_CHECK(cond->c.cond.else_body == else_body);
+
+  ast_delete(cond);
+}
+
+void test_ast_new_loop(void) {
+  stmt_t *init = stmt_new(ast_new_decl(TYPE_INT, "i", ast_new_constant(1)));
+  ast_node_t *cond =
+      ast_new_binary(OP_LT, ast_new_symbol("i"), ast_new_constant(10));
+  stmt_t *end = stmt_new(ast_new_unary(OP_INCR, ast_new_symbol("i")));
+  stmt_t *body = stmt_new(ast_new_decl(
+      TYPE_INT, "y",
+      ast_new_binary(OP_MUL, ast_new_symbol("i"), ast_new_symbol("y"))));
+
+  ast_node_t *loop = ast_new_loop(init, cond, end, body);
+
+  TEST_CHECK(loop->type == NODE_LOOP);
+  TEST_CHECK(loop->c.loop.initializers == init);
+  TEST_CHECK(loop->c.loop.condition == cond);
+  TEST_CHECK(loop->c.loop.end == end);
+  TEST_CHECK(loop->c.loop.body == body);
+
+  ast_delete(loop);
+}
+
+void test_ast_new_break(void) {
+  ast_node_t *node = ast_new_break();
+
+  TEST_CHECK(node->type == NODE_BREAK);
+
+  ast_delete(node);
+}
+
+void test_ast_new_continue(void) {
+  ast_node_t *node = ast_new_continue();
+
+  TEST_CHECK(node->type == NODE_CONTINUE);
+
+  ast_delete(node);
+}
+
+void test_ast_new_return(void) {
+  ast_node_t *retval = ast_new_symbol("x");
+  ast_node_t *node = ast_new_return(retval);
+
+  TEST_CHECK(node->type == NODE_RETURN);
+  TEST_CHECK(node->c.retval == retval);
+
+  ast_delete(node);
+}
+
+void test_ast_new_constant(void) {
+  ast_node_t *pi = ast_new_constant(3.14);
+
+  TEST_CHECK(pi->type == NODE_CONST);
+  TEST_CHECK(pi->c.constant == 3.14);
+
+  ast_delete(pi);
+}
+
+void test_ast_new_symbol(void) {
+  ast_node_t *x = ast_new_symbol("x");
+
+  TEST_CHECK(x->type == NODE_SYMBOL);
+  TEST_CHECK(strcmp(x->c.symbol, "x") == 0);
+
+  ast_delete(x);
+}
+
+void test_ast_decl_from_assign(void) {
   ast_node_t *val = ast_new_constant(1);
   ast_node_t *assign = ast_new_assign("x", val);
   ast_node_t *decl = ast_decl_from_assign(TYPE_INT, assign);
