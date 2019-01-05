@@ -270,6 +270,8 @@ void stmt_gen_quad(stmt_t *stmt, symbol_t **table, op_list_t **ops) {
           op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
           quad_list_append(ops, quad);
         }
+
+        break;
       }
 
       case STMT_COND:
