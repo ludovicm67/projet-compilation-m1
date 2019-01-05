@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "ast.h"
+#include "util.h"
 
 ast_node_t *ast_alloc(ast_node_type_t type) {
   ast_node_t *node = malloc(sizeof(ast_node_t));
@@ -89,7 +90,8 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
     case NODE_UNARY: {
       symbol_t *dest = symbol_add(table, SYM_DECIMAL, NULL, false);
       symbol_t *arg = ast_gen_quad(node->c.unary.arg, table, ops);
-      op_t *quad = quad_new(ast_map_unary(node->c.unary.type), dest, arg, NULL);
+      quad_op_t op = ast_map_unary(node->c.unary.type);
+      op_t *quad = quad_new(op, dest, arg, NULL);
       quad_list_append(ops, quad);
       return dest;
     }
@@ -98,8 +100,8 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
       symbol_t *dest = symbol_add(table, SYM_DECIMAL, NULL, false);
       symbol_t *left = ast_gen_quad(node->c.binary.left, table, ops);
       symbol_t *right = ast_gen_quad(node->c.binary.right, table, ops);
-      op_t *quad =
-          quad_new(ast_map_binary(node->c.binary.type), dest, left, right);
+      quad_op_t op = ast_map_binary(node->c.binary.type);
+      op_t *quad = quad_new(op, dest, left, right);
       quad_list_append(ops, quad);
       return dest;
     }
@@ -116,6 +118,7 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
     case NODE_CONST: {
       symbol_t *symbol = symbol_add(table, SYM_DECIMAL, NULL, false);
       symbol_set_decimal(symbol, node->c.constant);
+      DEBUGF("New symbol for constant `%f'", node->c.constant);
       return symbol;
     }
 
@@ -127,7 +130,7 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
     }
   }
 
-  abort();
+  FATALF("Unknown node type %d", node->type);
 }
 
 void ast_delete(ast_node_t *node) {
@@ -155,11 +158,6 @@ void ast_delete(ast_node_t *node) {
   }
 
   free(node);
-}
-
-static void indent(uint8_t n) {
-  for (uint8_t i = 0; i < n; i++)
-    fprintf(stderr, "  ");
 }
 
 void stmt_display_i(stmt_t *list, uint8_t i);

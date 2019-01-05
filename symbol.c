@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "symbol.h"
+#include "util.h"
 
 symbol_t *symbol_new(symbol_type_t type, char *name, bool declared) {
   symbol_t *symbol = malloc(sizeof(symbol_t));
@@ -59,17 +60,20 @@ symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
   // check if symbol already exists
   for (tmp = *symbol; tmp; tmp = tmp->next) {
     if (tmp->name && !strcmp(tmp->name, name)) {
+      DEBUGF("Symbol `%s' found (%p)", name, (void *)tmp);
       return tmp;
     }
   }
 
-  // if not add it
-  return symbol_add(symbol, SYM_UNKNOWN, name, false);
+  tmp = symbol_add(symbol, SYM_UNKNOWN, name, false);
+  DEBUGF("Symbol `%s' not found, creating it (%p)", name, (void *)tmp);
+  return tmp;
 }
 
 void symbol_delete(symbol_t *symbol) {
-  if (!symbol)
-    return;
-  symbol_delete(symbol->next);
-  free(symbol);
+  while (symbol) {
+    symbol_t *tmp = symbol->next;
+    free(symbol);
+    symbol = tmp;
+  }
 }

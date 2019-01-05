@@ -4,6 +4,14 @@
 #include <string.h>
 
 #include "statement.h"
+#include "util.h"
+
+static char *stmt_type_map[] = {
+    [STMT_EXPR] = "expression",   [STMT_BLOCK] = "block",
+    [STMT_DECL] = "declaration",  [STMT_COND] = "if",
+    [STMT_LOOP] = "loop",         [STMT_BREAK] = "break",
+    [STMT_CONTINUE] = "continue", [STMT_RETURN] = "return",
+};
 
 stmt_t *stmt_alloc(stmt_type_t type) {
   stmt_t *stmt = malloc(sizeof(stmt_t));
@@ -137,11 +145,6 @@ uint8_t stmt_count(stmt_t *list) {
   return i;
 }
 
-static void indent(uint8_t n) {
-  for (uint8_t i = 0; i < n; i++)
-    fprintf(stderr, "  ");
-}
-
 void ast_display_i(ast_node_t *, uint8_t);
 
 void stmt_display_i(stmt_t *stmt, uint8_t i) {
@@ -235,10 +238,12 @@ void stmt_gen_quad(stmt_t *stmt, symbol_t **table, op_list_t **ops) {
   while (stmt) {
     switch (stmt->type) {
       case STMT_EXPR:
+        DEBUGF("Generating quad for expression %p", (void *)stmt->c.expr);
         ast_gen_quad(stmt->c.expr, table, ops);
         break;
 
       case STMT_BLOCK:
+        DEBUGF("Generating quad for block %p", (void *)stmt->c.block);
         stmt_gen_quad(stmt->c.block, table, ops);
         break;
 
@@ -264,6 +269,7 @@ void stmt_gen_quad(stmt_t *stmt, symbol_t **table, op_list_t **ops) {
         }
 
         symbol_t *dest = symbol_add(table, type, stmt->c.decl.lval, true);
+        DEBUGF("Declaration of `%s'", stmt->c.decl.lval);
         if (stmt->c.decl.rval) {
           dest->modified = true;
           symbol_t *temp = ast_gen_quad(stmt->c.decl.rval, table, ops);
@@ -280,7 +286,7 @@ void stmt_gen_quad(stmt_t *stmt, symbol_t **table, op_list_t **ops) {
       case STMT_CONTINUE:
       case STMT_RETURN:
         // TODO(sandhose): Generate code
-        abort();
+        FATALF("Unsupported `%s' statement", stmt_type_map[stmt->type]);
         break;
     }
     stmt = stmt->next;

@@ -5,13 +5,12 @@
 
 #include "statement.h"
 #include "gencode.h"
+#include "util.h"
 
 stmt_t *parse(FILE* source);
 int yyparse(void);
 
-FILE *f_dst;
-
-void usage (char * const command) {
+static void usage (char * const command) {
     printf("Usage: %s [-o file] SOURCE\n\n", command);
     printf("Compiling C to C with transformations of some arithmetic\n"
            "computations so that these computations are carried out \n"
@@ -26,8 +25,8 @@ void usage (char * const command) {
     exit(EXIT_FAILURE);
 }
 
-FILE* f_open(char* fname, char* options) {
-  FILE* fp = fopen(fname, options);
+static FILE* f_open(char* fname, char* options) {
+  FILE* fp = f_open(fname, options);
   if (!fp) {
     perror("open");
     abort();
@@ -35,7 +34,7 @@ FILE* f_open(char* fname, char* options) {
   return fp;
 }
 
-void f_close(FILE* fp) {
+static void f_close(FILE *fp) {
   fclose(fp);
   if (ferror(fp)) {
     perror("close");
@@ -43,9 +42,8 @@ void f_close(FILE* fp) {
   }
 }
 
-
-int main (int argc, char* argv[]) {
-  char* prog_name = argv[0];
+int main(int argc, char *argv[]) {
+  char *prog_name = argv[0];
 
   int option;
   int i = 0;
@@ -55,7 +53,7 @@ int main (int argc, char* argv[]) {
 
   // No option is required
   while ((option = getopt(argc, argv, "+:o:h")) != -1) {
-    switch(option){
+    switch (option) {
       case 'o':
         f_dst = f_open(optarg, "w");
         break;
@@ -70,13 +68,13 @@ int main (int argc, char* argv[]) {
         fprintf(stderr, "Option -%c takes an argument\n", optopt);
         usage(prog_name);
         break;
-      default :
+      default:
         abort();
     }
   }
 
   argc -= optind;
-	argv += optind;
+  argv += optind;
 
   if (argc == 1) {
     printf("source : %s\n", argv[0]);

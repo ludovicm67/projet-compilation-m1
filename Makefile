@@ -4,11 +4,12 @@ LDFLAGS := $(FLAGS)
 
 SOURCES = \
 	ast.c \
+	gencode.c \
+	optim.c \
 	quad.c \
 	statement.c \
 	symbol.c \
-	gencode.c \
-	optim.c \
+	util.c \
 
 HEADERS = \
 	$(SOURCES=.c=.h)
