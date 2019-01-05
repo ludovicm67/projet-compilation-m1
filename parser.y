@@ -9,6 +9,7 @@
   int yydebug = 1;
   int yylex(void);
   int yyerror(const char *s);
+  extern FILE* yyin;
 
   extern bool is_pragma;
   extern bool is_in_single_comment;
@@ -308,3 +309,10 @@ comment_single:
   | comment_single IGNORE
   | comment_single '\n'   { is_in_single_comment = false; }
   ;
+
+%%
+
+void parse(FILE* source) {
+  yyin = source;
+  yyparse();
+}
