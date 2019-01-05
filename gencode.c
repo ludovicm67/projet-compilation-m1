@@ -177,10 +177,12 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
           abort(); // TODO(sandhose): error handling
 
         fprintf(args->file, "%s%s %s = %s_get_d%c(T%d, %s);\n", indent, type,
-                s->name, lib, (args->lib == LIB_MPC) ? 'c' : '\0', s->number, args->rounding);
+                s->name, lib, (args->lib == LIB_MPC) ? 'c' : '\0', s->number,
+                args->rounding);
       } else {
         fprintf(args->file, "%s%s = %s_get_d%c(T%d, %s);\n", indent, s->name,
-                lib, (args->lib == LIB_MPC) ? 'c' : '\0', s->number, args->rounding);
+                lib, (args->lib == LIB_MPC) ? 'c' : '\0', s->number,
+                args->rounding);
       }
     }
   }
