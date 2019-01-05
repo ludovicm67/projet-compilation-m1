@@ -58,14 +58,29 @@ static quad_op_t binary_map[] = {
 quad_op_t ast_map_binary(ast_binary_op_t op) { return binary_map[op]; }
 
 static quad_op_t unary_map[] = {
-    [OP_ABS] = QUAD_OP_ABS,   [OP_CPOW] = QUAD_NOOP,    [OP_CPOWF] = QUAD_NOOP,
-    [OP_CPOWL] = QUAD_NOOP,   [OP_CSIN] = QUAD_NOOP,    [OP_CSINF] = QUAD_NOOP,
-    [OP_CSINL] = QUAD_NOOP,   [OP_CSQRT] = QUAD_NOOP,   [OP_CSQRTF] = QUAD_NOOP,
-    [OP_CSQRTL] = QUAD_NOOP,  [OP_DECR] = QUAD_OP_DECR, [OP_EXP] = QUAD_OP_EXP,
-    [OP_INCR] = QUAD_OP_INCR, [OP_LOG] = QUAD_OP_LOG,   [OP_NEG] = QUAD_OP_NEG,
-    [OP_POW] = QUAD_OP_POW,   [OP_POWF] = QUAD_NOOP,    [OP_POWL] = QUAD_NOOP,
-    [OP_SIN] = QUAD_OP_SIN,   [OP_SINF] = QUAD_NOOP,    [OP_SINL] = QUAD_NOOP,
-    [OP_SQRT] = QUAD_OP_SQRT, [OP_SQRTF] = QUAD_NOOP,   [OP_SQRTL] = QUAD_NOOP,
+    [OP_ABS] = QUAD_OP_ABS,     [OP_CPOW] = QUAD_OP_POW,
+    [OP_CPOWF] = QUAD_OP_POW,   [OP_CPOWL] = QUAD_OP_POW,
+    [OP_CSIN] = QUAD_OP_SIN,    [OP_CSINF] = QUAD_OP_SIN,
+    [OP_CSINL] = QUAD_OP_SIN,   [OP_CSQRT] = QUAD_OP_SQRT,
+    [OP_CSQRTF] = QUAD_OP_SQRT, [OP_CSQRTL] = QUAD_OP_SQRT,
+    [OP_DECR] = QUAD_OP_DECR,   [OP_EXP] = QUAD_OP_EXP,
+    [OP_INCR] = QUAD_OP_INCR,   [OP_LOG] = QUAD_OP_LOG,
+    [OP_NEG] = QUAD_OP_NEG,     [OP_POW] = QUAD_OP_POW,
+    [OP_POWF] = QUAD_OP_POW,    [OP_POWL] = QUAD_OP_POW,
+    [OP_SIN] = QUAD_OP_SIN,     [OP_SINF] = QUAD_OP_SIN,
+    [OP_SINL] = QUAD_OP_SIN,    [OP_SQRT] = QUAD_OP_SQRT,
+    [OP_SQRTF] = QUAD_OP_SQRT,  [OP_SQRTL] = QUAD_OP_SQRT,
+    [OP_LLABS] = QUAD_OP_ABS,   [OP_LABS] = QUAD_OP_ABS,
+    [OP_CABSF] = QUAD_OP_ABS,   [OP_CABSL] = QUAD_OP_ABS,
+    [OP_CABS] = QUAD_OP_ABS,    [OP_CEXPF] = QUAD_OP_EXP,
+    [OP_CEXPL] = QUAD_OP_EXP,   [OP_CEXP] = QUAD_OP_EXP,
+    [OP_EXPF] = QUAD_OP_EXP,    [OP_EXPL] = QUAD_OP_EXP,
+    [OP_CLOGF] = QUAD_OP_LOG,   [OP_CLOGL] = QUAD_OP_LOG,
+    [OP_CLOG] = QUAD_OP_LOG,    [OP_LOGF] = QUAD_OP_LOG,
+    [OP_LOGL] = QUAD_OP_LOG,    [OP_CCOSF] = QUAD_OP_COS,
+    [OP_CCOSL] = QUAD_OP_COS,   [OP_CCOS] = QUAD_OP_COS,
+    [OP_COSF] = QUAD_OP_COS,    [OP_COSL] = QUAD_OP_COS,
+    [OP_COS] = QUAD_OP_COS,
 };
 
 quad_op_t ast_map_unary(ast_unary_op_t op) { return unary_map[op]; }
