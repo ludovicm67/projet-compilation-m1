@@ -25,6 +25,7 @@ TESTS = \
 	tests/symbol.c \
 	tests/gencode.c \
 	tests/optim.c \
+	tests/output_check.c \
 
 TESTS_OBJ = \
 	$(TESTS:%.c=%.o)

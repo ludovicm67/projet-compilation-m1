@@ -3,23 +3,7 @@
 #include "../gencode.h"
 #include "../quad.h"
 #include "acutest.h"
-#include <unistd.h>
-
-#define BUFF_SIZE 1024
-
-FILE *__init_output_check(int *fd, char *buff) {
-  if (pipe(fd) < 0) {
-    perror("fd");
-    exit(EXIT_FAILURE);
-  }
-  memset(buff, 0, BUFF_SIZE - 1);
-  return fdopen(fd[1], "a");
-}
-
-void __clean_output_check(int *fd) {
-  close(fd[0]);
-  close(fd[1]);
-}
+#include "output_check.h"
 
 void test_gencode_init(void) {
   // init gencode args

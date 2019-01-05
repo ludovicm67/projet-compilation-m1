@@ -11,7 +11,9 @@
   _TEST_ITEM(gencode, init)                                                    \
   _TEST_ITEM(gencode, clear)                                                   \
   _TEST_ITEM(gencode, example)                                                 \
-  _TEST_ITEM(optim, example)
+  _TEST_ITEM(optim, example)                                                   \
+  _TEST_ITEM(optim, add_zero)                                                  \
+  _TEST_ITEM(optim, mul_one)
 
 #define _TEST_ITEM(scope, fun) void test_##scope##_##fun(void);
 _TEST_LIST
