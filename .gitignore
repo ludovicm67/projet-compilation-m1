@@ -6,3 +6,4 @@ main
 tests/main
 *.gc*
 *.dSYM
+doc/
