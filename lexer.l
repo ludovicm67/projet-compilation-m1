@@ -10,8 +10,6 @@
   int scanne(int token);
 
   bool is_pragma = false;
-
-  bool term = false;
 %}
 
 %option noyywrap
@@ -22,10 +20,10 @@
 
 <<EOF>>                { return END; }
 
-"#pragma MPC"          { return PRAGMA_MPC; }
-"#pragma MPFR"         { return PRAGMA_MPFR; }
-" precision"           { return scanne(PRECISION); }
-" rounding"            { return scanne(ROUNDING); }
+"#pragma"[ ]+"MPC"     { return PRAGMA_MPC; }
+"#pragma"[ ]+"MPFR"    { return PRAGMA_MPFR; }
+[ ]+"precision"        { return scanne(PRECISION); }
+[ ]+"rounding"         { return scanne(ROUNDING); }
 
 "int"                  { return scanne(INT); }
 "float"                { return scanne(FLOAT); }
