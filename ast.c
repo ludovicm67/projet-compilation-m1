@@ -6,11 +6,14 @@
 
 #include "ast.h"
 
-ast_node_t *ast_alloc(void) { return malloc(sizeof(ast_node_t)); }
+ast_node_t *ast_alloc(ast_node_type_t type) {
+  ast_node_t *node = malloc(sizeof(ast_node_t));
+  node->type = type;
+  return node;
+}
 
 ast_node_t *ast_new_unary(ast_unary_op_t type, ast_node_t *arg) {
-  ast_node_t *node = ast_alloc();
-  node->type = NODE_UNARY;
+  ast_node_t *node = ast_alloc(NODE_UNARY);
   node->c.unary.type = type;
   node->c.unary.arg = arg;
   return node;
@@ -18,8 +21,7 @@ ast_node_t *ast_new_unary(ast_unary_op_t type, ast_node_t *arg) {
 
 ast_node_t *ast_new_binary(ast_binary_op_t type, ast_node_t *left,
                            ast_node_t *right) {
-  ast_node_t *node = ast_alloc();
-  node->type = NODE_BINARY;
+  ast_node_t *node = ast_alloc(NODE_BINARY);
   node->c.binary.type = type;
   node->c.binary.left = left;
   node->c.binary.right = right;
@@ -27,23 +29,20 @@ ast_node_t *ast_new_binary(ast_binary_op_t type, ast_node_t *left,
 }
 
 ast_node_t *ast_new_assign(char *lval, ast_node_t *rval) {
-  ast_node_t *node = ast_alloc();
-  node->type = NODE_ASSIGN;
+  ast_node_t *node = ast_alloc(NODE_ASSIGN);
   node->c.assign.lval = strdup(lval);
   node->c.assign.rval = rval;
   return node;
 }
 
 ast_node_t *ast_new_constant(constant_t constant) {
-  ast_node_t *node = ast_alloc();
-  node->type = NODE_CONST;
+  ast_node_t *node = ast_alloc(NODE_CONST);
   node->c.constant = constant;
   return node;
 }
 
 ast_node_t *ast_new_symbol(char *symbol) {
-  ast_node_t *node = ast_alloc();
-  node->type = NODE_SYMBOL;
+  ast_node_t *node = ast_alloc(NODE_SYMBOL);
   node->c.symbol = strdup(symbol);
   return node;
 }
