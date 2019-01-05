@@ -100,15 +100,16 @@
 %%
 
 statement:
-    assignement_expr ';'  { $$ = stmt_new_expr($1); }
+    assignement_expr ';'        { $$ = stmt_new_expr($1); }
   | declaration_list ';'
   | if_statement
   | while_statement
-  | do_while_statement    { $$ = NULL; printf("do_while_statement\n"); }
+  | do_while_statement          { $$ = NULL; printf("do_while_statement\n"); }
   | for_statement
-  | ';'                   { $$ = NULL; }
-  | BREAK ';'             { $$ = stmt_new_break(); }
-  | CONTINUE ';'          { $$ = stmt_new_continue(); }
+  | ';'                         { $$ = NULL; }
+  | BREAK ';'                   { $$ = stmt_new_break(); }
+  | CONTINUE ';'                { $$ = stmt_new_continue(); }
+  | RETURN assignement_expr ';' { $$ = stmt_new_return($2); }
   ;
 
 declaration:
