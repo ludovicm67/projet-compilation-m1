@@ -36,4 +36,5 @@ TEST_LIST = {
 #define _TEST_ITEM(scope, fun) {#scope "/" #fun, test_##scope##_##fun},
     _TEST_LIST
 #undef _TEST_ITEM
-    {0}};
+    {NULL, NULL}
+};
