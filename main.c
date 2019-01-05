@@ -3,26 +3,26 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void parse(FILE* source);
+void parse(FILE *source);
 int yyparse(void);
 
-void usage (char * const command) {
-    printf("Usage: %s [-o file] SOURCE\n\n", command);
-    printf("Compiling C to C with transformations of some arithmetic\n"
-           "computations so that these computations are carried out \n"
-           "in floating point of arbitrary precision, thanks to the use\n"
-           "of a dedicated library\n\n");
-    printf("  SOURCE is a file (or stdin) to compile\n");
-    printf("Options:\n"
-           "  -o   Specifies the output (stdout or a file)\n"
-           "  -h   Display this help and exit\n");
-    printf("\n");
+void usage(char *const command) {
+  printf("Usage: %s [-o file] SOURCE\n\n", command);
+  printf("Compiling C to C with transformations of some arithmetic\n"
+         "computations so that these computations are carried out \n"
+         "in floating point of arbitrary precision, thanks to the use\n"
+         "of a dedicated library\n\n");
+  printf("  SOURCE is a file (or stdin) to compile\n");
+  printf("Options:\n"
+         "  -o   Specifies the output (stdout or a file)\n"
+         "  -h   Display this help and exit\n");
+  printf("\n");
 
-    exit(EXIT_FAILURE);
+  exit(EXIT_FAILURE);
 }
 
-FILE* f_open(char* fname) {
-  FILE* fp = fopen(fname, "r");
+FILE *f_open(char *fname) {
+  FILE *fp = fopen(fname, "r");
   if (!fp) {
     perror("open");
     abort();
@@ -30,7 +30,7 @@ FILE* f_open(char* fname) {
   return fp;
 }
 
-void f_close(FILE* fp) {
+void f_close(FILE *fp) {
   fclose(fp);
   if (ferror(fp)) {
     perror("close");
@@ -38,19 +38,18 @@ void f_close(FILE* fp) {
   }
 }
 
-
-int main (int argc, char* argv[]) {
-  char* prog_name = argv[0];
+int main(int argc, char *argv[]) {
+  char *prog_name = argv[0];
 
   int option;
   int i = 0;
 
-  FILE* src = stdin;  // STDIN is the source by default
-  FILE* dst = stdout; // STDOUT is the destination by default
+  FILE *src = stdin;  // STDIN is the source by default
+  FILE *dst = stdout; // STDOUT is the destination by default
 
   // No option is required
   while ((option = getopt(argc, argv, "+:o:h")) != -1) {
-    switch(option){
+    switch (option) {
       case 'o':
         dst = f_open(optarg);
         break;
@@ -65,13 +64,13 @@ int main (int argc, char* argv[]) {
         fprintf(stderr, "Option -%c takes an argument\n", optopt);
         usage(prog_name);
         break;
-      default :
+      default:
         abort();
     }
   }
 
   argc -= optind;
-	argv += optind;
+  argv += optind;
 
   if (argc == 1) {
     printf("source : %s\n", argv[0]);
@@ -88,8 +87,8 @@ int main (int argc, char* argv[]) {
     usage(prog_name);
   }
 
-  (void) src;
-  (void) dst;
+  (void)src;
+  (void)dst;
 
   parse(src);
   /*
