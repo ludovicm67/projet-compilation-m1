@@ -50,11 +50,9 @@ void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
   }
 
   while (symbol) {
-    if (symbol->external && symbol->name &&
-        symbol->readBeforeModified) {
+    if (symbol->external && symbol->name && symbol->readBeforeModified) {
       fprintf(args->file, "%s%s_set_d(T%d, %s, %s); // %s\n", indent, lib,
-              symbol->number, symbol->name, args->rounding,
-              symbol->name);
+              symbol->number, symbol->name, args->rounding, symbol->name);
     } else if (symbol->hasValue) {
       if (symbol->type == SYM_DECIMAL) {
         fprintf(args->file, "%s%s_set_d(T%d, %f, %s);\n", indent, lib,

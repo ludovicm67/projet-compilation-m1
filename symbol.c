@@ -18,7 +18,8 @@ symbol_t *symbol_new(symbol_type_t type, char *name, bool external) {
   return symbol;
 }
 
-symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name, bool external) {
+symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name,
+                     bool external) {
   symbol_t *tmp;
 
   tmp = symbol_new(type, name, external);

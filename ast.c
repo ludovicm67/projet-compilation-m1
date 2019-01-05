@@ -151,8 +151,10 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
     }
 
     case NODE_DECL: {
-      // TODO(sandhose): The symbol type should be set according to the decl type
-      symbol_t *dest = symbol_add(table, SYM_DECIMAL, node->c.assign.lval, false);
+      // TODO(sandhose): The symbol type should be set according to the decl
+      // type
+      symbol_t *dest =
+          symbol_add(table, SYM_DECIMAL, node->c.assign.lval, false);
       if (node->c.assign.rval) {
         dest->modified = true;
         symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);

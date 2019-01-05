@@ -17,8 +17,8 @@ void test_symbol_memory(void) {
   TEST_CHECK_(!symbol->hasValue, "Expected hasValue to be 'false' but got %d",
               symbol->hasValue);
   symbol_set_integer(symbol, 42);
-  TEST_CHECK_(symbol->value.integer == 42, "Expected value to be '42' but got %d",
-              symbol->value);
+  TEST_CHECK_(symbol->value.integer == 42,
+              "Expected value to be '42' but got %d", symbol->value);
   TEST_CHECK_(symbol->hasValue, "Expected hasValue to be 'true' but got %d",
               symbol->hasValue);
   symbol_delete(symbol);
