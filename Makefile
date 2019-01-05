@@ -44,7 +44,7 @@ $(TESTS_BIN): tests/main.o $(OBJECTS) $(TESTS_OBJ)
 
 .PHONY: cover
 cover:
-	$(MAKE) FLAGS="-fprofile-arcs -ftest-coverage -g -O0" test
+	$(MAKE) FLAGS="--coverage" test
 
 .PHONY: release
 release:

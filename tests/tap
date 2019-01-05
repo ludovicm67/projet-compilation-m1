@@ -1,6 +1,0 @@
-1..5
-ok 1 - ast/new
-ok 2 - quad/new
-ok 3 - quad/list
-ok 4 - symbol/memory
-ok 5 - symbol/same_name
