@@ -313,10 +313,12 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
 
     case NODE_DECL:
       if (node->c.decl.rval) {
-        fprintf(stderr, "Declaration %d %s =\n", node->c.decl.type, node->c.decl.lval);
+        fprintf(stderr, "Declaration %d %s =\n", node->c.decl.type,
+                node->c.decl.lval);
         ast_display_i(node->c.decl.rval, i + 1);
       } else {
-        fprintf(stderr, "Declaration %d %s\n", node->c.decl.type, node->c.decl.lval);
+        fprintf(stderr, "Declaration %d %s\n", node->c.decl.type,
+                node->c.decl.lval);
       }
       break;
 
