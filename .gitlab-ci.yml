@@ -9,7 +9,7 @@ test:
 
 pages:
   before_script:
-    - apk add --no-cache doxygen ttf-freefont graphviz
+    - apk add --no-cache doxygen ttf-freefont graphviz make
   script:
     - make doc
     - mv doc/html/ public/
