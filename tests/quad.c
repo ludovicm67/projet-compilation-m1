@@ -42,6 +42,7 @@ void test_quad_list(void) {
   TEST_CHECK(symbol_table != NULL);
   op_t *quad1 = quad_new(QUAD_OP_ADD, var_y, tmp_1, var_x);
   op_t *quad2 = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
+  op_t *quad3 = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
   op_list_t *list = quad_list_new(quad1);
   quad_list_concat(&list, quad_list_new(quad2));
 
@@ -55,7 +56,7 @@ void test_quad_list(void) {
   TEST_CHECK(list->next->quad == quad2);
 
   // test append
-  quad_list_append(&list, quad1);
+  quad_list_append(&list, quad3);
 
   // check length
   TEST_CHECK(list != NULL);
@@ -66,11 +67,9 @@ void test_quad_list(void) {
   // check order
   TEST_CHECK(list->quad == quad1);
   TEST_CHECK(list->next->quad == quad2);
-  TEST_CHECK(list->next->next->quad == quad1);
+  TEST_CHECK(list->next->next->quad == quad3);
 
   // clean
   quad_list_delete(list);
-  quad_delete(quad1);
-  quad_delete(quad2);
   symbol_delete(symbol_table);
 }

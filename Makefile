@@ -8,6 +8,7 @@ SOURCES = \
 	statement.c \
 	symbol.c \
 	gencode.c \
+	optim.c \
 
 HEADERS = \
 	$(SOURCES=.c=.h)
@@ -23,6 +24,8 @@ TESTS = \
 	tests/statement.c \
 	tests/symbol.c \
 	tests/gencode.c \
+	tests/optim.c \
+	tests/output_check.c \
 
 TESTS_OBJ = \
 	$(TESTS:%.c=%.o)
@@ -41,7 +44,7 @@ $(TESTS_BIN): tests/main.o $(OBJECTS) $(TESTS_OBJ)
 
 .PHONY: cover
 cover:
-	$(MAKE) FLAGS="-fprofile-arcs -ftest-coverage -g -O0" test
+	$(MAKE) FLAGS="--coverage" test
 
 .PHONY: release
 release:

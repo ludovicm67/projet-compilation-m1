@@ -61,24 +61,11 @@ void test_ast_new_binary(void) {
 
 void test_ast_new_assign(void) {
   ast_node_t *two = ast_new_constant(2.0);
-  ast_node_t *double_x_eq_two = ast_new_decl(TYPE_DOUBLE, "x", two);
+  ast_node_t *double_x_eq_two = ast_new_assign("x", two);
 
-  TEST_CHECK(double_x_eq_two->type == NODE_DECL);
-  TEST_CHECK(double_x_eq_two->c.decl.type == TYPE_DOUBLE);
-  TEST_CHECK(strcmp(double_x_eq_two->c.decl.lval, "x") == 0);
-  TEST_CHECK(double_x_eq_two->c.decl.rval == two);
-
-  ast_delete(double_x_eq_two);
-}
-
-void test_ast_new_decl(void) {
-  ast_node_t *two = ast_new_constant(2.0);
-  ast_node_t *double_x_eq_two = ast_new_decl(TYPE_DOUBLE, "x", two);
-
-  TEST_CHECK(double_x_eq_two->type == NODE_DECL);
-  TEST_CHECK(double_x_eq_two->c.decl.type == TYPE_DOUBLE);
-  TEST_CHECK(strcmp(double_x_eq_two->c.decl.lval, "x") == 0);
-  TEST_CHECK(double_x_eq_two->c.decl.rval == two);
+  TEST_CHECK(double_x_eq_two->type == NODE_ASSIGN);
+  TEST_CHECK(strcmp(double_x_eq_two->c.assign.lval, "x") == 0);
+  TEST_CHECK(double_x_eq_two->c.assign.rval == two);
 
   ast_delete(double_x_eq_two);
 }
@@ -99,15 +86,4 @@ void test_ast_new_symbol(void) {
   TEST_CHECK(strcmp(x->c.symbol, "x") == 0);
 
   ast_delete(x);
-}
-
-void test_ast_decl_from_assign(void) {
-  ast_node_t *val = ast_new_constant(1);
-  ast_node_t *assign = ast_new_assign("x", val);
-  ast_node_t *decl = ast_decl_from_assign(TYPE_INT, assign);
-
-  TEST_CHECK(decl->type == NODE_DECL);
-  TEST_CHECK(decl->c.decl.type == TYPE_INT);
-  TEST_CHECK(decl->c.decl.rval == val);
-  TEST_CHECK(strcmp(decl->c.decl.lval, "x") == 0);
 }

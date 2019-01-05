@@ -3,9 +3,21 @@
 
 #include <stdint.h>
 
+/**
+ * The different type of symbols in declarations.
+ */
+typedef enum stmt_decl_type_e {
+  TYPE_INT,
+  TYPE_DOUBLE,
+  TYPE_BOOL,
+  TYPE_FLOAT,
+  TYPE_COMPLEX
+} stmt_decl_type_t;
+
 typedef enum stmt_type_e {
   STMT_EXPR,
   STMT_BLOCK,
+  STMT_DECL,
   STMT_COND,
   STMT_LOOP,
   STMT_BREAK,
@@ -23,6 +35,12 @@ struct stmt_s {
     ast_node_t *expr; ///< Content of a `STMT_EXPR`.
 
     stmt_t *block; ///< Content of a `STMT_BLOCK`.
+
+    struct {
+      char *lval; ///< The name of the symbol to declare.
+      ast_node_t *rval; ///< The value of the assignment.
+      stmt_decl_type_t type; ///< The type of symbol to declare.
+    } decl; ///< Content of a `STMT_DECL`.
 
     struct {
       ast_node_t *condition; ///< The condition itself.
@@ -51,11 +69,13 @@ struct stmt_s {
 
 stmt_t *stmt_new_expr(ast_node_t *);
 stmt_t *stmt_new_block(stmt_t *content);
+stmt_t *stmt_new_decl(stmt_decl_type_t, char *, ast_node_t *);
 stmt_t *stmt_new_cond(ast_node_t *condition, stmt_t *body, stmt_t *else_body);
 stmt_t *stmt_new_loop(stmt_t *init, ast_node_t *cond, stmt_t *end, stmt_t *body);
 stmt_t *stmt_new_break(void);
 stmt_t *stmt_new_continue(void);
 stmt_t *stmt_new_return(ast_node_t *retval);
+stmt_t *stmt_decl_from_assign(stmt_decl_type_t, ast_node_t *);
 
 void stmt_concat(stmt_t **head, stmt_t *tail);
 void stmt_delete(stmt_t *list);

@@ -139,6 +139,11 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
                 ARG_2);
         break;
 
+      case QUAD_OP_COS:
+        fprintf(args->file, "%s%s_cos(T%d, T%d, %s); // T%d = cos(T%d)\n",
+                ARG_2);
+        break;
+
       case QUAD_OP_INCR:
         fprintf(args->file, "%s%s_add_ui(T%d, T%d, 1, %s); // T%d++\n", ARG_1);
         break;
@@ -171,11 +176,11 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
         else
           abort(); // TODO(sandhose): error handling
 
-        fprintf(args->file, "%s%s %s = %s_get_dc(T%d, %s);\n", indent, type,
-                s->name, lib, s->number, args->rounding);
+        fprintf(args->file, "%s%s %s = %s_get_d%c(T%d, %s);\n", indent, type,
+                s->name, lib, (args->lib == LIB_MPC) ? 'c' : '\0', s->number, args->rounding);
       } else {
-        fprintf(args->file, "%s%s = %s_get_dc(T%d, %s);\n", indent, s->name,
-                lib, s->number, args->rounding);
+        fprintf(args->file, "%s%s = %s_get_d%c(T%d, %s);\n", indent, s->name,
+                lib, (args->lib == LIB_MPC) ? 'c' : '\0', s->number, args->rounding);
       }
     }
   }

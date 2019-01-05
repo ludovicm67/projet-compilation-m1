@@ -19,21 +19,9 @@ typedef enum ast_node_type_e {
   NODE_UNARY,
   NODE_BINARY,
   NODE_ASSIGN,
-  NODE_DECL,
   NODE_CONST,
   NODE_SYMBOL,
 } ast_node_type_t;
-
-/**
- * The different type of symbols in declarations.
- */
-typedef enum ast_decl_type_e {
-  TYPE_INT,
-  TYPE_DOUBLE,
-  TYPE_BOOL,
-  TYPE_FLOAT,
-  TYPE_COMPLEX
-} ast_decl_type_t;
 
 /**
  * The different types of binary operations.
@@ -130,18 +118,10 @@ struct ast_node_s {
       ast_node_t *right; ///< The right operand.
     } binary; ///< Content of a `NODE_BINARY`.
 
-    // assign and decl have the same shape in memory. This is important for
-    // transforming between them
     struct {
       char *lval; ///< The name of the symbol to assign.
       ast_node_t *rval; ///< The value of the assignment.
     } assign; ///< Content of a `NODE_ASSIGN`.
-
-    struct {
-      char *lval; ///< The name of the symbol to declare.
-      ast_node_t *rval; ///< The value of the assignment.
-      ast_decl_type_t type; ///< The type of symbol to declare.
-    } decl; ///< Content of a `NODE_DECL`.
 
     struct {
       ast_node_t *condition; ///< The condition itself.
@@ -247,32 +227,6 @@ ast_node_t *ast_new_binary(ast_binary_op_t type, ast_node_t *left, ast_node_t *r
 ast_node_t *ast_new_assign(char *symbol, ast_node_t *value);
 
 /**
- * Create a new `NODE_DECL`.
- *
- * @see ast_decl_type_e
- *
- * @param[in] type the type of the declared symbol
- * @param[in] symbol the left part of the assignment
- * @param[in] value the right part of the assignment
- *
- * Example, `double x = 2`:
- * @code
- *  ast_node_t *two = ast_new_constant(2.0);
- *  ast_node_t *double_x_eq_two = ast_new_decl(TYPE_DOUBLE, "x", two);
- *
- *  assert(double_x_eq_two->type == NODE_DECL);
- *  assert(double_x_eq_two->c.decl.type == TYPE_DOUBLE);
- *  assert(strcmp(double_x_eq_two->c.decl.lval, "x") == 0);
- *  assert(double_x_eq_two->c.decl.rval == two);
- *
- *  ast_delete(double_x_eq_two);
- * @endcode
- *
- * @return The new node
- */
-ast_node_t *ast_new_decl(ast_decl_type_t type, char *symbol, ast_node_t *value);
-
-/**
  * Create a new `NODE_CONST`.
  *
  * @param[in] value
@@ -309,18 +263,6 @@ ast_node_t *ast_new_constant(constant_t value);
  * @return The new node
  */
 ast_node_t *ast_new_symbol(char *symbol);
-
-/**
- * Create a `NODE_DECL` from a `NODE_ASSIGN`.
- *
- * @warning The input node is modified and should not be used after that
- *
- * @param[in] type
- * @param[in] node the `NODE_ASSIGN` to convert
- *
- * @return The converted node
- */
-ast_node_t *ast_decl_from_assign(ast_decl_type_t type, ast_node_t *node);
 
 /**
  * Generate quads from a node in the AST.

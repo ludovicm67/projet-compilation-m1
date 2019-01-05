@@ -11,11 +11,7 @@ op_t *quad_new(quad_op_t op, symbol_t *q1, symbol_t *q2, symbol_t *q3) {
   return quad;
 }
 
-void quad_delete(op_t *q) {
-  if (!q)
-    return;
-  free(q);
-}
+void quad_delete(op_t *q) { free(q); }
 
 op_list_t *quad_list_new(op_t *quad) {
   op_list_t *list = malloc(sizeof(op_list_t));
@@ -37,8 +33,10 @@ void quad_list_concat(op_list_t **list1, op_list_t *list2) {
 }
 
 void quad_list_delete(op_list_t *list) {
-  if (!list)
-    return;
-  quad_list_delete(list->next);
-  free(list);
+  while (list) {
+    op_list_t *tmp = list->next;
+    quad_delete(list->quad);
+    free(list);
+    list = tmp;
+  }
 }
