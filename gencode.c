@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "gencode.h"
+#include "util.h"
 
 #define ARG_1                                                                  \
   indent, __gencode_lib_name(args->lib), q->q1->number, q->q1->number,         \
@@ -25,6 +26,8 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol_table) {
   char *lib = __gencode_lib_name(args->lib);
 
   if (symbol_table) {
+    INFO("Generating the init section");
+
     fprintf(args->file,
             "\n%s// declaration of all variables that we will use\n", indent);
   }
@@ -46,6 +49,7 @@ void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
   char *lib = __gencode_lib_name(args->lib);
 
   if (symbol) {
+    INFO("Generating the assign section");
     fprintf(args->file, "\n%s// assign values to some variables\n", indent);
   }
 
@@ -75,6 +79,7 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
   op_t *q;
 
   if (list) {
+    INFO("Generating the operations section");
     fprintf(args->file, "\n%s// operations\n", indent);
   }
 
@@ -164,6 +169,10 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
   symbol_t *s;
   char *indent = "  ";
   char *lib = __gencode_lib_name(args->lib);
+
+  if (symbol_table) {
+    INFO("Generating the clear section");
+  }
 
   for (s = symbol_table; s; s = s->next) {
     if (s->modified && s->name) {
