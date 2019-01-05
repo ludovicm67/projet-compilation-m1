@@ -114,17 +114,22 @@ statement:
 
 declaration:
     type assignement { $$ = stmt_decl_from_assign($1, $2); }
-  | type IDENTIFIER  { $$ = stmt_new_decl($1, $2, NULL); }
+  | type IDENTIFIER  { $$ = stmt_new_decl($1, $2, NULL);
+                       free($2); }
   ;
 
 declaration_list:
     declaration                      { $$ = $1; }
-  | declaration_list ',' assignement { $$ = $1; stmt_concat(&$$, stmt_decl_from_assign($1->c.decl.type, $3)); }
-  | declaration_list ',' IDENTIFIER  { $$ = $1; stmt_concat(&$$, stmt_new_decl($1->c.decl.type, $3, NULL)); }
+  | declaration_list ',' assignement { $$ = $1;
+                                       stmt_concat(&$$, stmt_decl_from_assign($1->c.decl.type, $3)); }
+  | declaration_list ',' IDENTIFIER  { $$ = $1;
+                                       stmt_concat(&$$, stmt_new_decl($1->c.decl.type, $3, NULL));
+                                       free($3); }
   ;
 
 assignement:
-	  IDENTIFIER '=' or_expr { $$ = ast_new_assign($1, $3); }
+	  IDENTIFIER '=' or_expr { $$ = ast_new_assign($1, $3);
+                             free($1); }
   ;
 
 assignement_expr:
@@ -173,7 +178,8 @@ unary_expr:
   ;
 
 expression:
-    IDENTIFIER            { $$ = ast_new_symbol($1); }
+    IDENTIFIER            { $$ = ast_new_symbol($1);
+                            free($1); }
   | DECIMAL               { $$ = ast_new_constant($1); }
   | INTEGER               { $$ = ast_new_constant($1); }
   | '(' assignement_expr ')' { $$ = $2; }
@@ -221,6 +227,12 @@ parse:
       is_pragma = false;
       is_in_single_comment = false;
       is_in_multi_comment = false;
+
+      if (args.rounding)
+        free(args.rounding);
+      stmt_delete($2);
+      quad_list_delete(ops);
+      symbol_delete(table);
     };
 
 pragma_contents:

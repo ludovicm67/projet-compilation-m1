@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "ast.h"
 
@@ -28,7 +29,7 @@ ast_node_t *ast_new_binary(ast_binary_op_t type, ast_node_t *left,
 ast_node_t *ast_new_assign(char *lval, ast_node_t *rval) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_ASSIGN;
-  node->c.assign.lval = lval;
+  node->c.assign.lval = strdup(lval);
   node->c.assign.rval = rval;
   return node;
 }
@@ -43,7 +44,7 @@ ast_node_t *ast_new_constant(constant_t constant) {
 ast_node_t *ast_new_symbol(char *symbol) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_SYMBOL;
-  node->c.symbol = symbol;
+  node->c.symbol = strdup(symbol);
   return node;
 }
 
@@ -127,7 +128,7 @@ void ast_delete(ast_node_t *node) {
       break;
 
     case NODE_ASSIGN:
-      // symbol_delete(node->c.assign.lval);
+      free(node->c.assign.lval);
       ast_delete(node->c.assign.rval);
       break;
 
@@ -135,7 +136,7 @@ void ast_delete(ast_node_t *node) {
       break;
 
     case NODE_SYMBOL:
-      // symbol_delete(node->c.symbol);
+      free(node->c.symbol);
       break;
   }
 

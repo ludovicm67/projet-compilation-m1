@@ -225,7 +225,5 @@ void test_gencode_example(void) {
 
   // clean
   quad_list_delete(list);
-  quad_delete(quad1);
-  quad_delete(quad2);
   symbol_delete(symbol_table);
 }

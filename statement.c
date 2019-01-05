@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "statement.h"
 
@@ -27,7 +28,7 @@ stmt_t *stmt_new_block(stmt_t *content) {
 stmt_t *stmt_new_decl(stmt_decl_type_t type, char *symbol, ast_node_t *value) {
   stmt_t *stmt = stmt_alloc(STMT_DECL);
   stmt->c.decl.type = type;
-  stmt->c.decl.lval = symbol;
+  stmt->c.decl.lval = strdup(symbol);
   stmt->c.decl.rval = value;
   return stmt;
 }
@@ -107,6 +108,7 @@ void stmt_delete(stmt_t *stmt) {
         break;
 
       case STMT_DECL:
+        free(stmt->c.decl.lval);
         ast_delete(stmt->c.decl.rval);
         break;
 
