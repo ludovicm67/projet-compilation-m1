@@ -43,6 +43,18 @@ void test_statement_new_block(void) {
   stmt_delete(node);
 }
 
+void test_statement_new_decl(void) {
+  ast_node_t *two = ast_new_constant(2.0);
+  stmt_t *double_x_eq_two = stmt_new_decl(TYPE_DOUBLE, "x", two);
+
+  TEST_CHECK(double_x_eq_two->type == STMT_DECL);
+  TEST_CHECK(double_x_eq_two->c.decl.type == TYPE_DOUBLE);
+  TEST_CHECK(strcmp(double_x_eq_two->c.decl.lval, "x") == 0);
+  TEST_CHECK(double_x_eq_two->c.decl.rval == two);
+
+  stmt_delete(double_x_eq_two);
+}
+
 void test_statement_new_cond(void) {
   ast_node_t *y = ast_new_symbol("y");
   stmt_t *body = stmt_new_expr(ast_new_assign("x", ast_new_constant(2.0)));
@@ -58,14 +70,13 @@ void test_statement_new_cond(void) {
 }
 
 void test_statement_new_loop(void) {
-  stmt_t *init =
-      stmt_new_expr(ast_new_decl(TYPE_INT, "i", ast_new_constant(1)));
+  stmt_t *init = stmt_new_decl(TYPE_INT, "i", ast_new_constant(1));
   ast_node_t *cond =
       ast_new_binary(OP_LT, ast_new_symbol("i"), ast_new_constant(10));
   stmt_t *end = stmt_new_expr(ast_new_unary(OP_INCR, ast_new_symbol("i")));
-  stmt_t *body = stmt_new_expr(ast_new_decl(
+  stmt_t *body = stmt_new_decl(
       TYPE_INT, "y",
-      ast_new_binary(OP_MUL, ast_new_symbol("i"), ast_new_symbol("y"))));
+      ast_new_binary(OP_MUL, ast_new_symbol("i"), ast_new_symbol("y")));
 
   stmt_t *loop = stmt_new_loop(init, cond, end, body);
 
@@ -102,4 +113,17 @@ void test_statement_new_return(void) {
   TEST_CHECK(node->c.retval == retval);
 
   stmt_delete(node);
+}
+
+void test_statement_decl_from_assign(void) {
+  ast_node_t *val = ast_new_constant(1);
+  ast_node_t *assign = ast_new_assign("x", val);
+  stmt_t *decl = stmt_decl_from_assign(TYPE_INT, assign);
+
+  TEST_CHECK(decl->type == STMT_DECL);
+  TEST_CHECK(decl->c.decl.type == TYPE_INT);
+  TEST_CHECK(decl->c.decl.rval == val);
+  TEST_CHECK(strcmp(decl->c.decl.lval, "x") == 0);
+
+  stmt_delete(decl);
 }

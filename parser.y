@@ -23,7 +23,7 @@
   ast_node_t     *node;
   ast_unary_op_t  unary;
   ast_binary_op_t binary;
-  ast_decl_type_t decl_type;
+  stmt_decl_type_t decl_type;
   stmt_t* stmt;
   struct {
     enum {
@@ -76,7 +76,7 @@
 %type <node>       or_expr
 %type <node>       assignement_expr
 %type <node>       assignement
-%type <node>       declaration
+%type <stmt>       declaration
 %type <stmt>       statement
 %type <stmt>       declaration_list
 %type <decl_type>  type
@@ -113,14 +113,14 @@ statement:
   ;
 
 declaration:
-    type assignement { $$ = ast_decl_from_assign($1, $2); }
-  | type IDENTIFIER  { $$ = ast_new_decl($1, $2, NULL); }
+    type assignement { $$ = stmt_decl_from_assign($1, $2); }
+  | type IDENTIFIER  { $$ = stmt_new_decl($1, $2, NULL); }
   ;
 
 declaration_list:
-    declaration                      { $$ = stmt_new_expr($1); }
-  | declaration_list ',' assignement { $$ = $1; stmt_concat(&$$, stmt_new_expr(ast_decl_from_assign($1->c.expr->c.decl.type, $3))); }
-  | declaration_list ',' IDENTIFIER  { $$ = $1; stmt_concat(&$$, stmt_new_expr(ast_new_decl($1->c.expr->c.decl.type, $3, NULL))); }
+    declaration                      { $$ = $1; }
+  | declaration_list ',' assignement { $$ = $1; stmt_concat(&$$, stmt_decl_from_assign($1->c.decl.type, $3)); }
+  | declaration_list ',' IDENTIFIER  { $$ = $1; stmt_concat(&$$, stmt_new_decl($1->c.decl.type, $3, NULL)); }
   ;
 
 assignement:

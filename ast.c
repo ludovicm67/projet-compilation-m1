@@ -33,15 +33,6 @@ ast_node_t *ast_new_assign(char *lval, ast_node_t *rval) {
   return node;
 }
 
-ast_node_t *ast_new_decl(ast_decl_type_t type, char *lval, ast_node_t *rval) {
-  ast_node_t *node = ast_alloc();
-  node->type = NODE_DECL;
-  node->c.decl.type = type;
-  node->c.decl.lval = lval;
-  node->c.decl.rval = rval;
-  return node;
-}
-
 ast_node_t *ast_new_constant(constant_t constant) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_CONST;
@@ -53,13 +44,6 @@ ast_node_t *ast_new_symbol(char *symbol) {
   ast_node_t *node = ast_alloc();
   node->type = NODE_SYMBOL;
   node->c.symbol = symbol;
-  return node;
-}
-
-ast_node_t *ast_decl_from_assign(ast_decl_type_t type, ast_node_t *node) {
-  assert(node->type == NODE_ASSIGN);
-  node->type = NODE_DECL;
-  node->c.decl.type = type;
   return node;
 }
 
@@ -114,37 +98,6 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
       return dest;
     }
 
-    case NODE_DECL: {
-      symbol_type_t type;
-      switch (node->c.decl.type) {
-        case TYPE_INT:
-          type = SYM_INTEGER;
-          break;
-
-        case TYPE_DOUBLE:
-        case TYPE_FLOAT:
-          type = SYM_DECIMAL;
-          break;
-
-        case TYPE_BOOL:
-          type = SYM_BOOLEAN;
-          break;
-
-        case TYPE_COMPLEX:
-          type = SYM_UNKNOWN;
-          break;
-      }
-
-      symbol_t *dest = symbol_add(table, type, node->c.decl.lval, true);
-      if (node->c.assign.rval) {
-        dest->modified = true;
-        symbol_t *temp = ast_gen_quad(node->c.decl.rval, table, ops);
-        op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
-        quad_list_append(ops, quad);
-      }
-      return NULL;
-    }
-
     case NODE_CONST: {
       symbol_t *symbol = symbol_add(table, SYM_DECIMAL, NULL, false);
       symbol_set_decimal(symbol, node->c.constant);
@@ -159,7 +112,7 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
     }
   }
 
-  return NULL;
+  abort();
 }
 
 void ast_delete(ast_node_t *node) {
@@ -176,11 +129,6 @@ void ast_delete(ast_node_t *node) {
     case NODE_ASSIGN:
       // symbol_delete(node->c.assign.lval);
       ast_delete(node->c.assign.rval);
-      break;
-
-    case NODE_DECL:
-      // symbol_delete(node->c.decl.lval);
-      ast_delete(node->c.decl.rval);
       break;
 
     case NODE_CONST:
@@ -219,17 +167,6 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
     case NODE_ASSIGN:
       fprintf(stderr, "Assign %s =\n", node->c.assign.lval);
       ast_display_i(node->c.assign.rval, i + 1);
-      break;
-
-    case NODE_DECL:
-      if (node->c.decl.rval) {
-        fprintf(stderr, "Declaration %d %s =\n", node->c.decl.type,
-                node->c.decl.lval);
-        ast_display_i(node->c.decl.rval, i + 1);
-      } else {
-        fprintf(stderr, "Declaration %d %s\n", node->c.decl.type,
-                node->c.decl.lval);
-      }
       break;
 
     case NODE_CONST:

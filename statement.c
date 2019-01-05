@@ -24,6 +24,14 @@ stmt_t *stmt_new_block(stmt_t *content) {
   return stmt;
 }
 
+stmt_t *stmt_new_decl(stmt_decl_type_t type, char *symbol, ast_node_t *value) {
+  stmt_t *stmt = stmt_alloc(STMT_DECL);
+  stmt->c.decl.type = type;
+  stmt->c.decl.lval = symbol;
+  stmt->c.decl.rval = value;
+  return stmt;
+}
+
 stmt_t *stmt_new_cond(ast_node_t *condition, stmt_t *body, stmt_t *else_body) {
   assert(condition);
   stmt_t *stmt = stmt_alloc(STMT_COND);
@@ -50,6 +58,16 @@ stmt_t *stmt_new_continue(void) { return stmt_alloc(STMT_CONTINUE); }
 stmt_t *stmt_new_return(ast_node_t *retval) {
   stmt_t *stmt = stmt_alloc(STMT_RETURN);
   stmt->c.retval = retval;
+  return stmt;
+}
+
+stmt_t *stmt_decl_from_assign(stmt_decl_type_t type, ast_node_t *assign) {
+  assert(assign->type == NODE_ASSIGN);
+  stmt_t *stmt = stmt_alloc(STMT_DECL);
+  stmt->c.decl.type = type;
+  stmt->c.decl.lval = assign->c.assign.lval;
+  stmt->c.decl.rval = assign->c.assign.rval;
+  free(assign);
   return stmt;
 }
 
@@ -86,6 +104,10 @@ void stmt_delete(stmt_t *stmt) {
 
         stmt_delete(stmt->c.loop.end);
         stmt_delete(stmt->c.loop.body);
+        break;
+
+      case STMT_DECL:
+        ast_delete(stmt->c.decl.rval);
         break;
 
       case STMT_BREAK:
@@ -131,6 +153,18 @@ void stmt_display_i(stmt_t *stmt, uint8_t i) {
         indent(i);
         fprintf(stderr, "Block\n");
         stmt_display_i(stmt->c.block, i + 1);
+        break;
+
+      case STMT_DECL:
+        indent(i);
+        if (stmt->c.decl.rval) {
+          fprintf(stderr, "Declaration %d %s =\n", stmt->c.decl.type,
+                  stmt->c.decl.lval);
+          ast_display_i(stmt->c.decl.rval, i + 1);
+        } else {
+          fprintf(stderr, "Declaration %d %s\n", stmt->c.decl.type,
+                  stmt->c.decl.lval);
+        }
         break;
 
       case STMT_COND:
@@ -205,6 +239,36 @@ void stmt_gen_quad(stmt_t *stmt, symbol_t **table, op_list_t **ops) {
       case STMT_BLOCK:
         stmt_gen_quad(stmt->c.block, table, ops);
         break;
+
+      case STMT_DECL: {
+        symbol_type_t type;
+        switch (stmt->c.decl.type) {
+          case TYPE_INT:
+            type = SYM_INTEGER;
+            break;
+
+          case TYPE_DOUBLE:
+          case TYPE_FLOAT:
+            type = SYM_DECIMAL;
+            break;
+
+          case TYPE_BOOL:
+            type = SYM_BOOLEAN;
+            break;
+
+          case TYPE_COMPLEX:
+            type = SYM_UNKNOWN;
+            break;
+        }
+
+        symbol_t *dest = symbol_add(table, type, stmt->c.decl.lval, true);
+        if (stmt->c.decl.rval) {
+          dest->modified = true;
+          symbol_t *temp = ast_gen_quad(stmt->c.decl.rval, table, ops);
+          op_t *quad = quad_new(QUAD_OP_ASSIGN, dest, temp, NULL);
+          quad_list_append(ops, quad);
+        }
+      }
 
       case STMT_COND:
       case STMT_LOOP:
