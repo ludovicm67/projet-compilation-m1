@@ -86,8 +86,6 @@ void test_optim_add_zero(void) {
 
   // clean
   quad_list_delete(list);
-  quad_delete(quad1);
-  quad_delete(quad2);
   symbol_delete(symbol_table);
 }
 
@@ -171,8 +169,6 @@ void test_optim_mul_one(void) {
 
   // clean
   quad_list_delete(list);
-  quad_delete(quad1);
-  quad_delete(quad2);
   symbol_delete(symbol_table);
 }
 
@@ -186,7 +182,7 @@ void test_optim_example(void) {
   args.rounding = "MPC_RNDZZ";
 
   symbol_t *symbol_table = NULL;
-  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
+  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", false);
   var_y->modified = true;
   symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_1, 1.0);
@@ -209,7 +205,5 @@ void test_optim_example(void) {
 
   // clean
   quad_list_delete(list);
-  quad_delete(quad1);
-  quad_delete(quad2);
   symbol_delete(symbol_table);
 }
