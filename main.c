@@ -7,7 +7,7 @@
 #include "gencode.h"
 #include "util.h"
 
-stmt_t *parse(FILE* source);
+parse_result_t *parse(FILE* source);
 int yyparse(void);
 
 static void usage (char * const command) {
@@ -26,10 +26,10 @@ static void usage (char * const command) {
 }
 
 static FILE* f_open(char* fname, char* options) {
-  FILE* fp = f_open(fname, options);
+  FILE* fp = fopen(fname, options);
   if (!fp) {
-    perror("open");
-    abort();
+    PERROR("open");
+    exit(EXIT_FAILURE);
   }
   return fp;
 }
@@ -92,27 +92,26 @@ int main(int argc, char *argv[]) {
   }
 
   gencode_args_t args;
-  args.file = stdout;
-  args.lib = 0;
-  args.precision = 128;
-  args.rounding = "MPCMACHIN";
   args.file = f_dst;
 
-  stmt_t *result = NULL;
+  parse_result_t *result = NULL;
 
   while ((result = parse(f_src)) != NULL) {
     //stmt_display(result);
+    args.lib = result->mode;
+    args.precision = result->precision;
+    args.rounding = result->rounding;
 
     op_list_t *ops = NULL;
     symbol_t *table = NULL;
-    stmt_gen_quad(result, &table, &ops);
+    stmt_gen_quad(result->stmt, &table, &ops);
 
     gencode_init(&args, table);
     gencode_assign(&args, table);
     gencode_operations(&args, ops);
     gencode_clear(&args, table);
 
-    stmt_delete(result);
+    stmt_delete(result->stmt);
     quad_list_delete(ops);
     symbol_delete(table);
   }

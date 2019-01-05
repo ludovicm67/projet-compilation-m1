@@ -5,6 +5,7 @@
   #include "ast.h"
   #include "statement.h"
   #include "gencode.h"
+  #include "util.h"
 
   int yydebug = 1;
   int yylex(void);
@@ -15,7 +16,7 @@
   extern bool is_in_single_comment;
   extern bool is_in_multi_comment;
 
-  stmt_t *parse_result;
+  parse_result_t *parse_result;
 %}
 
 %union {
@@ -28,14 +29,7 @@
   ast_binary_op_t  binary;
   stmt_decl_type_t decl_type;
   stmt_t          *stmt;
-  struct parse_option_s {
-    enum {
-      MODE_MPC,
-      MODE_MPFR,
-    } mode;
-    int   precision;
-    char *rounding;
-  } options;
+  parse_result_t options;
 }
 
 %token END
@@ -208,26 +202,13 @@ parse_list:
 
 parse:
     pragma pragma_contents  {
-      // init gencode args
-      /*
-      gencode_args_t args;
-      args.file = stdout;
-      args.lib = $1.mode;
-      args.precision = $1.precision;
-      args.rounding = $1.rounding;
-      */
-
-      parse_result = $2;
+      $1.stmt = $2;
+      parse_result = &$1;
 
       is_pragma = false;
       is_in_single_comment = false;
       is_in_multi_comment = false;
       YYACCEPT;
-
-      /*
-      fprintf(stderr, "mode: %d, precision: %d, rounding: %s\n",
-              $1.mode, $1.precision, $1.rounding);
-      */
     };
 
 pragma_contents:
@@ -318,7 +299,7 @@ comment_single:
 
 %%
 
-stmt_t* parse(FILE* source) {
+parse_result_t* parse(FILE* source) {
   yyin = source;
   yyparse();
 

@@ -1,8 +1,12 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <errno.h>
+
+#include "statement.h"
 
 #ifndef LOG_LEVEL
 #define LOG_LEVEL __current_log_level
@@ -10,13 +14,13 @@
 
 #define LEVEL_FATAL 1
 #define COLOR_FATAL "\x1b[1;35;7m" // Magenta
-#define LEVEL_ERROR 2
+#define LEVEL_ERROR 1
 #define COLOR_ERROR "\x1b[1;31;7m" // Red
-#define LEVEL_WARN 3
+#define LEVEL_WARN 2
 #define COLOR_WARN "\x1b[1;33;7m" // Yellow
-#define LEVEL_INFO 4
+#define LEVEL_INFO 3
 #define COLOR_INFO "\x1b[1;32;7m" // Green
-#define LEVEL_DEBUG 5
+#define LEVEL_DEBUG 4
 #define COLOR_DEBUG "\x1b[1;36;7m" // Cyan
 
 #define CLEAR_LINE "\x1b[0G\x1b[0k"
@@ -56,6 +60,16 @@
       fflush(stderr);                                                          \
     }                                                                          \
   }
+
+typedef struct parse_result_s {
+  stmt_t* stmt;
+  enum {
+    MODE_MPC,
+    MODE_MPFR
+  } mode;
+  int precision;
+  char* rounding;
+} parse_result_t;
 
 extern uint8_t __current_log_level;
 extern FILE *f_dst;
