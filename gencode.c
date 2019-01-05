@@ -167,8 +167,8 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
 
   for (s = symbol_table; s; s = s->next) {
     if (s->modified && s->name && s->external) {
-      fprintf(args->file, "%s%s = %s_get_dc(T%d, %s);\n", indent, s->name, lib,
-              s->number, args->rounding);
+      fprintf(args->file, "%s%s = %s_get_d%c(T%d, %s);\n", indent, s->name, lib,
+              (args->lib == LIB_MPC) ? 'c' : '\0', s->number, args->rounding);
     }
   }
 
