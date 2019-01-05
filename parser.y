@@ -11,6 +11,7 @@
   int yyerror(const char *s);
 
   extern bool is_pragma;
+  extern bool is_in_comment;
 %}
 
 %union {
@@ -183,7 +184,7 @@ type:
   ;
 
 start:
-    parse_list END { YYACCEPT; }
+    parse_list END { printf("\n"); YYACCEPT; }
 
 parse_list:
     parse
@@ -214,6 +215,7 @@ parse:
       gencode_operations(&args, ops);
       gencode_clear(&args, table);
       is_pragma = false;
+      is_in_comment = false;
     };
 
 pragma_contents:
@@ -224,6 +226,8 @@ block:
    statement                { $$ = $1; }
   | '{' '}'                 { $$ = NULL; }
   | '{' statement_list '}'  { $$ = $2; }
+  | comment_multiline       { $$ = NULL; }
+  | comment_single          { $$ = NULL; }
   ;
 
 statement_list:
@@ -281,6 +285,22 @@ for_instruction:
   ;
 
 for_statement:
-    FOR '(' for_instruction ';' for_condition ';' for_instruction ')' block  { $$ = ast_new_loop($3, $5, $7, $9); }
-  | FOR '(' declaration_list ';' for_condition ';' for_instruction ')' block { $$ = ast_new_loop($3, $5, $7, $9); }
+    FOR '(' for_instruction ';' for_condition ';' for_instruction ')' block
+      { $$ = ast_new_loop($3, $5, $7, $9); }
+  | FOR '(' declaration_list ';' for_condition ';' for_instruction ')' block
+      { $$ = ast_new_loop($3, $5, $7, $9); }
   ;
+
+comment_multiline:
+    COMMENT_MULTI                 { is_in_comment = true; }
+  | comment_multiline IGNORE
+  | comment_multiline '\n'
+  | comment_multiline COMMENT_END { is_in_comment = false; }
+  ;
+
+comment_single:
+    COMMENT_LINE          { is_in_comment = true; }
+  | comment_single IGNORE
+  | comment_single '\n'   { is_in_comment = false; }
+  ;
+

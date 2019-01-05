@@ -10,6 +10,7 @@
   int scanne(int token);
 
   bool is_pragma = false;
+  bool is_in_comment = false;
 %}
 
 %option noyywrap
@@ -46,7 +47,8 @@
 
 "//"                   { return scanne(COMMENT_LINE); }
 "/*"                   { return scanne(COMMENT_MULTI); }
-"*/"                   { return scanne(COMMENT_END); }
+"*/"                   { if (is_pragma && is_in_comment) return COMMENT_END;
+                         return scanne(COMMENT_END); }
 
 ";"                    { return scanne(';'); }
 "="                    { return scanne('='); }
@@ -120,7 +122,9 @@
 [0-9]+                 { yylval.integer = atoi(yytext); return scanne(INTEGER); }
 [0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return scanne(DECIMAL); }
 
-[\n\t ]+               { if (!is_pragma) printf("%s", yytext); }
+"\n"                   { if (is_pragma && is_in_comment) return yytext[0];
+                         if (!is_pragma) printf("%c", yytext[0]); }
+[\t ]+                 { if (!is_pragma) printf("%s", yytext); }
 
 [a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext); return scanne(IDENTIFIER); }
 
@@ -132,8 +136,12 @@ int yyerror(char *errormsg) {
 }
 
 int scanne(int token) {
-  if (is_pragma)
-    return token;
+  if (is_pragma) {
+    if (is_in_comment)
+      return IGNORE;
+    else
+      return token;
+  }
 
   printf("%s", yytext);
   return IGNORE;
