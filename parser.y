@@ -107,8 +107,8 @@ statement:
   | do_while_statement    { $$ = NULL; printf("do_while_statement\n"); }
   | for_statement
   | ';'                   { $$ = NULL; }
-  | BREAK ';'             { $$ = NULL; }
-  | CONTINUE ';'          { $$ = NULL; }
+  | BREAK ';'             { $$ = stmt_new_break(); }
+  | CONTINUE ';'          { $$ = stmt_new_continue(); }
   ;
 
 declaration:
