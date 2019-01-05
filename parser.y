@@ -86,10 +86,10 @@
 %type <stmt>       pragma_contents
 %type <stmt>       block
 %type <stmt>       statement_list
-%type <node>       if_statement
-%type <node>       while_statement
-%type <node>       do_while_statement
-%type <node>       for_statement
+%type <stmt>       if_statement
+%type <stmt>       while_statement
+%type <stmt>       do_while_statement
+%type <stmt>       for_statement
 %type <node>       for_condition
 %type <stmt>       for_instruction
 
@@ -99,12 +99,12 @@
 %%
 
 statement:
-    assignement_expr ';'  { $$ = stmt_new($1); }
+    assignement_expr ';'  { $$ = stmt_new_expr($1); }
   | declaration_list ';'
-  | if_statement          { $$ = stmt_new($1); }
-  | while_statement       { $$ = stmt_new($1); }
+  | if_statement
+  | while_statement
   | do_while_statement    { $$ = NULL; printf("do_while_statement\n"); }
-  | for_statement         { $$ = stmt_new($1); }
+  | for_statement
   | ';'                   { $$ = NULL; }
   ;
 
@@ -114,9 +114,9 @@ declaration:
   ;
 
 declaration_list:
-    declaration                      { $$ = stmt_new($1); }
-  | declaration_list ',' assignement { $$ = stmt_push($1, ast_decl_from_assign($1->node->c.decl.type, $3)); }
-  | declaration_list ',' IDENTIFIER  { $$ = stmt_push($1, ast_new_decl($1->node->c.decl.type, $3, NULL)); }
+    declaration                      { $$ = stmt_new_expr($1); }
+  | declaration_list ',' assignement { $$ = $1; stmt_concat(&$$, stmt_new_expr(ast_decl_from_assign($1->c.expr->c.decl.type, $3))); }
+  | declaration_list ',' IDENTIFIER  { $$ = $1; stmt_concat(&$$, stmt_new_expr(ast_new_decl($1->c.expr->c.decl.type, $3, NULL))); }
   ;
 
 assignement:
@@ -204,11 +204,11 @@ parse:
 
       fprintf(stderr, "mode: %d, precision: %d, rounding: %s\n",
               $1.mode, $1.precision, $1.rounding);
+      stmt_display($2);
 
       op_list_t *ops = NULL;
       symbol_t *table = NULL;
       stmt_gen_quad($2, &table, &ops);
-      stmt_display($2);
 
       gencode_init(&args, table);
       gencode_assign(&args, table);
@@ -224,8 +224,8 @@ pragma_contents:
 
 block:
    statement                { $$ = $1; }
-  | '{' '}'                 { $$ = NULL; }
-  | '{' statement_list '}'  { $$ = $2; }
+  | '{' '}'                 { $$ = stmt_new_block(NULL); }
+  | '{' statement_list '}'  { $$ = stmt_new_block($2); }
   | comment_multiline       { $$ = NULL; }
   | comment_single          { $$ = NULL; }
   ;
@@ -261,12 +261,12 @@ options:
   ;
 
 if_statement:
-    IF '(' assignement_expr ')' block             { $$ = ast_new_cond($3, $5, NULL); }
-  | IF '(' assignement_expr ')' block ELSE block  { $$ = ast_new_cond($3, $5, $7); }
+    IF '(' assignement_expr ')' block             { $$ = stmt_new_cond($3, $5, NULL); }
+  | IF '(' assignement_expr ')' block ELSE block  { $$ = stmt_new_cond($3, $5, $7); }
   ;
 
 while_statement:
-    WHILE '(' assignement_expr ')' block { $$ = ast_new_loop(NULL, $3, NULL, $5); }
+    WHILE '(' assignement_expr ')' block { $$ = stmt_new_loop(NULL, $3, NULL, $5); }
   ;
 
 do_while_statement:
@@ -279,16 +279,16 @@ for_condition:
   ;
 
 for_instruction:
-    assignement_expr                      { $$ = stmt_new($1); }
-  | for_instruction ',' assignement_expr  { $$ = $1; stmt_concat(&$$, stmt_new($3)); }
+    assignement_expr                      { $$ = stmt_new_expr($1); }
+  | for_instruction ',' assignement_expr  { $$ = $1; stmt_concat(&$$, stmt_new_expr($3)); }
   |                                       { $$ = NULL; }
   ;
 
 for_statement:
     FOR '(' for_instruction ';' for_condition ';' for_instruction ')' block
-      { $$ = ast_new_loop($3, $5, $7, $9); }
+      { $$ = stmt_new_loop($3, $5, $7, $9); }
   | FOR '(' declaration_list ';' for_condition ';' for_instruction ')' block
-      { $$ = ast_new_loop($3, $5, $7, $9); }
+      { $$ = stmt_new_loop($3, $5, $7, $9); }
   ;
 
 comment_multiline:
@@ -303,4 +303,3 @@ comment_single:
   | comment_single IGNORE
   | comment_single '\n'   { is_in_comment = false; }
   ;
-

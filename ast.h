@@ -22,11 +22,6 @@ typedef enum ast_node_type_e {
   NODE_DECL,
   NODE_CONST,
   NODE_SYMBOL,
-  NODE_COND,
-  NODE_LOOP,
-  NODE_BREAK,
-  NODE_CONTINUE,
-  NODE_RETURN,
 } ast_node_type_t;
 
 /**
@@ -276,113 +271,6 @@ ast_node_t *ast_new_assign(char *symbol, ast_node_t *value);
  * @return The new node
  */
 ast_node_t *ast_new_decl(ast_decl_type_t type, char *symbol, ast_node_t *value);
-
-/**
- * Create a new `NODE_COND`.
- *
- * @param[in] cond the condition itself
- * @param[in] body the `then` part of the condition
- * @param[in] value the `else` part of the condition
- *
- * Example, `if (y) x = 2; else y = 5;`:
- * @code
- *  ast_node_t *y = ast_new_symbol("y");
- *  stmt_t *body = stmt_new(ast_new_assign("x", ast_new_constant(2.0)));
- *  stmt_t *else_body = stmt_new(ast_new_assign("x", ast_new_constant(5.0)));
- *  ast_node_t *cond = ast_new_cond(y, body, else_body);
-
- *  assert(cond->type == NODE_COND);
- *  assert(cond->c.cond.condition == y);
- *  assert(cond->c.cond.body == body);
- *  assert(cond->c.cond.else_body == else_body);
-
- *  ast_delete(cond);
- * @endcode
- *
- * @return The new node
- */
-ast_node_t *ast_new_cond(ast_node_t *cond, stmt_t *body, stmt_t *body_else);
-
-/**
- * Create a new `NODE_LOOP`.
- *
- * @param[in] init the initialization section of a `for` loop
- * @param[in] cond the condition part of the loop
- * @param[in] end the end part of a `for` loop
- * @param[in] body the body of the loop.
- *
- * Example, `for (int i = 1; i < 10; i++) y = i * y;`:
- * @code
- *  stmt_t *init = stmt_new(ast_new_decl(TYPE_INT, "i", ast_new_constant(1)));
- *  ast_node_t *cond =
- *      ast_new_binary(OP_LT, ast_new_symbol("i"), ast_new_constant(10));
- *  stmt_t *end = stmt_new(ast_new_unary(OP_INCR, ast_new_symbol("i")));
- *  stmt_t *body = stmt_new(ast_new_decl(
- *      TYPE_INT, "y",
- *      ast_new_binary(OP_MUL, ast_new_symbol("i"), ast_new_symbol("y"))));
- *
- *  ast_node_t *loop = ast_new_loop(init, cond, end, body);
- *
- *  assert(loop->type == NODE_LOOP);
- *  assert(loop->c.loop.initializers == init);
- *  assert(loop->c.loop.condition == cond);
- *  assert(loop->c.loop.end == end);
- *  assert(loop->c.loop.body == body);
- *
- *  ast_delete(loop);
- * @endcode
- *
- * @return The new node
- */
-ast_node_t *ast_new_loop(stmt_t *init, ast_node_t *cond, stmt_t *end, stmt_t *body);
-
-/**
- * Create a new `NODE_BREAK`.
- *
- * @code
- *  ast_node_t *node = ast_new_break();
- *
- *  assert(node->type == NODE_BREAK);
- *
- *  ast_delete(node);
- * @endcode
- *
- * @return The new node
- */
-ast_node_t *ast_new_break(void);
-
-/**
- * Create a new `NODE_CONTINUE`.
- *
- * @code
- *  ast_node_t *node = ast_new_continue();
- *
- *  assert(node->type == NODE_CONTINUE);
- *
- *  ast_delete(node);
- * @endcode
- *
- * @return The new node
- */
-ast_node_t *ast_new_continue(void);
-
-/**
- * Create a new `NODE_RETURN`.
- *
- * @param[in] retval the returned value
- *
- * Example, `return x;`:
- * @code
- *  ast_node_t *retval = ast_new_symbol("x");
- *  ast_node_t *node = ast_new_return(retval);
- *
- *  assert(node->type == NODE_RETURN);
- *  assert(node->c.retval == retval);
- *
- *  ast_delete(node);
- * @endcode
- */
-ast_node_t *ast_new_return(ast_node_t *retval);
 
 /**
  * Create a new `NODE_CONST`.

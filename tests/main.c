@@ -6,17 +6,19 @@
   _TEST_ITEM(ast, new_binary)                                                  \
   _TEST_ITEM(ast, new_assign)                                                  \
   _TEST_ITEM(ast, new_decl)                                                    \
-  _TEST_ITEM(ast, new_cond)                                                    \
-  _TEST_ITEM(ast, new_loop)                                                    \
-  _TEST_ITEM(ast, new_break)                                                   \
-  _TEST_ITEM(ast, new_continue)                                                \
-  _TEST_ITEM(ast, new_return)                                                  \
   _TEST_ITEM(ast, new_constant)                                                \
   _TEST_ITEM(ast, new_symbol)                                                  \
   _TEST_ITEM(ast, decl_from_assign)                                            \
   _TEST_ITEM(quad, new)                                                        \
   _TEST_ITEM(quad, list)                                                       \
   _TEST_ITEM(statement, count)                                                 \
+  _TEST_ITEM(statement, new_block)                                             \
+  _TEST_ITEM(statement, new_expr)                                              \
+  _TEST_ITEM(statement, new_cond)                                              \
+  _TEST_ITEM(statement, new_loop)                                              \
+  _TEST_ITEM(statement, new_break)                                             \
+  _TEST_ITEM(statement, new_continue)                                          \
+  _TEST_ITEM(statement, new_return)                                            \
   _TEST_ITEM(symbol, memory)                                                   \
   _TEST_ITEM(symbol, same_name)                                                \
   _TEST_ITEM(gencode, init)                                                    \
