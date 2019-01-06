@@ -43,8 +43,8 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol) {
         WARNF("Could not infer type for symbol %p, assuming decimal",
               (void *)symbol);
       case SYM_DECIMAL:
-        fprintf(args->file, "%s%s_t " TEMP "%d; %s_init2(" TEMP "%d, %d);", indent,
-                lib, n, lib, n, args->precision);
+        fprintf(args->file, "%s%s_t " TEMP "%d; %s_init2(" TEMP "%d, %d);",
+                indent, lib, n, lib, n, args->precision);
         break;
 
       case SYM_INTEGER:

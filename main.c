@@ -11,16 +11,16 @@ parse_result_t *parse(FILE *source);
 int yyparse(void);
 
 static void usage(char *const command) {
-  printf("Usage: %s [-o file] SOURCE\n\n", command);
-  printf("Compiling C to C with transformations of some arithmetic\n"
-         "computations so that these computations are carried out \n"
-         "in floating point of arbitrary precision, thanks to the use\n"
-         "of a dedicated library\n\n");
-  printf("  SOURCE is a file (or stdin) to compile\n");
-  printf("Options:\n"
-         "  -o   Specifies the output (stdout or a file)\n"
-         "  -h   Display this help and exit\n");
-  printf("\n");
+  fprintf(stderr, "Usage: %s [-o file] SOURCE\n\n", command);
+  fprintf(stderr,
+          "Compiling C to C with transformations of some arithmetic\n"
+          "computations so that these computations are carried out \n"
+          "in floating point of arbitrary precision, thanks to the use\n"
+          "of a dedicated library\n\n");
+  fprintf(stderr, "  SOURCE is a file (`-' for stdin) to compile\n");
+  fprintf(stderr, "Options:\n"
+                  "  -o   Specifies the output (stdout by default)\n"
+                  "  -h   Display this help and exit\n");
 
   exit(EXIT_FAILURE);
 }
@@ -46,7 +46,6 @@ int main(int argc, char *argv[]) {
   char *prog_name = argv[0];
 
   int option;
-  int i = 0;
 
   FILE *f_src = stdin;  // STDIN is the source by default
   f_dst       = stdout; // STDOUT is the destination by default
@@ -64,11 +63,11 @@ int main(int argc, char *argv[]) {
         log_level_incr();
         break;
       case '?':
-        fprintf(stderr, "Unknown option: %c\n\n", optopt);
+        ERRORF("Unknown option: %c", optopt);
         usage(prog_name);
         break;
       case ':':
-        fprintf(stderr, "Option -%c takes an argument\n", optopt);
+        ERRORF("Option -%c takes an argument", optopt);
         usage(prog_name);
         break;
       default:
@@ -80,17 +79,12 @@ int main(int argc, char *argv[]) {
   argv += optind;
 
   if (argc == 1) {
-    printf("source : %s\n", argv[0]);
+    DEBUGF("Source file: %s", argv[0]);
     f_src = f_open(argv[0], "r");
   }
 
   if (argc > 1) {
-    printf("\nToo much argument(s): ");
-    while (i < argc) {
-      printf("%s ", argv[i]);
-      i++;
-    }
-    printf("\n\n");
+    ERROR("Too many arguments");
     usage(prog_name);
   }
 
