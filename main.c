@@ -35,9 +35,8 @@ static FILE *f_open(char *fname, char *options) {
 }
 
 static void f_close(FILE *fp) {
-  fclose(fp);
-  if (ferror(fp)) {
-    perror("close");
+  if (fclose(fp) != 0) {
+    PERROR("close");
     abort();
   }
 }
