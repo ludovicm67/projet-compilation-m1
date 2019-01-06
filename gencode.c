@@ -38,10 +38,12 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol) {
   }
 
   while (symbol) {
+    if (symbol->type == SYM_UNKNOWN) {
+      WARNF("Could not infer type for symbol %p, assuming decimal",
+            (void *)symbol);
+    }
     switch (symbol->type) {
       case SYM_UNKNOWN:
-        WARNF("Could not infer type for symbol %p, assuming decimal",
-              (void *)symbol);
       case SYM_DECIMAL:
         fprintf(args->file, "%s%s_t " TEMP "%d; %s_init2(" TEMP "%d, %d);",
                 indent, lib, n, lib, n, args->precision);
@@ -243,10 +245,11 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
 
   for (s = symbol_table; s; s = s->next) {
     if (s->modified && s->name) {
+      if (s->type == SYM_UNKNOWN)
+        WARNF("Could not infer type for symbol %p, assuming decimal",
+              (void *)s);
       switch (s->type) {
         case SYM_UNKNOWN:
-          WARNF("Could not infer type for symbol %p, assuming decimal",
-                (void *)s);
         case SYM_DECIMAL:
           if (s->declared)
             fprintf(args->file, "%sdouble ", indent);
