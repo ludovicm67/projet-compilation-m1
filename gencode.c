@@ -255,7 +255,7 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
             fprintf(args->file, "%sdouble ", indent);
           else
             fprintf(args->file, "%s", indent);
-          fprintf(args->file, "%s = %s_get_d%s(T%d, %s);\n", s->name, lib,
+          fprintf(args->file, "%s = %s_get_d%s(" TEMP "%d, %s);\n", s->name, lib,
                   (args->lib == LIB_MPC) ? "c" : "", s->number, args->rounding);
           break;
 
@@ -283,6 +283,6 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
   }
 
   for (s = symbol_table; s; s = s->next) {
-    fprintf(args->file, "%s%s_clear(T%d);\n", indent, lib, s->number);
+    fprintf(args->file, "%s%s_clear(" TEMP "%d);\n", indent, lib, s->number);
   }
 }
