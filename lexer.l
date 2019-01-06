@@ -80,9 +80,6 @@
 "clogf"                { yylval.unary = OP_CLOGF;  return scanne(UNARY_FUNC); }
 "clogl"                { yylval.unary = OP_CLOGL;  return scanne(UNARY_FUNC); }
 "clog"                 { yylval.unary = OP_CLOG;   return scanne(UNARY_FUNC); }
-"cpow"                 { yylval.unary = OP_CPOW;   return scanne(UNARY_FUNC); }
-"cpowf"                { yylval.unary = OP_CPOWF;  return scanne(UNARY_FUNC); }
-"cpowl"                { yylval.unary = OP_CPOWL;  return scanne(UNARY_FUNC); }
 "csin"                 { yylval.unary = OP_CSIN;   return scanne(UNARY_FUNC); }
 "csinf"                { yylval.unary = OP_CSINF;  return scanne(UNARY_FUNC); }
 "csinl"                { yylval.unary = OP_CSINL;  return scanne(UNARY_FUNC); }
@@ -101,15 +98,19 @@
 "logf"                 { yylval.unary = OP_LOGF;   return scanne(UNARY_FUNC); }
 "logl"                 { yylval.unary = OP_LOGL;   return scanne(UNARY_FUNC); }
 "log"                  { yylval.unary = OP_LOG;    return scanne(UNARY_FUNC); }
-"pow"                  { yylval.unary = OP_POW;    return scanne(UNARY_FUNC); }
-"powf"                 { yylval.unary = OP_POWF;   return scanne(UNARY_FUNC); }
-"powl"                 { yylval.unary = OP_POWL;   return scanne(UNARY_FUNC); }
 "sin"                  { yylval.unary = OP_SIN;    return scanne(UNARY_FUNC); }
 "sinf"                 { yylval.unary = OP_SINF;   return scanne(UNARY_FUNC); }
 "sinl"                 { yylval.unary = OP_SINL;   return scanne(UNARY_FUNC); }
 "sqrt"                 { yylval.unary = OP_SQRT;   return scanne(UNARY_FUNC); }
 "sqrtf"                { yylval.unary = OP_SQRTF;  return scanne(UNARY_FUNC); }
 "sqrtl"                { yylval.unary = OP_SQRTL;  return scanne(UNARY_FUNC); }
+
+"cpow"                 { yylval.binary = OP_CPOW;   return scanne(BINARY_FUNC); }
+"cpowf"                { yylval.binary = OP_CPOWF;  return scanne(BINARY_FUNC); }
+"cpowl"                { yylval.binary = OP_CPOWL;  return scanne(BINARY_FUNC); }
+"pow"                  { yylval.binary = OP_POW;    return scanne(BINARY_FUNC); }
+"powf"                 { yylval.binary = OP_POWF;   return scanne(BINARY_FUNC); }
+"powl"                 { yylval.binary = OP_POWL;   return scanne(BINARY_FUNC); }
 
 [0-9]+                 { yylval.integer = atoi(yytext); return scanne(INTEGER); }
 [0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return scanne(DECIMAL); }

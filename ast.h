@@ -30,18 +30,24 @@ typedef enum ast_node_type_e {
  * comparaisons (`<`, `==`, `>=`…) and logical operands (`&&`, `||`)
  */
 typedef enum ast_binary_op_e {
-  OP_ADD, ///< `x + y`
-  OP_AND, ///< `x && y`
-  OP_DIV, ///< `x / y`
-  OP_EQ,  ///< `x == y`
-  OP_NEQ, ///< `x != y`
-  OP_GT,  ///< `x > y`
-  OP_GTE, ///< `x >= y`
-  OP_LT,  ///< `x < y`
-  OP_LTE, ///< `x <= y`
-  OP_MUL, ///< `x * y`
-  OP_OR,  ///< `x || y`
-  OP_SUB, ///< `x - y`
+  OP_ADD,   ///< `x + y`
+  OP_AND,   ///< `x && y`
+  OP_DIV,   ///< `x / y`
+  OP_EQ,    ///< `x == y`
+  OP_NEQ,   ///< `x != y`
+  OP_GT,    ///< `x > y`
+  OP_GTE,   ///< `x >= y`
+  OP_LT,    ///< `x < y`
+  OP_LTE,   ///< `x <= y`
+  OP_MUL,   ///< `x * y`
+  OP_OR,    ///< `x || y`
+  OP_SUB,   ///< `x - y`
+  OP_CPOW,  ///< `cpow(x, y)`
+  OP_CPOWF, ///< `cpowf(x, y)`
+  OP_CPOWL, ///< `cpowl(x, y)`
+  OP_POW,   ///< `pow(x, y)`
+  OP_POWF,  ///< `powf(x, y)`
+  OP_POWL,  ///< `powl(x, y)`
 } ast_binary_op_t;
 
 /**
@@ -63,9 +69,6 @@ typedef enum ast_unary_op_e {
   OP_CLOGF,  ///< `clogf(x)`
   OP_CLOGL,  ///< `clogl(x)`
   OP_CLOG,   ///< `clog(x)`
-  OP_CPOW,   ///< `cpow(x)`
-  OP_CPOWF,  ///< `cpowf(x)`
-  OP_CPOWL,  ///< `cpowl(x)`
   OP_CSIN,   ///< `csin(x)`
   OP_CSINF,  ///< `csinf(x)`
   OP_CSINL,  ///< `csinl(x)`
@@ -84,9 +87,6 @@ typedef enum ast_unary_op_e {
   OP_LOGF,   ///< `logf(x)`
   OP_LOGL,   ///< `logl(x)`
   OP_LOG,    ///< `log(x)`
-  OP_POW,    ///< `pow(x)`
-  OP_POWF,   ///< `powf(x)`
-  OP_POWL,   ///< `powl(x)`
   OP_SIN,    ///< `sin(x)`
   OP_SINF,   ///< `sinf(x)`
   OP_SINL,   ///< `sinl(x)`

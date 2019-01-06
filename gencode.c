@@ -185,9 +185,9 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
 
       case QUAD_OP_POW:
         fprintf(args->file,
-                "%s%s_pow(" TEMP "%d, " TEMP "%d, %s); // " TEMP
-                "%d = pow(" TEMP "%d)\n",
-                ARG_2);
+                "%s%s_pow(" TEMP "%d, " TEMP "%d, " TEMP "%d %s); // " TEMP
+                "%d = pow(" TEMP "%d, " TEMP "%d)\n",
+                ARG_3);
         break;
 
       case QUAD_OP_SIN:

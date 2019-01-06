@@ -46,7 +46,7 @@
 %token BOOL
 
 %token AND_OP OR_OP COMP_OP EQ_OP
-%token UNARY_FUNC UNARY_OP
+%token BINARY_FUNC UNARY_FUNC UNARY_OP
 %token COMMENT_LINE COMMENT_MULTI COMMENT_END
 %token EXTERN
 
@@ -58,6 +58,7 @@
 %type <unary>      UNARY_FUNC
 %type <unary>      UNARY_OP
 
+%type <binary>     BINARY_FUNC
 %type <binary>     AND_OP
 %type <binary>     OR_OP
 %type <binary>     COMP_OP
@@ -168,10 +169,12 @@ multiplicative_expr:
 
 unary_expr:
     expression
-  | '-' expression                   { $$ = ast_new_unary(OP_NEG, $2); }
-  | expression UNARY_OP              { $$ = ast_new_unary($2, $1); }
-  | UNARY_OP expression              { $$ = ast_new_unary($1, $2); }
-  | UNARY_FUNC '(' additive_expr ')' { $$ = ast_new_unary($1, $3); }
+  | '-' expression                      { $$ = ast_new_unary(OP_NEG, $2); }
+  | expression UNARY_OP                 { $$ = ast_new_unary($2, $1); }
+  | UNARY_OP expression                 { $$ = ast_new_unary($1, $2); }
+  | UNARY_FUNC '(' assignement_expr ')' { $$ = ast_new_unary($1, $3); }
+  | BINARY_FUNC '(' assignement_expr ',' assignement_expr ')'
+                                        { $$ = ast_new_binary($1, $3, $5); }
   ;
 
 expression:
