@@ -28,9 +28,9 @@ void test_quad_list(void) {
   TEST_CHECK(var_y != NULL);
   symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   TEST_CHECK(tmp_1 != NULL);
-  symbol_t *var_x = symbol_lookup(&symbol_table, "x");
+  symbol_t *var_x = symbol_add(&symbol_table, SYM_UNKNOWN, "x", false);
   TEST_CHECK(var_x != NULL);
-  symbol_t *var_z = symbol_lookup(&symbol_table, "z");
+  symbol_t *var_z = symbol_add(&symbol_table, SYM_UNKNOWN, "z", false);
   TEST_CHECK(var_z != NULL);
   symbol_t *var_y_1 = symbol_lookup(&symbol_table, "y");
   TEST_CHECK(var_y_1 != NULL);

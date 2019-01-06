@@ -244,7 +244,7 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
   }
 
   for (s = symbol_table; s; s = s->next) {
-    if (s->modified && s->name) {
+    if (s->modified && s->name && !s->replaced) {
       if (s->type == SYM_UNKNOWN)
         WARNF("Could not infer type for symbol %p, assuming decimal",
               (void *)s);

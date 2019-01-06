@@ -166,7 +166,10 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
 
     case NODE_ASSIGN: {
       symbol_t *temp = ast_gen_quad(node->c.assign.rval, table, ops);
-      symbol_t *dest = symbol_lookup(table, node->c.assign.lval);
+      symbol_t *old = symbol_lookup(table, node->c.assign.lval);
+      if (old)
+        old->replaced = true;
+      symbol_t *dest = symbol_add(table, SYM_UNKNOWN, node->c.symbol, false);
 
       if (dest->type == SYM_UNKNOWN) {
         dest->type = temp->type;
@@ -193,6 +196,9 @@ symbol_t *ast_gen_quad(ast_node_t *node, symbol_t **table, op_list_t **ops) {
 
     case NODE_SYMBOL: {
       symbol_t *tmp = symbol_lookup(table, node->c.symbol);
+      if (!tmp)
+        tmp = symbol_add(table, SYM_UNKNOWN, node->c.symbol, false);
+
       if (!tmp->modified)
         tmp->readBeforeModified = true;
       return tmp;

@@ -192,18 +192,23 @@ void test_optim_example(void) {
   args.rounding  = "MPC_RNDZZ";
 
   symbol_t *symbol_table = NULL;
-  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", false);
-  var_y->modified        = true;
-  symbol_t *tmp_1        = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
+
+  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", false);
+  var_y->modified = true;
+
+  symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_1, 1.0);
+
   symbol_t *tmp_0 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_0, 0);
-  symbol_t *var_z           = symbol_lookup(&symbol_table, "z");
+
+  symbol_t *var_z = symbol_add(&symbol_table, SYM_UNKNOWN, "z", false);
   var_z->readBeforeModified = true;
-  symbol_t *var_y_1         = symbol_lookup(&symbol_table, "y");
-  op_t *quad1               = quad_new(QUAD_OP_ADD, var_y, tmp_1, tmp_0);
-  op_t *quad2               = quad_new(QUAD_OP_MUL, var_z, var_y_1, tmp_1);
-  op_list_t *list           = quad_list_new(quad1);
+
+  symbol_t *var_y_1 = symbol_lookup(&symbol_table, "y");
+  op_t *quad1       = quad_new(QUAD_OP_ADD, var_y, tmp_1, tmp_0);
+  op_t *quad2       = quad_new(QUAD_OP_MUL, var_z, var_y_1, tmp_1);
+  op_list_t *list   = quad_list_new(quad1);
   quad_list_concat(&list, quad_list_new(quad2));
 
   optim_arith(list);

@@ -33,6 +33,7 @@ typedef struct symbol_s {
   bool readBeforeModified; // value has been read
   bool modified;           // value has been changed in the pragma block
   bool hasValue;           // if this symbol contains a value or not
+  bool replaced;           // if this symbol was replaced by another
   union {
     double decimal;
     int32_t integer;

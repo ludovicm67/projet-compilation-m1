@@ -14,6 +14,7 @@ symbol_t *symbol_new(symbol_type_t type, char *name, bool declared) {
   symbol->declared           = declared;
   symbol->readBeforeModified = false;
   symbol->modified           = false;
+  symbol->replaced           = false;
   symbol->hasValue           = false;
   symbol->next               = NULL;
   return symbol;
@@ -75,9 +76,8 @@ symbol_t *symbol_lookup(symbol_t **symbol, char *name) {
     }
   }
 
-  tmp = symbol_add(symbol, SYM_UNKNOWN, name, false);
-  DEBUGF("Symbol `%s' not found, creating it (%p)", name, (void *)tmp);
-  return tmp;
+  DEBUGF("Symbol `%s' not found", name);
+  return NULL;
 }
 
 void symbol_delete(symbol_t *symbol) {
