@@ -7,9 +7,10 @@
 #ifndef GENCODE_H
 #define GENCODE_H
 
+#include <stdio.h>
+
 #include "quad.h"
 #include "symbol.h"
-#include <stdio.h>
 
 /**
  * The different supported libraries

@@ -2,8 +2,10 @@
   #include <stdlib.h>
   #include <string.h>
   #include <stdbool.h>
+
   #include "ast.h"
   #include "statement.h"
+  #include "util.h"
   #include "parser.h"
 
   int yyerror(char *errormsg);
