@@ -77,7 +77,7 @@ static struct op_info binary_map[] = {
 };
 
 static struct op_info unary_map[] = {
-    [OP_NEG]    = {QUAD_OP_NEG, SYM_BOOLEAN, SYM_BOOLEAN, "neg"},
+    [OP_NEG]    = {QUAD_OP_NEG, SYM_DECIMAL, SYM_DECIMAL, "neg"},
     [OP_ABS]    = {QUAD_OP_ABS, SYM_DECIMAL, SYM_DECIMAL, "abs"},
     [OP_CSIN]   = {QUAD_OP_SIN, SYM_DECIMAL, SYM_DECIMAL, "csin"},
     [OP_CSINF]  = {QUAD_OP_SIN, SYM_DECIMAL, SYM_DECIMAL, "csinf"},
