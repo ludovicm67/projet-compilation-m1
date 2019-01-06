@@ -22,8 +22,8 @@ char *__gencode_lib_name(gencode_lib_t lib) {
 
 void gencode_init(gencode_args_t *args, symbol_t *symbol) {
   static uint32_t n = 0;
-  char *indent = "  ";
-  char *lib = __gencode_lib_name(args->lib);
+  char *indent      = "  ";
+  char *lib         = __gencode_lib_name(args->lib);
 
   if (symbol) {
     INFO("Generating the init section");
@@ -42,13 +42,13 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol) {
     else
       fprintf(args->file, "\n");
     symbol->number = n++;
-    symbol = symbol->next;
+    symbol         = symbol->next;
   }
 }
 
 void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
   char *indent = "  ";
-  char *lib = __gencode_lib_name(args->lib);
+  char *lib    = __gencode_lib_name(args->lib);
 
   if (symbol) {
     INFO("Generating the assign section");
@@ -180,7 +180,7 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
 void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
   symbol_t *s;
   char *indent = "  ";
-  char *lib = __gencode_lib_name(args->lib);
+  char *lib    = __gencode_lib_name(args->lib);
 
   if (symbol_table) {
     INFO("Generating the clear section");

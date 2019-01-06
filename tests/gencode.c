@@ -8,10 +8,10 @@
 void test_gencode_init(void) {
   // init gencode args
   gencode_args_t args;
-  args.file = NULL;
-  args.lib = LIB_MPC;
+  args.file      = NULL;
+  args.lib       = LIB_MPC;
   args.precision = 128;
-  args.rounding = "MPC_RNDZZ";
+  args.rounding  = "MPC_RNDZZ";
 
   // init output check
   int fd[2];
@@ -46,10 +46,10 @@ void test_gencode_init(void) {
 void test_gencode_clear(void) {
   // init gencode args
   gencode_args_t args;
-  args.file = NULL;
-  args.lib = LIB_MPC;
+  args.file      = NULL;
+  args.lib       = LIB_MPC;
   args.precision = 128;
-  args.rounding = "MPC_RNDZZ";
+  args.rounding  = "MPC_RNDZZ";
 
   // init output check
   int fd[2];
@@ -99,10 +99,10 @@ void test_gencode_clear(void) {
 void test_gencode_example(void) {
   // init gencode args
   gencode_args_t args;
-  args.file = NULL;
-  args.lib = LIB_MPC;
+  args.file      = NULL;
+  args.lib       = LIB_MPC;
   args.precision = 128;
-  args.rounding = "MPC_RNDZZ";
+  args.rounding  = "MPC_RNDZZ";
 
   symbol_t *symbol_table = NULL;
   TEST_CHECK(symbol_table == NULL);
@@ -118,7 +118,7 @@ void test_gencode_example(void) {
   symbol_t *var_z = symbol_lookup(&symbol_table, "z");
   TEST_CHECK(var_z != NULL);
   var_z->readBeforeModified = true;
-  symbol_t *var_y_1 = symbol_lookup(&symbol_table, "y");
+  symbol_t *var_y_1         = symbol_lookup(&symbol_table, "y");
   TEST_CHECK(var_y_1 != NULL);
   TEST_CHECK(var_y == var_y_1);
   symbol_t *var_y_2 = symbol_lookup(&symbol_table, "y");
@@ -126,8 +126,8 @@ void test_gencode_example(void) {
   TEST_CHECK(var_y == var_y_2);
 
   TEST_CHECK(symbol_table != NULL);
-  op_t *quad1 = quad_new(QUAD_OP_ADD, var_y, tmp_1, var_x);
-  op_t *quad2 = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
+  op_t *quad1     = quad_new(QUAD_OP_ADD, var_y, tmp_1, var_x);
+  op_t *quad2     = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
   op_list_t *list = quad_list_new(quad1);
   quad_list_concat(&list, quad_list_new(quad2));
 

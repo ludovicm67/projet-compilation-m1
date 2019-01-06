@@ -17,10 +17,10 @@ op_t *quad_new(quad_op_t op, symbol_t *q1, symbol_t *q2, symbol_t *q3) {
   DEBUGF("quad_new(%p <- %s %p %p)", (void *)q1, names[op], (void *)q2,
          (void *)q3);
   op_t *quad = malloc(sizeof(op_t));
-  quad->op = op;
-  quad->q1 = q1;
-  quad->q2 = q2;
-  quad->q3 = q3;
+  quad->op   = op;
+  quad->q1   = q1;
+  quad->q2   = q2;
+  quad->q3   = q3;
   return quad;
 }
 
@@ -28,8 +28,8 @@ void quad_delete(op_t *q) { free(q); }
 
 op_list_t *quad_list_new(op_t *quad) {
   op_list_t *list = malloc(sizeof(op_list_t));
-  list->quad = quad;
-  list->next = NULL;
+  list->quad      = quad;
+  list->next      = NULL;
   return list;
 }
 

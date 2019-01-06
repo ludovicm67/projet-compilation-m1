@@ -7,15 +7,15 @@
 #include "util.h"
 
 symbol_t *symbol_new(symbol_type_t type, char *name, bool declared) {
-  symbol_t *symbol = malloc(sizeof(symbol_t));
-  symbol->number = 0;
-  symbol->type = type;
-  symbol->name = name;
-  symbol->declared = declared;
+  symbol_t *symbol           = malloc(sizeof(symbol_t));
+  symbol->number             = 0;
+  symbol->type               = type;
+  symbol->name               = name;
+  symbol->declared           = declared;
   symbol->readBeforeModified = false;
-  symbol->modified = false;
-  symbol->hasValue = false;
-  symbol->next = NULL;
+  symbol->modified           = false;
+  symbol->hasValue           = false;
+  symbol->next               = NULL;
   return symbol;
 }
 
@@ -23,7 +23,7 @@ symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name,
                      bool declared) {
   symbol_t *tmp;
 
-  tmp = symbol_new(type, name, declared);
+  tmp       = symbol_new(type, name, declared);
   tmp->next = *symbol;
 
   *symbol = tmp;
@@ -48,19 +48,19 @@ void symbol_set_type(symbol_t *symbol, symbol_type_t type) {
 
 void symbol_set_decimal(symbol_t *symbol, double value) {
   symbol_set_type(symbol, SYM_DECIMAL);
-  symbol->hasValue = true;
+  symbol->hasValue      = true;
   symbol->value.decimal = value;
 }
 
 void symbol_set_integer(symbol_t *symbol, int value) {
   symbol_set_type(symbol, SYM_INTEGER);
-  symbol->hasValue = true;
+  symbol->hasValue      = true;
   symbol->value.integer = value;
 }
 
 void symbol_set_boolean(symbol_t *symbol, bool value) {
   symbol_set_type(symbol, SYM_BOOLEAN);
-  symbol->hasValue = true;
+  symbol->hasValue      = true;
   symbol->value.boolean = value;
 }
 

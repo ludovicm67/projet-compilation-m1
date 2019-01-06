@@ -13,27 +13,27 @@ void test_optim_add_zero(void) {
 
   // init gencode args
   gencode_args_t args;
-  args.file = NULL;
-  args.lib = LIB_MPC;
+  args.file      = NULL;
+  args.lib       = LIB_MPC;
   args.precision = 128;
-  args.rounding = "MPC_RNDZZ";
+  args.rounding  = "MPC_RNDZZ";
 
   // create all required symbols
   symbol_t *symbol_table = NULL;
-  symbol_t *var_x = symbol_add(&symbol_table, SYM_UNKNOWN, "x", true);
-  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
-  symbol_t *var_z = symbol_add(&symbol_table, SYM_UNKNOWN, "z", true);
-  symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
+  symbol_t *var_x        = symbol_add(&symbol_table, SYM_UNKNOWN, "x", true);
+  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
+  symbol_t *var_z        = symbol_add(&symbol_table, SYM_UNKNOWN, "z", true);
+  symbol_t *tmp_1        = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_1, 1.0);
   symbol_t *tmp_0 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_0, 0.0);
 
   // create required quads
-  op_t *quad1 = quad_new(QUAD_OP_ADD, var_x, tmp_1, tmp_0);
-  op_t *quad2 = quad_new(QUAD_OP_ADD, var_x, tmp_0, tmp_1);
-  op_t *quad3 = quad_new(QUAD_OP_ADD, var_x, var_y, tmp_0);
-  op_t *quad4 = quad_new(QUAD_OP_ADD, var_x, tmp_0, var_y);
-  op_t *quad5 = quad_new(QUAD_OP_ADD, var_x, var_y, var_z);
+  op_t *quad1     = quad_new(QUAD_OP_ADD, var_x, tmp_1, tmp_0);
+  op_t *quad2     = quad_new(QUAD_OP_ADD, var_x, tmp_0, tmp_1);
+  op_t *quad3     = quad_new(QUAD_OP_ADD, var_x, var_y, tmp_0);
+  op_t *quad4     = quad_new(QUAD_OP_ADD, var_x, tmp_0, var_y);
+  op_t *quad5     = quad_new(QUAD_OP_ADD, var_x, var_y, var_z);
   op_list_t *list = quad_list_new(quad1);
   quad_list_concat(&list, quad_list_new(quad2));
   quad_list_concat(&list, quad_list_new(quad3));
@@ -96,27 +96,27 @@ void test_optim_mul_one(void) {
 
   // init gencode args
   gencode_args_t args;
-  args.file = NULL;
-  args.lib = LIB_MPC;
+  args.file      = NULL;
+  args.lib       = LIB_MPC;
   args.precision = 128;
-  args.rounding = "MPC_RNDZZ";
+  args.rounding  = "MPC_RNDZZ";
 
   // create all required symbols
   symbol_t *symbol_table = NULL;
-  symbol_t *var_x = symbol_add(&symbol_table, SYM_UNKNOWN, "x", true);
-  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
-  symbol_t *var_z = symbol_add(&symbol_table, SYM_UNKNOWN, "z", true);
-  symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
+  symbol_t *var_x        = symbol_add(&symbol_table, SYM_UNKNOWN, "x", true);
+  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
+  symbol_t *var_z        = symbol_add(&symbol_table, SYM_UNKNOWN, "z", true);
+  symbol_t *tmp_1        = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_1, 1.0);
   symbol_t *tmp_0 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_0, 0.0);
 
   // create required quads
-  op_t *quad1 = quad_new(QUAD_OP_MUL, var_x, tmp_1, tmp_0);
-  op_t *quad2 = quad_new(QUAD_OP_MUL, var_x, tmp_0, tmp_1);
-  op_t *quad3 = quad_new(QUAD_OP_MUL, var_x, var_y, tmp_1);
-  op_t *quad4 = quad_new(QUAD_OP_MUL, var_x, tmp_1, var_y);
-  op_t *quad5 = quad_new(QUAD_OP_MUL, var_x, var_y, var_z);
+  op_t *quad1     = quad_new(QUAD_OP_MUL, var_x, tmp_1, tmp_0);
+  op_t *quad2     = quad_new(QUAD_OP_MUL, var_x, tmp_0, tmp_1);
+  op_t *quad3     = quad_new(QUAD_OP_MUL, var_x, var_y, tmp_1);
+  op_t *quad4     = quad_new(QUAD_OP_MUL, var_x, tmp_1, var_y);
+  op_t *quad5     = quad_new(QUAD_OP_MUL, var_x, var_y, var_z);
   op_list_t *list = quad_list_new(quad1);
   quad_list_concat(&list, quad_list_new(quad2));
   quad_list_concat(&list, quad_list_new(quad3));
@@ -176,24 +176,24 @@ void test_optim_mul_one(void) {
 void test_optim_example(void) {
   // init gencode args
   gencode_args_t args;
-  args.file = fopen("/dev/null", "a");
-  args.lib = LIB_MPC;
+  args.file      = fopen("/dev/null", "a");
+  args.lib       = LIB_MPC;
   args.precision = 128;
-  args.rounding = "MPC_RNDZZ";
+  args.rounding  = "MPC_RNDZZ";
 
   symbol_t *symbol_table = NULL;
-  symbol_t *var_y = symbol_add(&symbol_table, SYM_UNKNOWN, "y", false);
-  var_y->modified = true;
-  symbol_t *tmp_1 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
+  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", false);
+  var_y->modified        = true;
+  symbol_t *tmp_1        = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_1, 1.0);
   symbol_t *tmp_0 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_0, 0);
-  symbol_t *var_z = symbol_lookup(&symbol_table, "z");
+  symbol_t *var_z           = symbol_lookup(&symbol_table, "z");
   var_z->readBeforeModified = true;
-  symbol_t *var_y_1 = symbol_lookup(&symbol_table, "y");
-  op_t *quad1 = quad_new(QUAD_OP_ADD, var_y, tmp_1, tmp_0);
-  op_t *quad2 = quad_new(QUAD_OP_MUL, var_z, var_y_1, tmp_1);
-  op_list_t *list = quad_list_new(quad1);
+  symbol_t *var_y_1         = symbol_lookup(&symbol_table, "y");
+  op_t *quad1               = quad_new(QUAD_OP_ADD, var_y, tmp_1, tmp_0);
+  op_t *quad2               = quad_new(QUAD_OP_MUL, var_z, var_y_1, tmp_1);
+  op_list_t *list           = quad_list_new(quad1);
   quad_list_concat(&list, quad_list_new(quad2));
 
   optim_arith(list);

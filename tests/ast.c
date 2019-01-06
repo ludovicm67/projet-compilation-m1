@@ -7,11 +7,11 @@ void test_ast_new(void) {
   // Simple AST that represents
   //   x = 5 * sqrt(y)
 
-  ast_node_t *five = ast_new_constant(5);
-  ast_node_t *y = ast_new_symbol("y");
+  ast_node_t *five  = ast_new_constant(5);
+  ast_node_t *y     = ast_new_symbol("y");
   ast_node_t *abs_y = ast_new_unary(OP_ABS, y);
-  ast_node_t *op = ast_new_binary(OP_MUL, five, abs_y);
-  ast_node_t *root = ast_new_assign("x", op);
+  ast_node_t *op    = ast_new_binary(OP_MUL, five, abs_y);
+  ast_node_t *root  = ast_new_assign("x", op);
 
   TEST_CHECK(five->type == NODE_CONST);
   TEST_CHECK(five->c.constant == 5);
@@ -36,7 +36,7 @@ void test_ast_new(void) {
 }
 
 void test_ast_new_unary(void) {
-  ast_node_t *x = ast_new_symbol("x");
+  ast_node_t *x       = ast_new_symbol("x");
   ast_node_t *minus_x = ast_new_unary(OP_NEG, x);
 
   TEST_CHECK(minus_x->type == NODE_UNARY);
@@ -47,8 +47,8 @@ void test_ast_new_unary(void) {
 }
 
 void test_ast_new_binary(void) {
-  ast_node_t *two = ast_new_constant(2.0);
-  ast_node_t *x = ast_new_symbol("x");
+  ast_node_t *two         = ast_new_constant(2.0);
+  ast_node_t *x           = ast_new_symbol("x");
   ast_node_t *two_times_x = ast_new_binary(OP_MUL, two, x);
 
   TEST_CHECK(two_times_x->type == NODE_BINARY);
@@ -60,7 +60,7 @@ void test_ast_new_binary(void) {
 }
 
 void test_ast_new_assign(void) {
-  ast_node_t *two = ast_new_constant(2.0);
+  ast_node_t *two             = ast_new_constant(2.0);
   ast_node_t *double_x_eq_two = ast_new_assign("x", two);
 
   TEST_CHECK(double_x_eq_two->type == NODE_ASSIGN);

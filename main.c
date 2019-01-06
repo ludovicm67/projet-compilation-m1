@@ -48,8 +48,8 @@ int main(int argc, char *argv[]) {
   int option;
   int i = 0;
 
-  FILE *f_src = stdin; // STDIN is the source by default
-  f_dst = stdout;      // STDOUT is the destination by default
+  FILE *f_src = stdin;  // STDIN is the source by default
+  f_dst       = stdout; // STDOUT is the destination by default
 
   // No option is required
   while ((option = getopt(argc, argv, "+:o:hv")) != -1) {
@@ -101,11 +101,11 @@ int main(int argc, char *argv[]) {
 
   while ((result = parse(f_src)) != NULL) {
     // stmt_display(result->stmt);
-    args.lib = result->mode;
+    args.lib       = result->mode;
     args.precision = result->precision;
-    args.rounding = result->rounding;
+    args.rounding  = result->rounding;
 
-    op_list_t *ops = NULL;
+    op_list_t *ops  = NULL;
     symbol_t *table = NULL;
     stmt_gen_quad(result->stmt, &table, &ops);
 

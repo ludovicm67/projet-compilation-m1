@@ -4,11 +4,11 @@
 #include "acutest.h"
 
 void test_quad_new(void) {
-  op_t *quad = NULL;
+  op_t *quad             = NULL;
   symbol_t *symbol_table = NULL;
-  symbol_t *symbol_left = symbol_add(&symbol_table, SYM_UNKNOWN, "a", true);
+  symbol_t *symbol_left  = symbol_add(&symbol_table, SYM_UNKNOWN, "a", true);
   symbol_t *symbol_right = symbol_add(&symbol_table, SYM_UNKNOWN, "b", true);
-  symbol_t *result = symbol_lookup(&symbol_table, "x");
+  symbol_t *result       = symbol_lookup(&symbol_table, "x");
   TEST_CHECK(quad == NULL);
   quad = quad_new(QUAD_OP_ADD, result, symbol_left, symbol_right);
   TEST_CHECK(quad != NULL);
@@ -40,9 +40,9 @@ void test_quad_list(void) {
   TEST_CHECK(var_y == var_y_2);
 
   TEST_CHECK(symbol_table != NULL);
-  op_t *quad1 = quad_new(QUAD_OP_ADD, var_y, tmp_1, var_x);
-  op_t *quad2 = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
-  op_t *quad3 = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
+  op_t *quad1     = quad_new(QUAD_OP_ADD, var_y, tmp_1, var_x);
+  op_t *quad2     = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
+  op_t *quad3     = quad_new(QUAD_OP_MUL, var_z, var_y_1, var_y_2);
   op_list_t *list = quad_list_new(quad1);
   quad_list_concat(&list, quad_list_new(quad2));
 
