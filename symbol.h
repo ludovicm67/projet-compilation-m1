@@ -18,6 +18,7 @@ typedef enum symbol_type_e {
   SYM_DECIMAL,
   SYM_INTEGER,
   SYM_BOOLEAN,
+  SYM_LABEL,
 } symbol_type_t;
 
 /**
@@ -62,6 +63,15 @@ symbol_t *symbol_new(symbol_type_t type, char *name, bool declared);
  * @return the new symbol
  */
 symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name, bool declared);
+
+/**
+ * Return a human-readable name for a given type
+ *
+ * @param[in] type the symbol type
+ *
+ * @return a statically allocated string
+ */
+char *symbol_type_name(symbol_type_t type);
 
 /**
  * Set the type of a symbol

@@ -28,6 +28,8 @@ typedef enum quad_op_e {
   QUAD_OP_COS,    ///< `cos(x)`
   QUAD_OP_INCR,   ///< `x++`
   QUAD_OP_DECR,   ///< `x--`
+  QUAD_GOTO,      ///< `goto x`
+  QUAD_LABEL,     ///< `x:`
   QUAD_NOOP,      ///< unsupported operation
 } quad_op_t;
 

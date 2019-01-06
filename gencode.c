@@ -20,27 +20,29 @@ char *__gencode_lib_name(gencode_lib_t lib) {
   return "mpc";
 }
 
-void gencode_init(gencode_args_t *args, symbol_t *symbol_table) {
-  uint32_t n = 0;
+void gencode_init(gencode_args_t *args, symbol_t *symbol) {
+  static uint32_t n = 0;
   char *indent = "  ";
   char *lib = __gencode_lib_name(args->lib);
 
-  if (symbol_table) {
+  if (symbol) {
     INFO("Generating the init section");
 
     fprintf(args->file,
             "\n%s// declaration of all variables that we will use\n", indent);
   }
 
-  while (symbol_table) {
+  while (symbol) {
+    if (symbol->type == SYM_LABEL)
+      continue;
     fprintf(args->file, "%s%s_t T%d; %s_init2(T%d, %d);", indent, lib, n, lib,
             n, args->precision);
-    if (symbol_table->name)
-      fprintf(args->file, " // %s\n", symbol_table->name);
+    if (symbol->name)
+      fprintf(args->file, " // %s\n", symbol->name);
     else
       fprintf(args->file, "\n");
-    symbol_table->number = n++;
-    symbol_table = symbol_table->next;
+    symbol->number = n++;
+    symbol = symbol->next;
   }
 }
 
@@ -54,6 +56,8 @@ void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
   }
 
   while (symbol) {
+    if (symbol->type == SYM_LABEL)
+      continue;
     if (symbol->name && symbol->readBeforeModified && !symbol->declared) {
       fprintf(args->file, "%s%s_set_d(T%d, %s, %s); // %s\n", indent, lib,
               symbol->number, symbol->name, args->rounding, symbol->name);
@@ -155,6 +159,14 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
 
       case QUAD_OP_DECR:
         fprintf(args->file, "%s%s_sub_ui(T%d, T%d, 1, %s); // T%d--\n", ARG_1);
+        break;
+
+      case QUAD_LABEL:
+        fprintf(args->file, "c2mp_label%d:\n", q->q1->number);
+        break;
+
+      case QUAD_GOTO:
+        fprintf(args->file, "%sgoto c2mp_label%d;\n", indent, q->q1->number);
         break;
 
       case QUAD_NOOP:

@@ -31,6 +31,16 @@ symbol_t *symbol_add(symbol_t **symbol, symbol_type_t type, char *name,
   return tmp;
 }
 
+static char *symbol_type_name_map[] = {
+    [SYM_UNKNOWN] = "unknown", [SYM_DECIMAL] = "decimal",
+    [SYM_INTEGER] = "integer", [SYM_BOOLEAN] = "boolean",
+    [SYM_LABEL] = "label",
+};
+
+char *symbol_type_name(symbol_type_t type) {
+  return symbol_type_name_map[type];
+}
+
 void symbol_set_type(symbol_t *symbol, symbol_type_t type) {
   assert(symbol->type == type || symbol->type == SYM_UNKNOWN);
   symbol->type = type;

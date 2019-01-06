@@ -34,6 +34,7 @@ typedef enum ast_binary_op_e {
   OP_AND, ///< `x && y`
   OP_DIV, ///< `x / y`
   OP_EQ,  ///< `x == y`
+  OP_NEQ, ///< `x != y`
   OP_GT,  ///< `x > y`
   OP_GTE, ///< `x >= y`
   OP_LT,  ///< `x < y`
