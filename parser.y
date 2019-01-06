@@ -16,7 +16,7 @@
   extern bool is_in_single_comment;
   extern bool is_in_multi_comment;
 
-  parse_result_t *parse_result;
+  parse_result_t parse_result;
 %}
 
 %union {
@@ -195,7 +195,7 @@ type:
   ;
 
 start:
-    parse_list END { parse_result = NULL; YYACCEPT; }
+    parse_list END { parse_result.stmt = NULL; YYACCEPT; }
 
 parse_list:
     parse
@@ -206,8 +206,10 @@ parse_list:
 
 parse:
     pragma pragma_contents  {
-      $1.stmt = $2;
-      parse_result = &$1;
+      parse_result.mode = $1.mode;
+      parse_result.precision = $1.precision;
+      parse_result.rounding = $1.rounding;
+      parse_result.stmt = $2;
 
       is_pragma = false;
       is_in_single_comment = false;
@@ -307,5 +309,7 @@ parse_result_t* parse(FILE* source) {
   yyin = source;
   yyparse();
 
-  return parse_result;
+  if (parse_result.stmt)
+    return &parse_result;
+  return NULL;
 }
