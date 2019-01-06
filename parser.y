@@ -172,16 +172,17 @@ unary_expr:
   | '-' expression                      { $$ = ast_new_unary(OP_NEG, $2); }
   | expression UNARY_OP                 { $$ = ast_new_unary($2, $1); }
   | UNARY_OP expression                 { $$ = ast_new_unary($1, $2); }
-  | UNARY_FUNC '(' assignement_expr ')' { $$ = ast_new_unary($1, $3); }
-  | BINARY_FUNC '(' assignement_expr ',' assignement_expr ')'
-                                        { $$ = ast_new_binary($1, $3, $5); }
   ;
 
 expression:
-    IDENTIFIER            { $$ = ast_new_symbol($1);
-                            free($1); }
-  | DECIMAL               { $$ = ast_new_constant($1); }
-  | INTEGER               { $$ = ast_new_constant($1); }
+    IDENTIFIER               { $$ = ast_new_symbol($1);
+                               free($1); }
+  | DECIMAL                  { $$ = ast_new_constant($1); }
+  | INTEGER                  { $$ = ast_new_constant($1); }
+  | UNARY_FUNC '(' assignement_expr ')'
+                             { $$ = ast_new_unary($1, $3); }
+  | BINARY_FUNC '(' assignement_expr ',' assignement_expr ')'
+                             { $$ = ast_new_binary($1, $3, $5); }
   | '(' assignement_expr ')' { $$ = $2; }
   ;
 
