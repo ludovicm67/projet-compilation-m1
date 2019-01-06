@@ -152,7 +152,7 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
 
       case QUAD_OP_SQRT:
         fprintf(args->file,
-                "%s%s_sqr(" TEMP "%d, " TEMP "%d, %s); // " TEMP
+                "%s%s_sqrt(" TEMP "%d, " TEMP "%d, %s); // " TEMP
                 "%d = sqrt(" TEMP "%d)\n",
                 ARG_2);
         break;
@@ -255,8 +255,9 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
             fprintf(args->file, "%sdouble ", indent);
           else
             fprintf(args->file, "%s", indent);
-          fprintf(args->file, "%s = %s_get_d%s(" TEMP "%d, %s);\n", s->name, lib,
-                  (args->lib == LIB_MPC) ? "c" : "", s->number, args->rounding);
+          fprintf(args->file, "%s = %s_get_d%s(" TEMP "%d, %s);\n", s->name,
+                  lib, (args->lib == LIB_MPC) ? "c" : "", s->number,
+                  args->rounding);
           break;
 
         case SYM_INTEGER:

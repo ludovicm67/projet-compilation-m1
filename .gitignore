@@ -7,3 +7,5 @@ tests/main
 *.gc*
 *.dSYM
 doc/
+*.out
+tests/e2e/tmp/

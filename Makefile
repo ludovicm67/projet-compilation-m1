@@ -67,8 +67,9 @@ doc:
 	mv y.tab.h $*.h
 
 .PHONY: test
-test: $(TESTS_BIN)
+test: $(BIN) $(TESTS_BIN)
 	$(TESTS_BIN)
+	bats ./tests/e2e/test.bats
 
 .PHONY: clean
 clean:

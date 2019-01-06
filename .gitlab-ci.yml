@@ -3,7 +3,7 @@ image: alpine:3.8
 test_clang:
   stage: test
   before_script:
-    - apk add --no-cache alpine-sdk flex bison clang
+    - apk add --no-cache alpine-sdk flex bison clang bats
   script:
     - make CC=clang
     - make CC=clang test
@@ -11,7 +11,7 @@ test_clang:
 test_gcc:
   stage: test
   before_script:
-    - apk add --no-cache alpine-sdk flex bison gcc
+    - apk add --no-cache alpine-sdk flex bison gcc bats
   script:
     - make CC=gcc
     - make CC=gcc test

@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
   parse_result_t *result = NULL;
 
   while ((result = parse(f_src)) != NULL) {
-    // stmt_display(result->stmt);
+    stmt_display(result->stmt);
     args.lib       = result->mode;
     args.precision = result->precision;
     args.rounding  = result->rounding;
