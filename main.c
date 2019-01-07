@@ -48,14 +48,14 @@ static void f_close(FILE *fp) {
   }
 }
 
-static int safe_atoi(char const* str, char *const command) {
-	for (unsigned int i = 0; i < strlen(str); ++i)
-		if (str[i] < '0' || str[i] > '9'){
-			ERRORF("Invalid argument: %s can't be converted to int", str);
+static int safe_atoi(char const *str, char *const command) {
+  for (unsigned int i = 0; i < strlen(str); ++i)
+    if (str[i] < '0' || str[i] > '9') {
+      ERRORF("Invalid argument: %s can't be converted to int", str);
       usage(command);
-		}
+    }
 
-	return atoi(str);
+  return atoi(str);
 }
 
 int main(int argc, char *argv[]) {
@@ -66,10 +66,10 @@ int main(int argc, char *argv[]) {
   FILE *f_src = stdin;  // STDIN is the source by default
   f_dst       = stdout; // STDOUT is the destination by default
 
-  bool opt_optim = false;
-  bool opt_ast   = false;
-  int  opt_prec  = 128;
-  char* opt_round = NULL;
+  bool opt_optim  = false;
+  bool opt_ast    = false;
+  int opt_prec    = 128;
+  char *opt_round = NULL;
 
   // No option is required
   while ((option = getopt(argc, argv, "+:o:p:r:hvOa")) != -1) {
@@ -151,9 +151,8 @@ int main(int argc, char *argv[]) {
         else
           args.rounding = "MPFR_RNDZ";
       }
-    }
-    else
-        args.rounding = result->rounding;
+    } else
+      args.rounding = result->rounding;
 
     op_list_t *ops  = NULL;
     symbol_t *table = NULL;
@@ -165,11 +164,12 @@ int main(int argc, char *argv[]) {
     gencode_init(&args, table);
 
     for (symbol_t *s = table; s; s = s->next) {
-      DEBUGF("Symbol T%d, type: %s, name: %6s, declared: %d, "
-             "readBeforeModified: %d, modified: %d, hasValue: %d, value: %f %s",
-             s->number, symbol_type_name(s->type), s->name, s->declared,
-             s->readBeforeModified, s->modified, s->hasValue, s->value.decimal,
-             s->alias ? "(alias)" : "");
+      DEBUGF("Symbol %p, type: %s, name: %6s, declared: %d, "
+             "readBeforeModified: %d, modified: %d, replaced: %d, hasValue: "
+             "%d, value: %f, alias: %p",
+             (void *)s, symbol_type_name(s->type), s->name, s->declared,
+             s->readBeforeModified, s->modified, s->replaced, s->hasValue,
+             s->value.decimal, (void *)s->alias);
     }
 
     gencode_assign(&args, table);

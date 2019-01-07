@@ -5,6 +5,8 @@
 #include <math.h>
 
 int main(void) {
+  // This checks that multiple pragma in the same file are supported, and that
+  // there is no conflicts in the symbol names.
   double x = 2;
   #pragma MPFR
   x = x * 2;

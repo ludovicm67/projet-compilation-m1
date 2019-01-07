@@ -3,6 +3,7 @@
 
 int main(void)
 {
+  // Just a simple test with a signle assignement
   
   // declaration of all variables that we will use
   mpfr_t c2mp_temp0; mpfr_init2(c2mp_temp0, 128);

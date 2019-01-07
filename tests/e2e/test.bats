@@ -105,6 +105,11 @@ EOF
 @test "'warning' optimized" { compare_optimized warning; }
 @test "'warning' execution" { compare_exec warning; }
 
+@test "'arithmetical-optimizations' AST" { compare_ast arithmetical-optimizations; }
+@test "'arithmetical-optimizations' output" { compare_output arithmetical-optimizations; }
+@test "'arithmetical-optimizations' optimized" { compare_optimized arithmetical-optimizations; }
+@test "'arithmetical-optimizations' execution" { compare_exec arithmetical-optimizations; }
+
 @test "'declaration-only' AST" { compare_ast declaration-only; }
 @test "'declaration-only' output" { compare_output declaration-only; }
 @test "'declaration-only' optimized" { compare_optimized declaration-only; }
