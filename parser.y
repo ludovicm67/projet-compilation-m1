@@ -208,7 +208,15 @@ parse:
     pragma pragma_contents  {
       parse_result.mode = $1.mode;
       parse_result.precision = $1.precision;
-      parse_result.rounding = $1.rounding;
+
+      if (!$1.rounding)
+        if ($1.mode == MODE_MPC)
+          parse_result.rounding = "MPC_RNDZZ";
+        else
+          parse_result.rounding = "MPFR_RNDZ";
+      else
+        parse_result.rounding = $1.rounding;
+
       parse_result.stmt = $2;
 
       is_pragma = false;
