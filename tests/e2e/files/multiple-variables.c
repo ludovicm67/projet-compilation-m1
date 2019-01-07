@@ -8,6 +8,8 @@ int main() {
 
   #pragma MPC precision(256) rounding(MPC_RNDZZ)
   {
+    // This is a simple test that checks that all the variables are assigned
+    // back in the end.
     s1 = sqrt(9);
     s2 = -s1;
     s3 = 4 + 3;

@@ -3,6 +3,8 @@
 
 int main(void)
 {
+  // This checks that a declaration without value should be declared in the
+  // generated code.
   
   // declaration of all variables that we will use
   mpfr_t c2mp_temp0; mpfr_init2(c2mp_temp0, 128); // x

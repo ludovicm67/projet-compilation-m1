@@ -11,6 +11,7 @@ int main() {
 
   #pragma MPFR precision(128) rounding(MPFR_RNDZ)
   {
+    // This tests the long expression that was defined in the assignments subject
     resultat = -(sqrt(-NMAX*(8*pc-4*pow(NMAX,3)-4*pow(NMAX,2)-NMAX-8))-2*pow(NMAX,2)-NMAX)/(2*NMAX);
   }
 

@@ -8,6 +8,9 @@ int main() {
 
   #pragma MPC precision(256) rounding(MPC_RNDZZ)
   {
+    // This tests for constant aliasing.
+    // When generating quads, a new symbol is created for each `3`.
+    // The optimizer then aliases symbols that have the same value.
     resultat = 3 * 3;
   }
 
