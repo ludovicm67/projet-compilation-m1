@@ -246,7 +246,7 @@ void gencode_operations(gencode_args_t *args, op_list_t *list) {
         break;
 
       case QUAD_NOOP:
-        fprintf(args->file, "%s// Unsupported OP\n", indent);
+        FATAL("Unsupported OP");
         break;
     }
   }
@@ -272,7 +272,7 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
       switch (tmp->type) {
         case SYM_UNKNOWN:
         case SYM_DECIMAL:
-          if (tmp->declared)
+          if (s->declared)
             fprintf(args->file, "%sdouble ", indent);
           else
             fprintf(args->file, "%s", indent);
@@ -286,7 +286,7 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
           break;
 
         case SYM_BOOLEAN:
-          if (tmp->declared)
+          if (s->declared)
             fprintf(args->file, "%sbool ", indent);
           else
             fprintf(args->file, "%s", indent);

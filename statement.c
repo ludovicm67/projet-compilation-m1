@@ -213,14 +213,17 @@ void stmt_display_i(stmt_t *stmt, uint8_t i) {
         break;
 
       case STMT_BREAK:
+        indent(i);
         printf("Break\n");
         break;
 
       case STMT_CONTINUE:
+        indent(i);
         printf("Continue\n");
         break;
 
       case STMT_RETURN:
+        indent(i);
         printf("Return\n");
 
         if (stmt->c.retval)

@@ -26,8 +26,8 @@
 #define CLEAR_LINE "\x1b[0G\x1b[0k"
 
 // Logging macros
-#define FATAL(MSG) { LOG(FATAL, MSG "\n"); abort(); }
-#define FATALF(MSG, ...) { LOG(FATAL, MSG "\n", __VA_ARGS__); abort(); }
+#define FATAL(MSG) { LOG(FATAL, MSG "\n"); exit(EXIT_FAILURE); }
+#define FATALF(MSG, ...) { LOG(FATAL, MSG "\n", __VA_ARGS__); exit(EXIT_FAILURE); }
 #define ERROR(MSG) LOG(ERROR, MSG "\n")
 #define ERRORF(MSG, ...) LOG(ERROR, MSG "\n", __VA_ARGS__)
 #define WARN(MSG) LOG(WARN, MSG "\n")
