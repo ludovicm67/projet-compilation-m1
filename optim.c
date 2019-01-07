@@ -129,6 +129,7 @@ bool optim_apply_assign(op_list_t *ops) {
 bool optim_merge_symbols(symbol_t *symbol) {
   bool changed = false;
   for (symbol_t *tmp = symbol; tmp; tmp = tmp->next) {
+    tmp->used = false;
     if (tmp->alias)
       continue;
 
@@ -160,21 +161,29 @@ void optim_mark_used(op_t *op) {
   if (!op || op->used)
     return;
   op->used = true;
+  op->q1->used = true;
 
-  if (op->q2)
+  if (op->q2) {
+    op->q2->used = true;
     optim_mark_used(op->q2->op);
+  }
 
-  if (op->q3)
+  if (op->q3) {
+    op->q3->used = true;
     optim_mark_used(op->q3->op);
+  }
 }
 
 void optim_dead_code(symbol_t *symbol) {
   for (; symbol; symbol = symbol->next) {
-    if (symbol->name && symbol->type != SYM_LABEL && symbol->modified &&
+    if (symbol->name && symbol->type != SYM_LABEL && (symbol->modified || symbol->declared) &&
         !symbol->replaced) {
       symbol_t *target = symbol;
       while (target->alias)
         target = target->alias;
+
+      target->used = true;
+
       optim_mark_used(target->op);
     }
   }

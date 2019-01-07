@@ -35,6 +35,7 @@ typedef struct symbol_s {
   bool hasValue;           // if this symbol contains a value or not
   bool replaced;           // if this symbol was replaced by another
   bool assigned;
+  bool used;
   union {
     double decimal;
     int32_t integer;

@@ -38,7 +38,8 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol) {
   }
 
   for (; symbol; symbol = symbol->next) {
-    if (symbol->alias)
+    symbol->number = n++;
+    if (!symbol->used)
       continue;
 
     if (symbol->type == SYM_UNKNOWN) {
@@ -49,7 +50,7 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol) {
       case SYM_UNKNOWN:
       case SYM_DECIMAL:
         fprintf(args->file, "%s%s_t " TEMP "%d; %s_init2(" TEMP "%d, %d);",
-                indent, lib, n, lib, n, args->precision);
+                indent, lib, symbol->number, lib, symbol->number, args->precision);
         break;
 
       case SYM_INTEGER:
@@ -57,11 +58,11 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol) {
         break;
 
       case SYM_BOOLEAN:
-        fprintf(args->file, "%sbool " BOOL "%d;", indent, n);
+        fprintf(args->file, "%sbool " BOOL "%d;", indent, symbol->number);
         break;
 
       case SYM_LABEL:
-        fprintf(args->file, "%s// " LABEL "%d", indent, n);
+        fprintf(args->file, "%s// " LABEL "%d", indent, symbol->number);
         break;
     }
 
@@ -69,7 +70,6 @@ void gencode_init(gencode_args_t *args, symbol_t *symbol) {
       fprintf(args->file, " // %s\n", symbol->name);
     else
       fprintf(args->file, "\n");
-    symbol->number = n++;
   }
 }
 
@@ -92,6 +92,11 @@ void gencode_assign(gencode_args_t *args, symbol_t *symbol) {
       target = target->alias;
     if (target->assigned) {
       DEBUGF("Skipping symbol " TEMP "%d, already assigned.", target->number);
+      continue;
+    }
+
+    if (!target->used) {
+      DEBUGF("Skipping unused symbol %p.", (void *)target);
       continue;
     }
 
@@ -313,7 +318,7 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
   }
 
   for (s = symbol_table; s; s = s->next) {
-    if (s->alias)
+    if (!s->used)
       continue;
     fprintf(args->file, "%s%s_clear(" TEMP "%d);\n", indent, lib, s->number);
   }

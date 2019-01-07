@@ -17,6 +17,7 @@ symbol_t *symbol_new(symbol_type_t type, char *name, bool declared) {
   symbol->replaced           = false;
   symbol->hasValue           = false;
   symbol->assigned           = false;
+  symbol->used               = true;
   symbol->op                 = NULL;
   symbol->alias              = NULL;
   symbol->next               = NULL;

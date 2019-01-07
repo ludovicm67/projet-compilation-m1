@@ -3,6 +3,18 @@ Block
     Binary op mul
       Symbol 'x'
       Const 1.000000
+  Assign x =
+    Binary op add
+      Symbol 'x'
+      Const 0.000000
+  Assign x =
+    Binary op div
+      Symbol 'x'
+      Const 1.000000
+  Assign x =
+    Binary op sub
+      Symbol 'x'
+      Const 0.000000
   Assign y =
     Binary op sub
       Unary op sin
