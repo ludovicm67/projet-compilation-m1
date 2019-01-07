@@ -29,10 +29,10 @@ compare_ast() {
   set -ao pipefail
 
   if ! [ -z "$UPDATE" ]; then
-    $BIN -a $INPUTS/$1.c > $EXPECTED/ast/$1.c
+    $BIN -a $INPUTS/$1.c > $EXPECTED/ast/$1.ast
   fi
 
-  diff <($BIN -a $INPUTS/$1.c) $EXPECTED/ast/$1.c
+  diff <($BIN -a $INPUTS/$1.c) $EXPECTED/ast/$1.ast
 }
 
 compare_exec() {
