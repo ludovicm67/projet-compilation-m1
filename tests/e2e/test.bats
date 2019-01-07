@@ -105,6 +105,11 @@ EOF
 @test "'warning' optimized" { compare_optimized warning; }
 @test "'warning' execution" { compare_exec warning; }
 
+@test "'declaration-only' AST" { compare_ast declaration-only; }
+@test "'declaration-only' output" { compare_output declaration-only; }
+@test "'declaration-only' optimized" { compare_optimized declaration-only; }
+@test "'declaration-only' execution" { compare_exec declaration-only; }
+
 @test "'multiple-pragma' AST" { compare_ast multiple-pragma; }
 @test "'multiple-pragma' output" { compare_output multiple-pragma; }
 @test "'multiple-pragma' optimized" { compare_optimized multiple-pragma; }

@@ -20,9 +20,9 @@ void test_optim_add_zero(void) {
 
   // create all required symbols
   symbol_t *symbol_table = NULL;
-  symbol_t *var_x        = symbol_add(&symbol_table, SYM_UNKNOWN, "x", true);
-  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
-  symbol_t *var_z        = symbol_add(&symbol_table, SYM_UNKNOWN, "z", true);
+  symbol_t *var_x        = symbol_add(&symbol_table, SYM_UNKNOWN, "x", false);
+  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", false);
+  symbol_t *var_z        = symbol_add(&symbol_table, SYM_UNKNOWN, "z", false);
   symbol_t *tmp_1        = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_1, 1.0);
   symbol_t *tmp_0 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
@@ -108,9 +108,9 @@ void test_optim_mul_one(void) {
 
   // create all required symbols
   symbol_t *symbol_table = NULL;
-  symbol_t *var_x        = symbol_add(&symbol_table, SYM_UNKNOWN, "x", true);
-  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", true);
-  symbol_t *var_z        = symbol_add(&symbol_table, SYM_UNKNOWN, "z", true);
+  symbol_t *var_x        = symbol_add(&symbol_table, SYM_UNKNOWN, "x", false);
+  symbol_t *var_y        = symbol_add(&symbol_table, SYM_UNKNOWN, "y", false);
+  symbol_t *var_z        = symbol_add(&symbol_table, SYM_UNKNOWN, "z", false);
   symbol_t *tmp_1        = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);
   symbol_set_decimal(tmp_1, 1.0);
   symbol_t *tmp_0 = symbol_add(&symbol_table, SYM_UNKNOWN, NULL, false);

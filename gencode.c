@@ -262,7 +262,7 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
   }
 
   for (s = symbol_table; s; s = s->next) {
-    if (s->modified && s->name && !s->replaced) {
+    if ((s->modified || s->declared) && s->name && !s->replaced) {
       symbol_t *tmp = s;
       while (tmp->alias)
         tmp = tmp->alias;
@@ -276,9 +276,13 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
             fprintf(args->file, "%sdouble ", indent);
           else
             fprintf(args->file, "%s", indent);
-          fprintf(args->file, "%s = %s_get_d%s(" TEMP "%d, %s);\n", s->name,
-                  lib, (args->lib == LIB_MPC) ? "c" : "", tmp->number,
-                  args->rounding);
+
+          if (s->modified)
+            fprintf(args->file, "%s = %s_get_d%s(" TEMP "%d, %s);\n", s->name,
+                    lib, (args->lib == LIB_MPC) ? "c" : "", tmp->number,
+                    args->rounding);
+          else
+            fprintf(args->file, "%s;\n", s->name);
           break;
 
         case SYM_INTEGER:
@@ -290,7 +294,11 @@ void gencode_clear(gencode_args_t *args, symbol_t *symbol_table) {
             fprintf(args->file, "%sbool ", indent);
           else
             fprintf(args->file, "%s", indent);
-          fprintf(args->file, "%s = " BOOL "%d;\n", s->name, tmp->number);
+
+          if (s->modified)
+            fprintf(args->file, "%s = " BOOL "%d;\n", s->name, tmp->number);
+          else
+            fprintf(args->file, "%s;\n", s->name);
           break;
 
         case SYM_LABEL:

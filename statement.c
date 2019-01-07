@@ -117,7 +117,8 @@ void stmt_delete(stmt_t *stmt) {
 
       case STMT_DECL:
         free(stmt->c.decl.lval);
-        ast_delete(stmt->c.decl.rval);
+        if (stmt->c.decl.rval)
+          ast_delete(stmt->c.decl.rval);
         break;
 
       case STMT_BREAK:
