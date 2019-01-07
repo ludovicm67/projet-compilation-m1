@@ -144,16 +144,8 @@ int main(int argc, char *argv[]) {
     else
       args.precision = result->precision;
 
-    if (!result->rounding) {
-      if (opt_round)
-        args.rounding = rounding;
-      else {
-        if (result->mode == MODE_MPC)
-          args.rounding = "MPC_RNDZZ";
-        else
-          args.rounding = "MPFR_RNDZ";
-      }
-    }
+    if (!result->rounding && opt_round)
+      args.rounding = rounding;
     else
         args.rounding = result->rounding;
 
