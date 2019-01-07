@@ -14,6 +14,7 @@
   bool is_pragma = false;
   bool is_in_single_comment = false;
   bool is_in_multi_comment = false;
+  bool is_complex = false;
 
   extern FILE *f_dst;
 %}
@@ -35,6 +36,7 @@
 "float"                { return scanne(FLOAT); }
 "double"               { return scanne(DOUBLE); }
 "bool"                 { return scanne(BOOL); }
+"complex"              { return scanne(COMPLEX); }
 
 "for"                  { return scanne(FOR); }
 "while"                { return scanne(WHILE); }
@@ -112,14 +114,23 @@
 "powf"                 { yylval.binary = OP_POWF;   return scanne(BINARY_FUNC); }
 "powl"                 { yylval.binary = OP_POWL;   return scanne(BINARY_FUNC); }
 
-[0-9]+                 { yylval.integer = atoi(yytext); return scanne(INTEGER); }
-[0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return scanne(DECIMAL); }
+[0-9]+                 { yylval.integer = atoi(yytext);
+                         if (!is_complex) return scanne(INTEGER);
+                         else return scanne(INTEGER_COMPLEX);
+                       }
+[0-9]+"."[0-9]+        { yylval.decimal = atof(yytext);
+                         if (!is_complex) return scanne(DECIMAL);
+                         else return scanne(DECIMAL_COMPLEX);
+                       }
 
 "\n"                   { if (is_pragma && is_in_single_comment) return yytext[0];
                          if (!is_pragma && f_dst) fprintf(f_dst, "%c", yytext[0]); }
 [\t ]+                 { if (!is_pragma && f_dst) fprintf(f_dst, "%s", yytext); }
 
-[a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext); return scanne(IDENTIFIER); }
+[a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext);
+                         if (!is_complex) return scanne(IDENTIFIER);
+                         else return scanne(IDENTIFIER_COMPLEX);
+                       }
 
 .                      { return scanne(yytext[0]); }
 

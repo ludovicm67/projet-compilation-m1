@@ -1,6 +1,7 @@
 %{
   #include <stdio.h>
   #include <stdlib.h>
+  #include <complex.h>
 
   #include "ast.h"
   #include "statement.h"
@@ -15,6 +16,7 @@
   extern bool is_pragma;
   extern bool is_in_single_comment;
   extern bool is_in_multi_comment;
+  extern bool is_complex;
 
   parse_result_t parse_result;
 %}
@@ -38,11 +40,14 @@
 %token <operator>   OPERATOR
 %token <integer>    INTEGER
 %token <decimal>    DECIMAL
+%token <identifier> IDENTIFIER_COMPLEX
+%token <integer>    INTEGER_COMPLEX
+%token <decimal>    DECIMAL_COMPLEX
 
 %token IGNORE
 %token PRAGMA_MPC PRAGMA_MPFR PRECISION ROUNDING
 
-%token INT FLOAT DOUBLE COMPLEX
+%token INT FLOAT DOUBLE COMPLEX IMAGINARY
 %token BOOL
 
 %token AND_OP OR_OP COMP_OP EQ_OP
@@ -77,7 +82,20 @@
 %type <stmt>       declaration
 %type <stmt>       statement
 %type <stmt>       declaration_list
+%type <node>       expression_complex
+%type <node>       unary_expr_complex
+%type <node>       additive_expr_complex
+%type <node>       multiplicative_expr_complex
+%type <node>       comparaison_expr_complex
+%type <node>       equal_expr_complex
+%type <node>       and_expr_complex
+%type <node>       or_expr_complex
+%type <node>       assignement_expr_complex
+%type <node>       assignement_complex
+%type <stmt>       declaration_complex
+%type <stmt>       declaration_complex_list
 %type <decl_type>  type
+%type <decl_type>  type_complex
 %type <integer>    precision
 %type <identifier> rounding
 %type <options>    options
@@ -98,22 +116,28 @@
 %%
 
 statement:
-    assignement_expr ';'        { $$ = stmt_new_expr($1); }
+    assignement_expr ';'         { $$ = stmt_new_expr($1); }
+  | assignement_expr_complex ';' { $$ = stmt_new_expr($1); }
   | declaration_list ';'
+  | declaration_complex_list ';'
   | if_statement
   | while_statement
-  | do_while_statement          { $$ = NULL; printf("do_while_statement\n"); }
+  | do_while_statement           { $$ = NULL; printf("do_while_statement\n"); }
   | for_statement
-  | ';'                         { $$ = NULL; }
-  | BREAK ';'                   { $$ = stmt_new_break(); }
-  | CONTINUE ';'                { $$ = stmt_new_continue(); }
-  | RETURN assignement_expr ';' { $$ = stmt_new_return($2); }
+  | ';'                          { $$ = NULL; }
+  | BREAK ';'                    { $$ = stmt_new_break(); }
+  | CONTINUE ';'                 { $$ = stmt_new_continue(); }
+  | RETURN assignement_expr ';'  { $$ = stmt_new_return($2); }
   ;
 
 declaration:
     type assignement { $$ = stmt_decl_from_assign($1, $2); }
-  | type IDENTIFIER  { $$ = stmt_new_decl($1, $2, NULL);
-                       free($2); }
+  | type IDENTIFIER  { $$ = stmt_new_decl($1, $2, NULL); free($2); }
+  ;
+
+declaration_complex:
+    type_complex assignement_complex { $$ = stmt_decl_from_assign($1, $2); }
+  | type_complex IDENTIFIER_COMPLEX  { $$ = stmt_new_decl($1, $2, NULL); free($2); }
   ;
 
 declaration_list:
@@ -125,9 +149,25 @@ declaration_list:
                                        free($3); }
   ;
 
+declaration_complex_list:
+    declaration_complex                      { $$ = $1; }
+  | declaration_complex_list ',' assignement_expr
+    { $$ = $1;
+      stmt_concat(&$$, stmt_decl_from_assign($1->c.decl.type, $3));
+    }
+  | declaration_complex_list ',' IDENTIFIER_COMPLEX
+    { $$ = $1;
+      stmt_concat(&$$, stmt_new_decl($1->c.decl.type, $3, NULL));
+      free($3);
+    }
+  ;
+
 assignement:
-	  IDENTIFIER '=' or_expr { $$ = ast_new_assign($1, $3);
-                             free($1); }
+	  IDENTIFIER '=' or_expr { $$ = ast_new_assign($1, $3); free($1); }
+  ;
+
+assignement_complex:
+	  IDENTIFIER_COMPLEX '=' or_expr_complex { $$ = ast_new_assign($1, $3); free($1); }
   ;
 
 assignement_expr:
@@ -135,9 +175,19 @@ assignement_expr:
 	| assignement
   ;
 
+assignement_expr_complex:
+    or_expr_complex
+	| assignement_complex
+  ;
+
 or_expr:
     and_expr
   | and_expr OR_OP or_expr { $$ = ast_new_binary(OP_OR, $1, $3); }
+  ;
+
+or_expr_complex:
+    and_expr_complex
+  | and_expr_complex OR_OP or_expr_complex { $$ = ast_new_binary(OP_OR, $1, $3); }
   ;
 
 and_expr:
@@ -145,14 +195,29 @@ and_expr:
   | equal_expr AND_OP and_expr { $$ = ast_new_binary(OP_AND, $1, $3); }
   ;
 
+and_expr_complex:
+    equal_expr_complex
+  | equal_expr_complex AND_OP and_expr_complex { $$ = ast_new_binary(OP_AND, $1, $3); }
+  ;
+
 equal_expr:
     comparaison_expr
   | comparaison_expr EQ_OP equal_expr { $$ = ast_new_binary($2, $1, $3);  }
   ;
 
+equal_expr_complex:
+    comparaison_expr_complex
+  | comparaison_expr_complex EQ_OP equal_expr_complex { $$ = ast_new_binary($2, $1, $3);  }
+  ;
+
 comparaison_expr:
     additive_expr
   | additive_expr COMP_OP comparaison_expr { $$ = ast_new_binary($2, $1, $3); }
+  ;
+
+comparaison_expr_complex:
+    additive_expr_complex
+  | additive_expr_complex COMP_OP comparaison_expr_complex { $$ = ast_new_binary($2, $1, $3); }
   ;
 
 additive_expr:
@@ -161,10 +226,22 @@ additive_expr:
   | additive_expr '-' multiplicative_expr { $$ = ast_new_binary(OP_SUB, $1, $3); }
   ;
 
+additive_expr_complex:
+    multiplicative_expr_complex
+  | additive_expr_complex '+' multiplicative_expr_complex { $$ = ast_new_binary(OP_ADD, $1, $3); }
+  | additive_expr_complex '-' multiplicative_expr_complex { $$ = ast_new_binary(OP_SUB, $1, $3); }
+  ;
+
 multiplicative_expr:
     unary_expr
   | multiplicative_expr '*' unary_expr { $$ = ast_new_binary(OP_MUL, $1, $3); }
   | multiplicative_expr '/' unary_expr { $$ = ast_new_binary(OP_DIV, $1, $3); }
+  ;
+
+multiplicative_expr_complex:
+    unary_expr_complex
+  | multiplicative_expr_complex '*' unary_expr_complex { $$ = ast_new_binary(OP_MUL, $1, $3); }
+  | multiplicative_expr_complex '/' unary_expr_complex { $$ = ast_new_binary(OP_DIV, $1, $3); }
   ;
 
 unary_expr:
@@ -172,6 +249,13 @@ unary_expr:
   | '-' expression                      { $$ = ast_new_unary(OP_NEG, $2); }
   | expression UNARY_OP                 { $$ = ast_new_unary($2, $1); }
   | UNARY_OP expression                 { $$ = ast_new_unary($1, $2); }
+  ;
+
+unary_expr_complex:
+    expression_complex
+  | '-' expression_complex              { $$ = ast_new_unary(OP_NEG, $2); }
+  | expression_complex UNARY_OP         { $$ = ast_new_unary($2, $1); }
+  | UNARY_OP expression_complex         { $$ = ast_new_unary($1, $2); }
   ;
 
 expression:
@@ -186,12 +270,34 @@ expression:
   | '(' assignement_expr ')' { $$ = $2; }
   ;
 
+expression_complex:
+    IDENTIFIER_COMPLEX       { if (strcmp($1, "I") == 0) {
+                                 $$ = ast_new_constant(I);
+                                 free($1);
+                               }
+                               else {
+                                 $$ = ast_new_symbol($1);
+                                 free($1);
+                               }
+                             }
+  | DECIMAL_COMPLEX          { $$ = ast_new_constant($1); }
+  | INTEGER_COMPLEX          { $$ = ast_new_constant($1); }
+  | UNARY_FUNC '(' assignement_expr_complex ')'
+                             { $$ = ast_new_unary($1, $3); }
+  | BINARY_FUNC '(' assignement_expr_complex ',' assignement_expr_complex ')'
+                             { $$ = ast_new_binary($1, $3, $5); }
+  | '(' assignement_expr_complex ')' { $$ = $2; }
+  ;
+
 type:
-    INT     { $$ = TYPE_INT; }
-  | FLOAT   { $$ = TYPE_FLOAT; }
-  | DOUBLE  { $$ = TYPE_DOUBLE; }
-  | COMPLEX { $$ = TYPE_COMPLEX; }
-  | BOOL    { $$ = TYPE_BOOL; }
+    INT            { $$ = TYPE_INT; }
+  | FLOAT          { $$ = TYPE_FLOAT; }
+  | DOUBLE         { $$ = TYPE_DOUBLE; }
+  | BOOL           { $$ = TYPE_BOOL; }
+  ;
+
+type_complex:
+    DOUBLE COMPLEX { $$ = TYPE_COMPLEX; is_complex = true;}
   ;
 
 start:
@@ -215,8 +321,10 @@ parse:
       is_pragma = false;
       is_in_single_comment = false;
       is_in_multi_comment = false;
+      is_complex = false;
       YYACCEPT;
-    };
+    }
+  ;
 
 pragma_contents:
     block  { $$ = $1; }
@@ -231,7 +339,7 @@ block:
   ;
 
 statement_list:
-    block                { $$ = $1; }
+    block                { $$ = $1; is_complex = false;}
   | statement_list block { $$ = $1; stmt_concat(&$$, $2); }
   ;
 
