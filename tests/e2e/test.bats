@@ -4,8 +4,8 @@ load helper
 
 @test "test1" {
   compare_output test1
-  compare_optimized test2
-  compare_ast test2
+  compare_optimized test1
+  compare_ast test1
   compare_exec test1
 }
 

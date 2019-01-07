@@ -32,7 +32,7 @@ compare_ast() {
     $BIN -a $INPUTS/$1.c > $EXPECTED/ast/$1.c
   fi
 
-  diff -w <($BIN -a $INPUTS/$1.c) $EXPECTED/ast/$1.c
+  diff <($BIN -a $INPUTS/$1.c) $EXPECTED/ast/$1.c
 }
 
 compare_exec() {
