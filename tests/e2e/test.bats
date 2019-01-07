@@ -21,3 +21,15 @@ load helper
 @test "'control-statements' output" { skip; compare_output control-statements; }
 @test "'control-statements' optimized" { skip; compare_optimized control-statements; }
 @test "'control-statements' execution" { skip; compare_exec control-statements; }
+
+@test "Report syntax error" {
+  run $BIN -o /dev/null $INPUTS/syntax-error.c
+  [ "$status" -eq 2 ]
+  [[ "$output" == *"syntax error"* ]]
+}
+
+@test "Report invalid operation" {
+  run $BIN -o /dev/null $INPUTS/invalid-op.c
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Can't use a decimal symbol ("*") in a and op"* ]]
+}

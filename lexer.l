@@ -126,8 +126,8 @@
 %%
 
 int yyerror(char *errormsg) {
-      fprintf(stderr, "%s\n", errormsg);
-      exit(1);
+  ERRORF("%s", errormsg);
+  exit(2);
 }
 
 int scanne(int token) {
