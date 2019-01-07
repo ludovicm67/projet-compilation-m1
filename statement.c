@@ -156,58 +156,58 @@ void stmt_display_i(stmt_t *stmt, uint8_t i) {
 
       case STMT_BLOCK:
         indent(i);
-        fprintf(stderr, "Block\n");
+        fprintf(stdout, "Block\n");
         stmt_display_i(stmt->c.block, i + 1);
         break;
 
       case STMT_DECL:
         indent(i);
         if (stmt->c.decl.rval) {
-          fprintf(stderr, "Declaration %d %s =\n", stmt->c.decl.type,
+          fprintf(stdout, "Declaration %d %s =\n", stmt->c.decl.type,
                   stmt->c.decl.lval);
           ast_display_i(stmt->c.decl.rval, i + 1);
         } else {
-          fprintf(stderr, "Declaration %d %s\n", stmt->c.decl.type,
+          fprintf(stdout, "Declaration %d %s\n", stmt->c.decl.type,
                   stmt->c.decl.lval);
         }
         break;
 
       case STMT_COND:
         indent(i);
-        fprintf(stderr, "If\n");
+        fprintf(stdout, "If\n");
         ast_display_i(stmt->c.cond.condition, i + 1);
         indent(i);
-        fprintf(stderr, "Then\n");
+        fprintf(stdout, "Then\n");
         stmt_display_i(stmt->c.cond.body, i + 1);
 
         if (stmt->c.cond.else_body) {
           indent(i);
-          fprintf(stderr, "Else\n");
+          fprintf(stdout, "Else\n");
           stmt_display_i(stmt->c.cond.else_body, i + 1);
         }
         break;
 
       case STMT_LOOP:
-        fprintf(stderr, "Loop\n");
+        fprintf(stdout, "Loop\n");
         if (stmt->c.loop.initializers) {
           indent(i);
-          fprintf(stderr, "Init\n");
+          fprintf(stdout, "Init\n");
           stmt_display_i(stmt->c.loop.initializers, i + 1);
         }
 
         if (stmt->c.loop.condition) {
           indent(i);
-          fprintf(stderr, "Condition\n");
+          fprintf(stdout, "Condition\n");
           ast_display_i(stmt->c.loop.condition, i + 1);
         }
 
         indent(i);
-        fprintf(stderr, "Body\n");
+        fprintf(stdout, "Body\n");
         stmt_display_i(stmt->c.loop.body, i + 1);
 
         if (stmt->c.loop.end) {
           indent(i);
-          fprintf(stderr, "End\n");
+          fprintf(stdout, "End\n");
           stmt_display_i(stmt->c.loop.end, i + 1);
         }
         break;

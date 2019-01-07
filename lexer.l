@@ -116,8 +116,8 @@
 [0-9]+"."[0-9]+        { yylval.decimal = atof(yytext); return scanne(DECIMAL); }
 
 "\n"                   { if (is_pragma && is_in_single_comment) return yytext[0];
-                         if (!is_pragma) fprintf(f_dst, "%c", yytext[0]); }
-[\t ]+                 { if (!is_pragma) fprintf(f_dst, "%s", yytext); }
+                         if (!is_pragma && f_dst) fprintf(f_dst, "%c", yytext[0]); }
+[\t ]+                 { if (!is_pragma && f_dst) fprintf(f_dst, "%s", yytext); }
 
 [a-zA-Z_][0-9a-zA-Z_]* { yylval.identifier = strdup(yytext); return scanne(IDENTIFIER); }
 
@@ -138,6 +138,8 @@ int scanne(int token) {
       return token;
   }
 
-  fprintf(f_dst, "%s", yytext);
+  if (f_dst)
+    fprintf(f_dst, "%s", yytext);
+
   return IGNORE;
 }

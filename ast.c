@@ -242,27 +242,27 @@ void ast_display_i(ast_node_t *node, uint8_t i) {
 
   switch (node->type) {
     case NODE_UNARY:
-      fprintf(stderr, "Unary op %s\n", unary_map[node->c.unary.type].name);
+      fprintf(stdout, "Unary op %s\n", unary_map[node->c.unary.type].name);
       ast_display_i(node->c.unary.arg, i + 1);
       break;
 
     case NODE_BINARY:
-      fprintf(stderr, "Binary op %s\n", binary_map[node->c.binary.type].name);
+      fprintf(stdout, "Binary op %s\n", binary_map[node->c.binary.type].name);
       ast_display_i(node->c.binary.left, i + 1);
       ast_display_i(node->c.binary.right, i + 1);
       break;
 
     case NODE_ASSIGN:
-      fprintf(stderr, "Assign %s =\n", node->c.assign.lval);
+      fprintf(stdout, "Assign %s =\n", node->c.assign.lval);
       ast_display_i(node->c.assign.rval, i + 1);
       break;
 
     case NODE_CONST:
-      fprintf(stderr, "Const %f\n", node->c.constant);
+      fprintf(stdout, "Const %f\n", node->c.constant);
       break;
 
     case NODE_SYMBOL:
-      fprintf(stderr, "Symbol '%s'\n", node->c.symbol);
+      fprintf(stdout, "Symbol '%s'\n", node->c.symbol);
       break;
   }
 }

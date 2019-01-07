@@ -23,6 +23,7 @@ static void usage(char *const command) {
                   "  -o\tSpecifies the output (stdout by default)\n"
                   "  -v\tVerbose output (repeatable)\n"
                   "  -O\tRun optimisations\n"
+                  "  -d\tPrint out the AST\n"
                   "  -h\tDisplay this help and exit\n");
 
   exit(EXIT_FAILURE);
@@ -51,10 +52,11 @@ int main(int argc, char *argv[]) {
 
   FILE *f_src = stdin;  // STDIN is the source by default
   f_dst       = stdout; // STDOUT is the destination by default
-  bool optim  = false;
+  bool opt_optim  = false;
+  bool opt_ast = false;
 
   // No option is required
-  while ((option = getopt(argc, argv, "+:o:hvO")) != -1) {
+  while ((option = getopt(argc, argv, "+:o:hvOa")) != -1) {
     switch (option) {
       case 'o':
         f_dst = f_open(optarg, "w");
@@ -66,7 +68,12 @@ int main(int argc, char *argv[]) {
         log_level_incr();
         break;
       case 'O':
-        optim = true;
+        opt_optim = true;
+        break;
+      case 'a':
+        opt_ast = true;
+        if (f_dst == stdout)
+          f_dst = NULL;
         break;
       case '?':
         ERRORF("Unknown option: %c", optopt);
@@ -100,7 +107,12 @@ int main(int argc, char *argv[]) {
   parse_result_t *result = NULL;
 
   while ((result = parse(f_src)) != NULL) {
-    stmt_display(result->stmt);
+    if (opt_ast)
+      stmt_display(result->stmt);
+
+    if (!f_dst)
+      continue;
+
     args.lib       = result->mode;
     args.precision = result->precision;
     args.rounding  = result->rounding;
@@ -109,7 +121,7 @@ int main(int argc, char *argv[]) {
     symbol_t *table = NULL;
     stmt_gen_quad(result->stmt, &table, &ops);
 
-    if (optim)
+    if (opt_optim)
       optim_do(table, ops, 8);
 
     gencode_init(&args, table);
@@ -131,8 +143,10 @@ int main(int argc, char *argv[]) {
     symbol_delete(table);
   }
 
-  f_close(f_src);
-  f_close(f_dst);
+  if (f_src)
+    f_close(f_src);
+  if (f_dst)
+    f_close(f_dst);
 
   return EXIT_SUCCESS;
 }
