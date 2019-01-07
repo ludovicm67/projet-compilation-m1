@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "gencode.h"
+#include "optim.h"
 #include "statement.h"
 #include "util.h"
 
@@ -19,8 +20,10 @@ static void usage(char *const command) {
           "of a dedicated library\n\n");
   fprintf(stderr, "  SOURCE is a file (`-' for stdin) to compile\n");
   fprintf(stderr, "Options:\n"
-                  "  -o   Specifies the output (stdout by default)\n"
-                  "  -h   Display this help and exit\n");
+                  "  -o\tSpecifies the output (stdout by default)\n"
+                  "  -v\tVerbose output (repeatable)\n"
+                  "  -O\tRun optimisations\n"
+                  "  -h\tDisplay this help and exit\n");
 
   exit(EXIT_FAILURE);
 }
@@ -48,9 +51,10 @@ int main(int argc, char *argv[]) {
 
   FILE *f_src = stdin;  // STDIN is the source by default
   f_dst       = stdout; // STDOUT is the destination by default
+  bool optim  = false;
 
   // No option is required
-  while ((option = getopt(argc, argv, "+:o:hv")) != -1) {
+  while ((option = getopt(argc, argv, "+:o:hvO")) != -1) {
     switch (option) {
       case 'o':
         f_dst = f_open(optarg, "w");
@@ -60,6 +64,9 @@ int main(int argc, char *argv[]) {
         break;
       case 'v':
         log_level_incr();
+        break;
+      case 'O':
+        optim = true;
         break;
       case '?':
         ERRORF("Unknown option: %c", optopt);
@@ -102,13 +109,17 @@ int main(int argc, char *argv[]) {
     symbol_t *table = NULL;
     stmt_gen_quad(result->stmt, &table, &ops);
 
+    if (optim)
+      optim_do(table, ops, 8);
+
     gencode_init(&args, table);
 
     for (symbol_t *s = table; s; s = s->next) {
       DEBUGF("Symbol T%d, type: %s, name: %6s, declared: %d, "
-             "readBeforeModified: %d, modified: %d, hasValue: %d, value: %f",
+             "readBeforeModified: %d, modified: %d, hasValue: %d, value: %f %s",
              s->number, symbol_type_name(s->type), s->name, s->declared,
-             s->readBeforeModified, s->modified, s->hasValue, s->value.decimal);
+             s->readBeforeModified, s->modified, s->hasValue, s->value.decimal,
+             s->alias ? "(alias)" : "");
     }
 
     gencode_assign(&args, table);

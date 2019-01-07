@@ -41,6 +41,7 @@ typedef struct op_s {
   symbol_t *q1;
   symbol_t *q2;
   symbol_t *q3;
+  bool used;
 } op_t;
 
 /**
@@ -62,6 +63,8 @@ typedef struct op_list_s {
  * @return the new quad
  */
 op_t *quad_new(quad_op_t op, symbol_t *q1, symbol_t *q2, symbol_t *q3);
+
+char *quad_op_name(quad_op_t);
 
 /**
  * Delete a quad

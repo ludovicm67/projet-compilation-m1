@@ -30,4 +30,6 @@ void optim_mul_one(op_t *quad);
  */
 void optim_arith(op_list_t * list);
 
+void optim_do(symbol_t *, op_list_t *, uint8_t);
+
 #endif

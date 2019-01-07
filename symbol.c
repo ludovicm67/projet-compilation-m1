@@ -16,6 +16,9 @@ symbol_t *symbol_new(symbol_type_t type, char *name, bool declared) {
   symbol->modified           = false;
   symbol->replaced           = false;
   symbol->hasValue           = false;
+  symbol->assigned           = false;
+  symbol->op                 = NULL;
+  symbol->alias              = NULL;
   symbol->next               = NULL;
   return symbol;
 }
@@ -63,6 +66,13 @@ void symbol_set_boolean(symbol_t *symbol, bool value) {
   symbol_set_type(symbol, SYM_BOOLEAN);
   symbol->hasValue      = true;
   symbol->value.boolean = value;
+}
+
+bool symbol_compare_values(symbol_t *x, symbol_t *y) {
+  return (x->type == y->type && x->hasValue && y->hasValue &&
+          ((x->type == SYM_DECIMAL && x->value.decimal == y->value.decimal) ||
+           (x->type == SYM_INTEGER && x->value.integer == y->value.integer) ||
+           (x->type == SYM_BOOLEAN && x->value.boolean == y->value.boolean)));
 }
 
 symbol_t *symbol_lookup(symbol_t **symbol, char *name) {

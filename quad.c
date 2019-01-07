@@ -21,8 +21,11 @@ op_t *quad_new(quad_op_t op, symbol_t *q1, symbol_t *q2, symbol_t *q3) {
   quad->q1   = q1;
   quad->q2   = q2;
   quad->q3   = q3;
+  quad->used = true;
   return quad;
 }
+
+char *quad_op_name(quad_op_t type) { return names[type]; }
 
 void quad_delete(op_t *q) { free(q); }
 

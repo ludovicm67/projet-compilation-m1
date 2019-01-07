@@ -34,11 +34,14 @@ typedef struct symbol_s {
   bool modified;           // value has been changed in the pragma block
   bool hasValue;           // if this symbol contains a value or not
   bool replaced;           // if this symbol was replaced by another
+  bool assigned;
   union {
     double decimal;
     int32_t integer;
     bool boolean;
   } value;
+  struct op_s *op;
+  struct symbol_s *alias;
   struct symbol_s *next;
 } symbol_t;
 
@@ -107,12 +110,17 @@ void symbol_set_integer(symbol_t *symbol, int value);
 void symbol_set_boolean(symbol_t *symbol, bool value);
 
 /**
- * Lookup for a symbol using a name, create it if it doesn't exist
+ * Compare the values of two symbols, if they both have one
+ */
+bool symbol_compare_values(symbol_t *x, symbol_t *y);
+
+/**
+ * Lookup for a symbol using a name
  *
  * @param[in,out] symbol the symbol table in wich we want to look for
  * @param[in] name the name of the symbol we are looking for
  *
- * @return the symbol having the specified name
+ * @return the symbol having the specified name, null if not found
  */
 symbol_t *symbol_lookup(symbol_t **symbol, char *name);
 
