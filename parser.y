@@ -201,7 +201,7 @@ parse_list:
     parse
   | parse_list parse
   | parse_list IGNORE
-  | IGNORE
+  |
   ;
 
 parse:
