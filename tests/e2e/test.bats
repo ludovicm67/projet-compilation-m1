@@ -34,7 +34,6 @@ load helper
   [[ "$output" == *"Unknown option: K"* ]]
   [[ "$output" == *"Usage"* ]]
   run $BIN -o # No output file specified
-  echo $output
   [[ "$output" == *"Usage"* ]]
 }
 
@@ -42,6 +41,10 @@ load helper
 @test "'simple' output" { compare_output simple; }
 @test "'simple' optimized" { compare_optimized simple; }
 @test "'simple' execution" { compare_exec simple; }
+
+@test "'empty' AST" { compare_ast empty; }
+@test "'empty' output" { compare_output empty; }
+@test "'empty' optimized" { compare_optimized empty; }
 
 @test "'constant-alias' AST" { compare_ast constant-alias; }
 @test "'constant-alias' output" { compare_output constant-alias; }
