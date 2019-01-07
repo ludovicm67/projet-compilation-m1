@@ -1,7 +1,7 @@
 #include <mpfr.h>
 
 int main(void) {
-  #pragma MFR precision(256) rouding(MPFR_RNDZZ)
+  #pragma MPFR precision(256) rounding(MPFR_RNDZZ)
   {
     double x = 2;
     for (int i = 0; i < 10; i++) {
