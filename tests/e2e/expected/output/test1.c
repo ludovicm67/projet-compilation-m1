@@ -6,7 +6,7 @@
 int main() {
   double complex resultat, s1, s2, s3;
 
-
+  
   // declaration of all variables that we will use
   mpc_t c2mp_temp0; mpc_init2(c2mp_temp0, 256); // resultat
   mpc_t c2mp_temp1; mpc_init2(c2mp_temp1, 256);

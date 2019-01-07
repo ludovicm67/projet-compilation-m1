@@ -9,7 +9,7 @@ int main() {
   int pc = 2;
   double resultat;
 
-
+  
   // declaration of all variables that we will use
   mpfr_t c2mp_temp0; mpfr_init2(c2mp_temp0, 128); // resultat
   mpfr_t c2mp_temp1; mpfr_init2(c2mp_temp1, 128);
