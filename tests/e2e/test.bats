@@ -15,14 +15,21 @@ load helper
 }
 
 @test "Try different log levels" {
-  run $BIN -o /dev/null $INPUTS/simple.c
+  run $BIN -o /dev/null $INPUTS/warning.c
   [ -z "$output" ] # No output
 
-  run $BIN -vvo /dev/null $INPUTS/simple.c
+  run $BIN -vo /dev/null $INPUTS/warning.c
+  [[ "$output" == *"WARN"* ]]
+  [[ "$output" != *"INFO"* ]]
+  [[ "$output" != *"DEBUG"* ]]
+
+  run $BIN -vvo /dev/null $INPUTS/warning.c
+  [[ "$output" == *"WARN"* ]]
   [[ "$output" == *"INFO"* ]]
   [[ "$output" != *"DEBUG"* ]]
 
-  run $BIN -vvvo /dev/null $INPUTS/simple.c
+  run $BIN -vvvo /dev/null $INPUTS/warning.c
+  [[ "$output" == *"WARN"* ]]
   [[ "$output" == *"INFO"* ]]
   [[ "$output" == *"DEBUG"* ]]
 }
@@ -92,6 +99,16 @@ EOF
 @test "'empty' AST" { compare_ast empty; }
 @test "'empty' output" { compare_output empty; }
 @test "'empty' optimized" { compare_optimized empty; }
+
+@test "'warning' AST" { compare_ast warning; }
+@test "'warning' output" { compare_output warning; }
+@test "'warning' optimized" { compare_optimized warning; }
+@test "'warning' execution" { compare_exec warning; }
+
+@test "'multiple-pragma' AST" { compare_ast multiple-pragma; }
+@test "'multiple-pragma' output" { compare_output multiple-pragma; }
+@test "'multiple-pragma' optimized" { compare_optimized multiple-pragma; }
+@test "'multiple-pragma' execution" { compare_exec multiple-pragma; }
 
 @test "'constant-alias' AST" { compare_ast constant-alias; }
 @test "'constant-alias' output" { compare_output constant-alias; }
