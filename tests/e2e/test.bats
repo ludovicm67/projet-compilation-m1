@@ -31,7 +31,7 @@ load helper
   run $BIN -h
   [[ "$output" == *"Usage"* ]]
   run $BIN -K # Invalid argument
-  [[ "$output" == *"Unknown option: K"* ]]
+  [[ "$output" == *"Unknown option"* ]]
   [[ "$output" == *"Usage"* ]]
   run $BIN -o # No output file specified
   [[ "$output" == *"Usage"* ]]

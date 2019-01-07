@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
           f_dst = NULL;
         break;
       case '?':
-        ERRORF("Unknown option: %c", optopt);
+        ERRORF("Unknown option %c", optopt);
         usage(prog_name);
         break;
       case ':':
