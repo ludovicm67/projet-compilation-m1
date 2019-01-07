@@ -65,12 +65,11 @@ int main(int argc, char *argv[]) {
 
   FILE *f_src = stdin;  // STDIN is the source by default
   f_dst       = stdout; // STDOUT is the destination by default
-  char* rounding;
 
   bool opt_optim = false;
   bool opt_ast   = false;
   int  opt_prec  = 128;
-  bool opt_round = false;
+  char* opt_round = NULL;
 
   // No option is required
   while ((option = getopt(argc, argv, "+:o:p:r:hvOa")) != -1) {
@@ -82,8 +81,7 @@ int main(int argc, char *argv[]) {
         opt_prec = safe_atoi(optarg, prog_name);
         break;
       case 'r':
-        opt_round = true;
-        rounding  = optarg;
+        opt_round = optarg;
         break;
       case 'h':
         usage(prog_name);
@@ -146,7 +144,7 @@ int main(int argc, char *argv[]) {
 
     if (!result->rounding) {
       if (opt_round)
-        args.rounding = rounding;
+        args.rounding = opt_round;
       else {
         if (result->mode == MODE_MPC)
           args.rounding = "MPC_RNDZZ";

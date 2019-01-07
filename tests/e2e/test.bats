@@ -37,6 +37,53 @@ load helper
   [[ "$output" == *"Usage"* ]]
 }
 
+@test "Try different rounding/precision args" {
+  run $BIN <(echo "#pragma MPC 3;")
+  echo "$output"
+  [ "$status" -eq 0 ]
+  diff -w <(echo "$output") - <<EOF
+
+    // declaration of all variables that we will use
+    mpc_t c2mp_temp0; mpc_init2(c2mp_temp0, 128);
+
+    // assign values to some variables
+    mpc_set_d(c2mp_temp0, 3.000000, MPC_RNDZZ);
+
+    // free memory of all variables that we used
+    mpc_clear(c2mp_temp0);
+EOF
+
+  run $BIN -r CUSTOM <(echo "#pragma MPC 3;")
+  echo "$output"
+  [ "$status" -eq 0 ]
+  diff -w <(echo "$output") - <<EOF
+
+    // declaration of all variables that we will use
+    mpc_t c2mp_temp0; mpc_init2(c2mp_temp0, 128);
+
+    // assign values to some variables
+    mpc_set_d(c2mp_temp0, 3.000000, CUSTOM);
+
+    // free memory of all variables that we used
+    mpc_clear(c2mp_temp0);
+EOF
+
+  run $BIN -p 256 <(echo "#pragma MPC 3;")
+  echo "$output"
+  [ "$status" -eq 0 ]
+  diff -w <(echo "$output") - <<EOF
+
+    // declaration of all variables that we will use
+    mpc_t c2mp_temp0; mpc_init2(c2mp_temp0, 256);
+
+    // assign values to some variables
+    mpc_set_d(c2mp_temp0, 3.000000, MPC_RNDZZ);
+
+    // free memory of all variables that we used
+    mpc_clear(c2mp_temp0);
+EOF
+}
+
 @test "'simple' AST" { compare_ast simple; }
 @test "'simple' output" { compare_output simple; }
 @test "'simple' optimized" { compare_optimized simple; }
