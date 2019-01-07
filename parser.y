@@ -255,8 +255,8 @@ options:
     precision rounding { $$.precision = $1; $$.rounding = $2; }
   | precision          { $$.precision = $1; $$.rounding = NULL; }
   | rounding precision { $$.precision = $2; $$.rounding = $1; }
-  | rounding           { $$.precision = 0;  $$.rounding = $1; }
-  |                    { $$.precision = 0;  $$.rounding = NULL; }
+  | rounding           { $$.precision = -1; $$.rounding = $1; }
+  |                    { $$.precision = -1; $$.rounding = NULL; }
   ;
 
 if_statement:

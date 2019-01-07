@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "gencode.h"
@@ -24,6 +25,8 @@ static void usage(char *const command) {
                   "  -v\tVerbose output (repeatable)\n"
                   "  -O\tRun optimisations\n"
                   "  -d\tPrint out the AST\n"
+                  "  -p\tSpecifies precision (unused if defined in pragma\n"
+                  "  -r\tSpecifies rounding (unused if defined in pragma\n"
                   "  -h\tDisplay this help and exit\n");
 
   exit(EXIT_FAILURE);
@@ -45,6 +48,16 @@ static void f_close(FILE *fp) {
   }
 }
 
+static int safe_atoi(char const* str, char *const command) {
+	for (unsigned int i = 0; i < strlen(str); ++i)
+		if (str[i] < '0' || str[i] > '9'){
+			ERRORF("Invalid argument: %s can't be converted to int", str);
+      usage(command);
+		}
+
+	return atoi(str);
+}
+
 int main(int argc, char *argv[]) {
   char *prog_name = argv[0];
 
@@ -52,14 +65,25 @@ int main(int argc, char *argv[]) {
 
   FILE *f_src = stdin;  // STDIN is the source by default
   f_dst       = stdout; // STDOUT is the destination by default
-  bool opt_optim  = false;
-  bool opt_ast = false;
+  char* rounding;
+
+  bool opt_optim = false;
+  bool opt_ast   = false;
+  int  opt_prec  = 128;
+  bool opt_round = false;
 
   // No option is required
-  while ((option = getopt(argc, argv, "+:o:hvOa")) != -1) {
+  while ((option = getopt(argc, argv, "+:o:p:r:hvOa")) != -1) {
     switch (option) {
       case 'o':
         f_dst = f_open(optarg, "w");
+        break;
+      case 'p':
+        opt_prec = safe_atoi(optarg, prog_name);
+        break;
+      case 'r':
+        opt_round = true;
+        rounding  = optarg;
         break;
       case 'h':
         usage(prog_name);
@@ -113,9 +137,25 @@ int main(int argc, char *argv[]) {
     if (!f_dst)
       continue;
 
-    args.lib       = result->mode;
-    args.precision = result->precision;
-    args.rounding  = result->rounding;
+    args.lib = result->mode;
+
+    if (result->precision == -1)
+      args.precision = opt_prec;
+    else
+      args.precision = result->precision;
+
+    if (!result->rounding) {
+      if (opt_round)
+        args.rounding = rounding;
+      else {
+        if (result->mode == MODE_MPC)
+          args.rounding = "MPC_RNDZZ";
+        else
+          args.rounding = "MPFR_RNDZ";
+      }
+    }
+    else
+        args.rounding = result->rounding;
 
     op_list_t *ops  = NULL;
     symbol_t *table = NULL;
