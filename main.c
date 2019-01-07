@@ -13,7 +13,7 @@ parse_result_t *parse(FILE *source);
 int yyparse(void);
 
 static void usage(char *const command) {
-  fprintf(stderr, "Usage: %s [-o file] SOURCE\n\n", command);
+  fprintf(stderr, "Usage: %s [-hvOa] [-p precision] [-r rounding] [-o file] SOURCE\n\n", command);
   fprintf(stderr,
           "Compiling C to C with transformations of some arithmetic\n"
           "computations so that these computations are carried out \n"
@@ -21,12 +21,12 @@ static void usage(char *const command) {
           "of a dedicated library\n\n");
   fprintf(stderr, "  SOURCE is a file (`-' for stdin) to compile\n");
   fprintf(stderr, "Options:\n"
-                  "  -o\tSpecifies the output (stdout by default)\n"
+                  "  -o\tSet an output file (stdout by default)\n"
                   "  -v\tVerbose output (repeatable)\n"
-                  "  -O\tRun optimisations\n"
-                  "  -d\tPrint out the AST\n"
-                  "  -p\tSpecifies precision (unused if defined in pragma\n"
-                  "  -r\tSpecifies rounding (unused if defined in pragma\n"
+                  "  -O\tRun optimizations\n"
+                  "  -a\tPrint out the AST\n"
+                  "  -p\tSet a default precision\n"
+                  "  -r\tSet a default rounding\n"
                   "  -h\tDisplay this help and exit\n");
 
   exit(EXIT_FAILURE);
